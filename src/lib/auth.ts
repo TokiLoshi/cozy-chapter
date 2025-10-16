@@ -17,6 +17,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL || '',
   basePath: '/api/auth',
+  trustedOrigins: ['http://localhost:3000', 'https://cozy-chapter.netlify.app'],
   plugins: [reactStartCookies()],
 })
 
