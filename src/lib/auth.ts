@@ -14,7 +14,7 @@ export const auth = betterAuth({
     autoSignIn: false,
     requireEmailVerification: false,
   },
-  secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET!,
+  secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || '',
   basePath: '/api/auth',
   trustedOrigins: ['http://localhost:3000', 'https://cozy-chapter.netlify.app'],
