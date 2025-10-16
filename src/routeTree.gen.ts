@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
-import { Route as ReadingRoomRouteImport } from './routes/readingRoom'
+import { Route as ReadingroomRouteImport } from './routes/readingroom'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
@@ -35,9 +35,9 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReadingRoomRoute = ReadingRoomRouteImport.update({
-  id: '/readingRoom',
-  path: '/readingRoom',
+const ReadingroomRoute = ReadingroomRouteImport.update({
+  id: '/readingroom',
+  path: '/readingroom',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -134,7 +134,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/readingRoom': typeof ReadingRoomRoute
+  '/readingroom': typeof ReadingroomRoute
   '/signup': typeof SignupRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -156,7 +156,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/readingRoom': typeof ReadingRoomRoute
+  '/readingroom': typeof ReadingroomRoute
   '/signup': typeof SignupRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -179,7 +179,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/readingRoom': typeof ReadingRoomRoute
+  '/readingroom': typeof ReadingroomRoute
   '/signup': typeof SignupRoute
   '/demo/db-chat': typeof DemoDbChatRoute
   '/demo/db-chat-api': typeof DemoDbChatApiRoute
@@ -203,7 +203,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
-    | '/readingRoom'
+    | '/readingroom'
     | '/signup'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
@@ -225,7 +225,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
-    | '/readingRoom'
+    | '/readingroom'
     | '/signup'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
@@ -247,7 +247,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/login'
-    | '/readingRoom'
+    | '/readingroom'
     | '/signup'
     | '/demo/db-chat'
     | '/demo/db-chat-api'
@@ -270,7 +270,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
-  ReadingRoomRoute: typeof ReadingRoomRoute
+  ReadingroomRoute: typeof ReadingroomRoute
   SignupRoute: typeof SignupRoute
   DemoDbChatRoute: typeof DemoDbChatRoute
   DemoDbChatApiRoute: typeof DemoDbChatApiRoute
@@ -299,11 +299,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/readingRoom': {
-      id: '/readingRoom'
-      path: '/readingRoom'
-      fullPath: '/readingRoom'
-      preLoaderRoute: typeof ReadingRoomRouteImport
+    '/readingroom': {
+      id: '/readingroom'
+      path: '/readingroom'
+      fullPath: '/readingroom'
+      preLoaderRoute: typeof ReadingroomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -438,7 +438,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
-  ReadingRoomRoute: ReadingRoomRoute,
+  ReadingroomRoute: ReadingroomRoute,
   SignupRoute: SignupRoute,
   DemoDbChatRoute: DemoDbChatRoute,
   DemoDbChatApiRoute: DemoDbChatApiRoute,

@@ -6,6 +6,8 @@ import { useState } from 'react'
 // import { Card, CardContent, CardDescription, CardFooter, CardHeader, }
 import { signUp } from '@/lib/auth-client'
 
+// TODO: implement zod validation
+// TODO: implement the tanstack form with shadcn documentation https://ui.shadcn.com/docs/forms/tanstack-form
 // const userSchema = z.object({
 //   email: z.ZodEmail(),
 //   password: z.string().min(8),
