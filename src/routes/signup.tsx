@@ -1,6 +1,9 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
-// import { z } from 'zod'
+// import * as z from "zod"
+// import { toast } from "sonner"
+// import { Button } from "@components/ui/button"
+// import { Card, CardContent, CardDescription, CardFooter, CardHeader, }
 import { signUp } from '@/lib/auth-client'
 
 // const userSchema = z.object({
@@ -43,10 +46,10 @@ function SignupPage() {
         name,
       })
       console.log('User post signup: ', user)
-      router.navigate({ to: '/readingRoom' })
+      router.navigate({ to: '/login' })
     } catch (err) {
       console.error('Error signing up user, ', err, error)
-      setError(error)
+      setError(err instanceof Error ? err.message : 'Failed to create account')
     } finally {
       setLoading(false)
     }
