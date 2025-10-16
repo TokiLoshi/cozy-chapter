@@ -31,8 +31,8 @@ function LoginRoute() {
       console.log('Result of user sign in: ', user)
       router.navigate({ to: '/readingroom' })
     } catch (err) {
-      console.error('Login failed: ', err, error)
-      setError(error)
+      console.error('Login failed: ', err)
+      setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
       setLoading(false)
     }

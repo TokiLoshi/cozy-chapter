@@ -15,7 +15,7 @@ export const auth = betterAuth({
     requireEmailVerification: false,
   },
   secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET!,
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  baseURL: process.env.BETTER_AUTH_URL || '',
   basePath: '/api/auth',
   plugins: [reactStartCookies()],
 })
