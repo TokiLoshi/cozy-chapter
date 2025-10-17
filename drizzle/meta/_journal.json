@@ -8,6 +8,13 @@
       "when": 1760638778608,
       "tag": "0000_dizzy_clint_barton",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760675880452,
+      "tag": "0001_material_thunderbolt",
+      "breakpoints": true
     }
   ]
 }

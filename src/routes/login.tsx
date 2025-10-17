@@ -70,11 +70,11 @@ function LoginRoute() {
             disabled={loading}
             className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Creating account... ' : 'Login'}
+            {loading ? 'Logging in... ' : 'Login'}
           </button>
           <p className="mt-4 text-center text-sm text-gray-600">
             Don't have an account?{' '}
-            <a href="/users/signup" className="text-blue-500 hover:underline">
+            <a href="/signup" className="text-blue-500 hover:underline">
               Sign Up
             </a>
           </p>
