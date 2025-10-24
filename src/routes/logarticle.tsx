@@ -86,7 +86,7 @@ function ArticleForm() {
             errors.fields.url = 'Must be a valid URL'
           }
         }
-        return errors.fields
+        return errors
       },
     },
     onSubmit: async ({ value }) => {
@@ -115,6 +115,7 @@ function ArticleForm() {
         </h2>
         <form
           onSubmit={(e) => {
+            console.log('Clicked!')
             e.preventDefault()
             e.stopPropagation()
             form.handleSubmit()

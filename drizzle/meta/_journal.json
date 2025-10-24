@@ -29,6 +29,13 @@
       "when": 1761243753647,
       "tag": "0003_chunky_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1761349691251,
+      "tag": "0004_lyrical_queen_noir",
+      "breakpoints": true
     }
   ]
 }
