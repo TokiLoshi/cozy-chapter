@@ -24,7 +24,7 @@ export const userBlogs = pgTable('articles', {
   userId: text('userId')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-
+  title: text('title').notNull(),
   url: text('url'),
   author: text('author'),
   publishedDate: date('publishedDate'),
@@ -47,3 +47,5 @@ export const userBlogs = pgTable('articles', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
+
+export type UserBlogs = typeof userBlogs.$inferInsert
