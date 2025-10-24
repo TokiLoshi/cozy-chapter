@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ReadingroomRouteImport } from './routes/readingroom'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LogarticleRouteImport } from './routes/logarticle'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoNeonRouteImport } from './routes/demo/neon'
@@ -43,6 +44,11 @@ const ReadingroomRoute = ReadingroomRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogarticleRoute = LogarticleRouteImport.update({
+  id: '/logarticle',
+  path: '/logarticle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -133,6 +139,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/logarticle': typeof LogarticleRoute
   '/login': typeof LoginRoute
   '/readingroom': typeof ReadingroomRoute
   '/signup': typeof SignupRoute
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/logarticle': typeof LogarticleRoute
   '/login': typeof LoginRoute
   '/readingroom': typeof ReadingroomRoute
   '/signup': typeof SignupRoute
@@ -178,6 +186,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/logarticle': typeof LogarticleRoute
   '/login': typeof LoginRoute
   '/readingroom': typeof ReadingroomRoute
   '/signup': typeof SignupRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/logarticle'
     | '/login'
     | '/readingroom'
     | '/signup'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/logarticle'
     | '/login'
     | '/readingroom'
     | '/signup'
@@ -246,6 +257,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/logarticle'
     | '/login'
     | '/readingroom'
     | '/signup'
@@ -269,6 +281,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LogarticleRoute: typeof LogarticleRoute
   LoginRoute: typeof LoginRoute
   ReadingroomRoute: typeof ReadingroomRoute
   SignupRoute: typeof SignupRoute
@@ -311,6 +324,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logarticle': {
+      id: '/logarticle'
+      path: '/logarticle'
+      fullPath: '/logarticle'
+      preLoaderRoute: typeof LogarticleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -437,6 +457,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LogarticleRoute: LogarticleRoute,
   LoginRoute: LoginRoute,
   ReadingroomRoute: ReadingroomRoute,
   SignupRoute: SignupRoute,
