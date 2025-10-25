@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
@@ -48,7 +48,8 @@ export const Route = createFileRoute('/logarticle')({
 })
 
 function ArticleForm() {
-  // const { session } = Route.useLoaderData()
+  const navigate = useNavigate()
+
   const form = useAppForm({
     defaultValues: {
       userId: '',
@@ -91,6 +92,7 @@ function ArticleForm() {
         console.log('Submitting before db...')
         const article = await submitArticle({ data: value })
         console.log('Article successfully submitted: ', article)
+        navigate({ to: '/blogs' })
       } catch (error) {
         console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
       }
