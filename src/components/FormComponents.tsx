@@ -119,10 +119,9 @@ export function Select({
           <ShadcnSelect.SelectGroup>
             <ShadcnSelect.SelectLabel>{label}</ShadcnSelect.SelectLabel>
             {values.map((value) => (
-              <ShadcnSelect.SelectItem
-                key={value.value}
-                value={value.value}
-              ></ShadcnSelect.SelectItem>
+              <ShadcnSelect.SelectItem key={value.value} value={value.value}>
+                {value.label}
+              </ShadcnSelect.SelectItem>
             ))}
           </ShadcnSelect.SelectGroup>
         </ShadcnSelect.SelectContent>

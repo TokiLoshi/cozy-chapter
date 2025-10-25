@@ -110,7 +110,7 @@ function ArticleForm() {
       }}
     >
       <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-        <h2 className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black">
+        <h2 className="w-full max-w-2xl p-8 text-white text-2xl text-center">
           Log new article
         </h2>
         <form
@@ -129,7 +129,7 @@ function ArticleForm() {
 
           {/** URL field */}
           <form.AppField name="url">
-            {(field) => <field.TextField label="URL" />}
+            {(field) => <field.TextField label="URL" placeholder="url" />}
           </form.AppField>
 
           {/** Author field */}
@@ -148,8 +148,21 @@ function ArticleForm() {
           </form.AppField>
 
           {/** Tags field */}
-          <form.AppField name="status">
+          {/* <form.AppField name="status">
             {(field) => <field.TextField label="status" />}
+          </form.AppField> */}
+          <form.AppField name="status">
+            {(field) => (
+              <field.Select
+                label="Reading Status"
+                values={[
+                  { label: 'To Read', value: 'toRead' },
+                  { label: 'Reading', value: 'reading' },
+                  { label: 'Read', value: 'read' },
+                ]}
+                placeholder="Select status"
+              />
+            )}
           </form.AppField>
 
           <div className="flex justify-end">
