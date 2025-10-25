@@ -23,12 +23,10 @@ type Blog = {
   url: string | null
   author: string | null
   description: string | null
-  estimatedadingTime: number | null
+  estimatedReadingTime: number | null
   wordCount: number | null
   status: 'toRead' | 'reading' | 'read'
   notes: string | null
-  createdAt: Date
-  updatedAt: Date
 }
 
 function BlogComponent() {
