@@ -9,7 +9,7 @@ export async function createArticle(blog: UserBlogs) {
 }
 
 export async function getArticlesbyId(id: string) {
-  const [result] = await db
+  const result = await db
     .select()
     .from(userBlogs)
     .where(eq(userBlogs.userId, id))
