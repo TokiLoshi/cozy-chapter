@@ -1,15 +1,37 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server'
+import { auth } from '../lib/auth'
 import { getArticlesbyId } from '@/db/queries/articles'
-import { getSessionServer } from '@/lib/utils'
+// import { getSessionServer } from '@/lib/utils'
+
+export const getSessionServer = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const session = await auth.api.getSession({ headers: getRequest().headers })
+    return session
+  },
+)
+
+export const getBlogs = createServerFn({ method: 'GET' }).handler(async () => {
+  const session = await getSessionServer()
+  if (!session) throw redirect({ to: '/login' })
+  const userId = session.user.id
+  const blogs = await getArticlesbyId(userId)
+  console.log('Blogs from DB: ', blogs)
+
+  return { session, blogs }
+})
 
 export const Route = createFileRoute('/blogs')({
   loader: async () => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-    const userId = session.user.id
-    const blogs = await getArticlesbyId(userId)
-    console.log('Blogs from DB: ', blogs)
+    // const userId = session.user.id
+    // const blogs = await getArticlesbyId(userId)
+    // console.log('Blogs from DB: ', blogs)
 
+    // return { session, blogs }
+    const { blogs } = await getBlogs()
     return { session, blogs }
   },
   component: BlogComponent,

@@ -7,11 +7,7 @@ import { auth } from '../lib/auth'
 import { useAppForm } from '@/hooks/form'
 import { userBlogs } from '@/db/article-schema'
 import { createArticle } from '@/db/queries/articles'
-
-const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
-  const session = await auth.api.getSession({ headers: getRequest().headers })
-  return session
-})
+import { getSessionServer } from '@/lib/utils'
 
 const insertArticlesSchema = createInsertSchema(userBlogs, {
   title: z.string().min(1, 'title is required'),
