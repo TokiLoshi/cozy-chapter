@@ -2,11 +2,13 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../lib/auth'
+import type { Blog } from '@/lib/types/Blog'
 import {
   deleteArticle,
   getArticlesbyId,
   updateArticle,
 } from '@/db/queries/articles'
+
 // import { getSessionServer } from '@/lib/utils'
 
 export const getSessionServer = createServerFn({ method: 'GET' }).handler(
@@ -77,20 +79,6 @@ export const Route = createFileRoute('/blogs')({
   },
   component: BlogComponent,
 })
-
-// Typing
-type Blog = {
-  id: string
-  userId: string
-  title: string
-  url: string | null
-  author: string | null
-  description: string | null
-  estimatedReadingTime: number | null
-  wordCount: number | null
-  status: 'toRead' | 'reading' | 'read'
-  notes: string | null
-}
 
 const StatusBadge = ({ status }: { status: Blog['status'] }) => {
   const statusStyles = {
@@ -229,7 +217,10 @@ function BlogComponent() {
             {blogs.length === 1 ? 'article' : 'articles'} saved.
           </p>
         </div>
-        <button className="bg-white mb-2 text-blue-600 hover:bg-gray-100 rounded-lg px-6">
+        <button
+          className="bg-white mb-2 text-blue-600 hover:bg-gray-100 rounded-lg px-6"
+          onClick={() => navigate({ to: '/logarticle' })}
+        >
           + Add Article
         </button>
       </div>

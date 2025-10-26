@@ -16,6 +16,15 @@ export async function getArticlesbyId(id: string) {
   return result
 }
 
+export async function getSingleBlog(blogId: string) {
+  const [result] = await db
+    .select()
+    .from(userBlogs)
+    .where(eq(userBlogs.id, blogId))
+  console.log('Single Blog returning from DB: ', result)
+  return result
+}
+
 // Edit or Update
 export async function updateArticle(
   id: string,
