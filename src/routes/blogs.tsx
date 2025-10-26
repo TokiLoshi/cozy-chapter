@@ -2,7 +2,11 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../lib/auth'
-import { deleteArticle, getArticlesbyId } from '@/db/queries/articles'
+import {
+  deleteArticle,
+  getArticlesbyId,
+  updateArticle,
+} from '@/db/queries/articles'
 // import { getSessionServer } from '@/lib/utils'
 
 export const getSessionServer = createServerFn({ method: 'GET' }).handler(
@@ -24,6 +28,8 @@ export const getBlogs = createServerFn({ method: 'GET' }).handler(async () => {
 export const deleteBlogs = createServerFn({ method: 'POST' })
   .inputValidator((data: string) => data)
   .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
     const blogId = data
     try {
       console.log('In delete server function passing this to the query: ', data)
@@ -36,8 +42,25 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
         error,
         blogId,
       )
-      throw error
+      throw new Error('Something bad happened')
     }
+  })
+
+// TODO: Figure out where exactly we're going to pull the data and hwo we're going to show the form
+export const updateBlog = createServerFn({ method: 'POST' })
+  .inputValidator((data: { id: string; updates: Partial<Blog> }) => data)
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    try {
+      console.log('Updating blog with: ', data.id, data.updates)
+      const updatedBlog = await updateArticle(data.id, data.updates)
+      console.log('Updates from DB: ', updatedBlog)
+      return { success: true, id: data.id }
+    } catch (error) {
+      console.error('Error updating blog: ', data.id, data.updates)
+    }
+    throw new Error('Something bad happend')
   })
 
 export const Route = createFileRoute('/blogs')({
@@ -90,10 +113,32 @@ const StatusBadge = ({ status }: { status: Blog['status'] }) => {
 }
 
 const BlogCard = ({ blog }: { blog: Blog }) => {
+  const navigate = useNavigate()
   const handleEdit = (id: string) => {
+    const newStatus =
+      blog.status === 'toRead'
+        ? 'reading'
+        : blog.status === 'reading'
+          ? 'read'
+          : 'toRead'
+    try {
+      updateBlog({
+        data: {
+          id,
+          updates: { status: newStatus },
+        },
+      })
+      console.log('All seems ok')
+      navigate({ to: '/blogs' })
+    } catch (error) {
+      console.warn('error updating article')
+      throw new Error('Error in client component')
+    }
+
     console.log('Edit blog: ', id)
   }
   const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this article?')) return
     console.log('In client with the desire to delete: ', id)
     try {
       await deleteBlogs({ data: id })

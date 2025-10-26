@@ -17,42 +17,31 @@ export async function getArticlesbyId(id: string) {
 }
 
 // Edit or Update
-// export async function updateArticle(
-//   id: string,
-//   title?: string,
-//   url?: string,
-//   author?: string,
-//   publishedDate?: string,
-//   description?: string,
-//   estimatedReadingTime?: number,
-//   wordCount?: number,
-//   tags?: string[],
-//   status: string,
-//   notes?: string,
-//   highlights?: string,
-// ) {
-//   try {
-//     await db
-//       .update(userBlogs)
-//       .set({
-//         title,
-//         url,
-//         author,
-//         publishedDate,
-//         description,
-//         estimatedReadingTime,
-//         wordCount,
-//         tags,
-//         status,
-//         notes,
-//         highlights,
-//         updatedAt: new Date(),
-//       })
-//     return { success: true }
-//   } catch (error) {
-//     console.warn('Error editing article with id: ', id, error)
-//   }
-// }
+export async function updateArticle(
+  id: string,
+  updates: Partial<{
+    title?: string
+    url?: string | null
+    author?: string | null
+    description?: string | null
+    estimatedReadingTime?: number | null
+    wordCount?: number | null
+    status?: 'toRead' | 'reading' | 'read'
+    notes?: string | null
+  }>,
+) {
+  try {
+    const result = await db
+      .update(userBlogs)
+      .set(updates)
+      .where(eq(userBlogs.id, id))
+      .returning()
+    console.log('Updated article: ', result)
+    return { success: true, blog: result[0] }
+  } catch (error) {
+    console.warn('Error editing article with id: ', id, error)
+  }
+}
 
 export async function deleteArticle(id: string) {
   console.log('In delete with: ', id)
