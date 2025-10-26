@@ -1,4 +1,5 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../lib/auth'
@@ -6,8 +7,10 @@ import type { Blog } from '@/lib/types/Blog'
 import {
   deleteArticle,
   getArticlesbyId,
+  getSingleBlog,
   updateArticle,
 } from '@/db/queries/articles'
+import { useAppForm } from '@/hooks/form'
 
 // import { getSessionServer } from '@/lib/utils'
 
@@ -26,6 +29,21 @@ export const getBlogs = createServerFn({ method: 'GET' }).handler(async () => {
   console.log('Blogs from DB: ', blogs)
   return { session, blogs }
 })
+
+export const getBlogToEdit = createServerFn({ method: 'GET' })
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    try {
+      const blogId = data.id
+      const singleBlog = getSingleBlog(blogId)
+      console.log('Single. blog back from db: ', singleBlog)
+    } catch (error) {
+      console.log('Something went wrong getting blog: ', data.id)
+      throw new Error('Issue getting single blog')
+    }
+  })
 
 export const deleteBlogs = createServerFn({ method: 'POST' })
   .inputValidator((data: string) => data)
@@ -100,31 +118,199 @@ const StatusBadge = ({ status }: { status: Blog['status'] }) => {
   )
 }
 
-const BlogCard = ({ blog }: { blog: Blog }) => {
+const EditModal = ({ blog }: { blog: Blog }) => {
+  const [open, setOpen] = useState(false)
   const navigate = useNavigate()
-  const handleEdit = (id: string) => {
-    const newStatus =
-      blog.status === 'toRead'
-        ? 'reading'
-        : blog.status === 'reading'
-          ? 'read'
-          : 'toRead'
-    try {
-      updateBlog({
-        data: {
-          id,
-          updates: { status: newStatus },
-        },
-      })
-      console.log('All seems ok')
-      navigate({ to: '/blogs' })
-    } catch (error) {
-      console.warn('error updating article')
-      throw new Error('Error in client component')
-    }
+  const form = useAppForm({
+    defaultValues: {
+      title: blog.title,
+      url: blog.url || '',
+      author: blog.author || '',
+      description: blog.description || '',
+      status: blog.status,
+      estimatedReadingTime: blog.estimatedReadingTime || undefined,
+      wordCount: blog.wordCount || undefined,
+      notes: blog.notes || '',
+    },
+    validators: {
+      onBlur: ({ value }) => {
+        const errors = {
+          fields: {},
+        } as {
+          fields: Record<string, string>
+        }
+        // Title Required
+        if (value.title.length === 0) {
+          errors.fields.title = 'Title is required'
+        }
+        // Validate URL
+        if (value.url && value.url.length > 0) {
+          try {
+            new URL(value.url)
+          } catch {
+            errors.fields.url = 'Must be a valid URL'
+          }
+        }
+        return errors
+      },
+    },
+    onSubmit: async ({ value }) => {
+      console.log('Submitting form with: ', value)
+      try {
+        console.log('Submitting before db...')
+        const article = await updateBlog({
+          data: {
+            id: blog.id,
+            updates: value,
+          },
+        })
+        console.log('Article successfully submitted: ', article)
 
-    console.log('Edit blog: ', id)
-  }
+        navigate({ to: '/blogs' })
+        setOpen(false)
+      } catch (error) {
+        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+      }
+    },
+  })
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+      >
+        Edit
+      </button>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/** Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          {/** Modal */}
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    Edit article
+                  </h2>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Make changes to your article here
+                  </p>
+                </div>
+                <button onClick={() => setOpen(false)}>x</button>
+              </div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                form.handleSubmit()
+              }}
+              className="p-6 space-y-6"
+            >
+              {/** Title field */}
+              <form.AppField name="title">
+                {(field) => (
+                  <field.TextField label="Title" placeholder={blog.title} />
+                )}
+              </form.AppField>
+
+              {/** URL Field */}
+              <form.AppField name="url">
+                {(field) => (
+                  <field.TextField
+                    label="url"
+                    placeholder={blog.url ? blog.url : 'https://....'}
+                  />
+                )}
+              </form.AppField>
+
+              {/** Author */}
+              <form.AppField name="author">
+                {(field) => (
+                  <field.TextField
+                    label="author"
+                    placeholder={blog.author ? blog.author : 'who wrote it?'}
+                  />
+                )}
+              </form.AppField>
+
+              {/** Description */}
+              <form.AppField name="description">
+                {(field) => (
+                  <field.TextField
+                    label="description"
+                    placeholder={
+                      blog.description
+                        ? blog.description
+                        : "description, what's it about?"
+                    }
+                  />
+                )}
+              </form.AppField>
+
+              {/** Notes field */}
+              <form.AppField name="notes">
+                {(field) => <field.TextArea label="Notes" />}
+              </form.AppField>
+
+              {/** Status */}
+              <form.AppField name="status">
+                {(field) => (
+                  <field.Select
+                    label="Reading Status"
+                    values={[
+                      { label: 'To Read', value: 'toRead' },
+                      { label: 'Reading', value: 'reading' },
+                      { label: 'Read', value: 'read' },
+                    ]}
+                    placeholder="Select status"
+                  />
+                )}
+              </form.AppField>
+
+              <div className="flex justify-end">
+                <form.AppForm>
+                  <form.SubmitButton label="Submit" />
+                </form.AppForm>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
+const BlogCard = ({ blog }: { blog: Blog }) => {
+  // const navigate = useNavigate()
+  // const handleEdit = (id: string) => {
+  //   const newStatus =
+  //     blog.status === 'toRead'
+  //       ? 'reading'
+  //       : blog.status === 'reading'
+  //         ? 'read'
+  //         : 'toRead'
+  //   try {
+  //     updateBlog({
+  //       data: {
+  //         id,
+  //         updates: { status: newStatus },
+  //       },
+  //     })
+  //     console.log('All seems ok')
+  //     navigate({ to: '/blogs' })
+  //   } catch (error) {
+  //     console.warn('error updating article')
+  //     throw new Error('Error in client component')
+  //   }
+
+  //   console.log('Edit blog: ', id)
+  // }
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this article?')) return
     console.log('In client with the desire to delete: ', id)
@@ -174,12 +360,7 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
           </a>
         )}
         <div className="flex gap-2 mt-4 pt-4 border-t border-white/10">
-          <button
-            onClick={() => handleEdit(blog.id)}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
-          >
-            Edit
-          </button>
+          <EditModal blog={blog} />
           <button
             onClick={() => handleDelete(blog.id)}
             className="flex-2 bg-red-500 hover:bg-red-800 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
