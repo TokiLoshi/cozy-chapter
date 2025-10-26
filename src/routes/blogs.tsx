@@ -2,7 +2,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../lib/auth'
-import { getArticlesbyId } from '@/db/queries/articles'
+import { deleteArticle, getArticlesbyId } from '@/db/queries/articles'
 // import { getSessionServer } from '@/lib/utils'
 
 export const getSessionServer = createServerFn({ method: 'GET' }).handler(
@@ -20,6 +20,24 @@ export const getBlogs = createServerFn({ method: 'GET' }).handler(async () => {
   console.log('Blogs from DB: ', blogs)
   return { session, blogs }
 })
+
+export const deleteBlogs = createServerFn({ method: 'POST' })
+  .inputValidator((data: string) => data)
+  .handler(async ({ data }) => {
+    const blogId = data
+    try {
+      const deletedBlog = await deleteArticle(blogId)
+      console.log('Deleted: ', deletedBlog)
+      return { success: true, id: blogId }
+    } catch (error) {
+      console.error(
+        'Something went wrong deleting the article: ',
+        error,
+        blogId,
+      )
+      throw error
+    }
+  })
 
 export const Route = createFileRoute('/blogs')({
   loader: async () => {
@@ -76,6 +94,7 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
   }
   const handleDelete = (id: string) => {
     console.log('Delete blog: ', id)
+    deleteBlogs(id)
   }
   return (
     <>

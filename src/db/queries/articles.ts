@@ -54,7 +54,7 @@ export async function getArticlesbyId(id: string) {
 //   }
 // }
 
-export async function deleteArticle(title: string) {
-  const result = await db.delete(userBlogs).where(eq(userBlogs.title, title))
+export async function deleteArticle(id: string) {
+  const result = await db.delete(userBlogs).where(eq(userBlogs.id, id))
   return result
 }
