@@ -55,6 +55,10 @@ export async function getArticlesbyId(id: string) {
 // }
 
 export async function deleteArticle(id: string) {
+  console.log('In delete with: ', id)
+  const article = await db.select().from(userBlogs).where(eq(userBlogs.id, id))
+  console.log('Sanity check: does article exist: ', article)
   const result = await db.delete(userBlogs).where(eq(userBlogs.id, id))
+  console.log('Result after passing to id: and what will be returned', result)
   return result
 }

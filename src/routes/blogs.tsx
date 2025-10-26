@@ -26,6 +26,7 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const blogId = data
     try {
+      console.log('In delete server function passing this to the query: ', data)
       const deletedBlog = await deleteArticle(blogId)
       console.log('Deleted: ', deletedBlog)
       return { success: true, id: blogId }
@@ -92,9 +93,15 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
   const handleEdit = (id: string) => {
     console.log('Edit blog: ', id)
   }
-  const handleDelete = (id: string) => {
-    console.log('Delete blog: ', id)
-    deleteBlogs(id)
+  const handleDelete = async (id: string) => {
+    console.log('In client with the desire to delete: ', id)
+    try {
+      await deleteBlogs({ data: id })
+      window.location.reload()
+    } catch (error) {
+      console.error('Failed to delete:', error)
+      alert('Failed to delete article')
+    }
   }
   return (
     <>
