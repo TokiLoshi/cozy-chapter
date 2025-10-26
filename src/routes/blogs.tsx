@@ -31,7 +31,7 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
       return { success: true, id: blogId }
     } catch (error) {
       console.error(
-        'Something went wrong deleting the article: ',
+        'Oops, something went wrong deleting the article: ',
         error,
         blogId,
       )
