@@ -11,6 +11,10 @@ Attempting to make a 3D Reading Tracker.
 - Tailwind
 - Shadcn
 
+## Attributions:
+
+1. Bookcase with Books by Quaternius via [polypizza](https://poly.pizza/m/tACDGJ4CGW)
+
 ## Still reviewing the rest from the documentation
 
 The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.

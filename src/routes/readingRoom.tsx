@@ -1,6 +1,8 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
+// @ts-ignore - jsx file
+import Experience from '../components/Experience'
 import { auth } from '@/lib/auth'
 import { signOut } from '@/lib/auth-client'
 
@@ -27,6 +29,7 @@ function ReadingRoomComponent() {
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-slate-700 text-white">
+        <Experience />
         <div className="mx-auto text-white bg-slate-500 py-2 px-3 rounded">
           <h1 className="text-2xl">Welcome to the reading room</h1>
           <p>Name: {session.user.name}</p>
