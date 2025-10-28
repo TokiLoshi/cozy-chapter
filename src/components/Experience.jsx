@@ -1,24 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import { useRef } from 'react'
-
-function RotatingCube() {
-  const meshRef = useRef()
-
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += delta
-      meshRef.current.rotation.y += delta * 0.5
-    }
-  })
-
-  return (
-    <mesh ref={meshRef}>
-      <boxGeometry args={[2, 2, 2]} />
-      <meshStandardMaterial color="hotpink" />
-    </mesh>
-  )
-}
+import Isometricroom from '../components/Isometricroom'
 
 export default function Experience() {
   return (
@@ -31,10 +14,27 @@ export default function Experience() {
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <OrbitControls />
-
-          <RotatingCube />
+          <Isometricroom />
         </Canvas>
       </div>
     </>
   )
 }
+
+// function RotatingCube() {
+//   const meshRef = useRef()
+
+//   useFrame((state, delta) => {
+//     if (meshRef.current) {
+//       meshRef.current.rotation.x += delta
+//       meshRef.current.rotation.y += delta * 0.5
+//     }
+//   })
+
+//   return (
+//     <mesh ref={meshRef}>
+//       <boxGeometry args={[2, 2, 2]} />
+//       <meshStandardMaterial color="hotpink" />
+//     </mesh>
+//   )
+// }
