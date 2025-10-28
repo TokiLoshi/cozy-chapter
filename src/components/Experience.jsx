@@ -3,7 +3,7 @@ import { OrbitControls } from '@react-three/drei'
 import { useRef } from 'react'
 import Isometricroom from '../components/Isometricroom'
 
-export default function Experience() {
+export default function Experience({ onBookcaseClick }) {
   return (
     <>
       <div className="w-full h-screen">
@@ -14,7 +14,7 @@ export default function Experience() {
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <OrbitControls />
-          <Isometricroom />
+          <Isometricroom onBookcaseClick={onBookcaseClick} />
         </Canvas>
       </div>
     </>
