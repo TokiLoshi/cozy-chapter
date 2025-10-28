@@ -14,6 +14,30 @@ Attempting to make a 3D Reading Tracker.
 ## Attributions:
 
 1. Bookcase with Books by Quaternius via [polypizza](https://poly.pizza/m/tACDGJ4CGW)
+2. Wall Corner by Kenney (https://poly.pizza/m/Rad76BJn2L)
+3. Wall by Kenney (https://poly.pizza/m/N8d0nkQGOn)
+4. Book by Quaternius (https://poly.pizza/m/LC0w7VI75u)
+5. L Couch by Quaternius (https://poly.pizza/m/1kwsjhpY84)
+6. Planks by Kay Lousberg (https://poly.pizza/m/5m4LLpNl2M)
+7. Open Book by Quaternius (https://poly.pizza/m/1A07aI9j2d)
+8. Open Book by Quaternius (https://poly.pizza/m/JEDMpG0UIR)
+9. DJ gear by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/5Zq4tgSECXz)
+10. Plants - Assorted shelf plants by Jakers_H [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/5COCzyz489J)
+11. Book by Quaternius (https://poly.pizza/m/h3Wh4fxSQX)
+12. Headphones by Michael Fuchs [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/fPJoG2u0gnN)
+13. Husky by Quaternius (https://poly.pizza/m/wcWiuEqwzq)
+14. Windows by Francis Chen [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/c93mqlf3yl1)
+15. Light Stand by Quaternius (https://poly.pizza/m/9L6lLUl9sD)
+16. Record player by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/6XodSi_3y_i)
+17. Fireplace by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/fueH4_5W9Ug)
+18. Radio by Quaternius (https://poly.pizza/m/TPqvwkyWdV)
+19. Table by Kenney (https://poly.pizza/m/41R2HTYj1O)
+20. Houseplant by Quaternius (https://poly.pizza/m/bfLOqIV5uP)
+21. Painting by CreativeTrio (https://poly.pizza/m/Pi6oReAizt)
+22. Vines by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/2jffIS8PMjZ)
+23. Orchid by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/0gEtIcRV4do)
+24. Acoustic Guitar by Dave Edwards [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/bf6_h_1wp2D)
+25.
 
 ## Still reviewing the rest from the documentation
 
