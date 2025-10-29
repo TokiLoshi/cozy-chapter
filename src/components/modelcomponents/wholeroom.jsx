@@ -178,11 +178,11 @@ export default function CozyRoom({ onBookcaseClick, ...props }) {
       <group
         onPointerOver={() => setIsBookcaseHovered(true)}
         onPointerOut={() => setIsBookcaseHovered(false)}
+        onClick={() => onBookcaseClick('read')}
       >
         <mesh
           castShadow
           receiveShadow
-          onClick={() => onBookcaseClick()}
           geometry={nodes.Bookcase_mesh.geometry}
           material={materials['Wood1.001']}
         />
@@ -350,11 +350,13 @@ export default function CozyRoom({ onBookcaseClick, ...props }) {
         geometry={nodes.headphones_mesh_2.geometry}
         material={materials['lambert3SG.003']}
       />
+      {/** TO READ Models */}
       <mesh
         castShadow
         receiveShadow
         onPointerOver={() => setIsToReadHovered(true)}
         onPointerOut={() => setIsToReadHovered(false)}
+        onClick={() => onBookcaseClick('toRead')}
         geometry={nodes.bottom_book_mesh.geometry}
         material={materials['DarkRed.003']}
       >
@@ -363,12 +365,14 @@ export default function CozyRoom({ onBookcaseClick, ...props }) {
       <mesh
         castShadow
         receiveShadow
+        onClick={() => onBookcaseClick('toRead')}
         geometry={nodes.bottom_book_mesh_1.geometry}
         material={materials['Golden.001']}
       />
       <mesh
         castShadow
         receiveShadow
+        onClick={() => onBookcaseClick('toRead')}
         geometry={nodes.bottom_book_mesh_2.geometry}
         material={materials['Beige.004']}
       />
@@ -377,7 +381,7 @@ export default function CozyRoom({ onBookcaseClick, ...props }) {
         onPointerOut={() => setIsToReadHovered(false)}
         castShadow
         receiveShadow
-        onClick={() => onBookcaseClick(true)}
+        onClick={() => onBookcaseClick('toRead')}
         geometry={nodes.top_book_mesh.geometry}
         material={materials['DarkRed.003']}
       >
@@ -386,18 +390,26 @@ export default function CozyRoom({ onBookcaseClick, ...props }) {
       <mesh
         castShadow
         receiveShadow
+        onClick={() => onBookcaseClick('toRead')}
         geometry={nodes.top_book_mesh_1.geometry}
         material={materials['Golden.001']}
       />
       <mesh
         castShadow
         receiveShadow
+        onClick={() => onBookcaseClick('toRead')}
         geometry={nodes.top_book_mesh_2.geometry}
         material={materials['Beige.004']}
       />
+      {/** READING */}
       <mesh
         castShadow
         receiveShadow
+        onPointerOver={() => {
+          setIsReadingHovered(true)
+        }}
+        onPointerOut={() => setIsReadingHovered(false)}
+        onClick={() => onBookcaseClick('reading')}
         geometry={nodes.Book1_Open001.geometry}
         material={materials['Beige.006']}
       />
@@ -409,7 +421,7 @@ export default function CozyRoom({ onBookcaseClick, ...props }) {
         onPointerOut={() => setIsReadingHovered(false)}
         castShadow
         receiveShadow
-        onClick={() => onBookcaseClick(true)}
+        onClick={() => onBookcaseClick('reading')}
         geometry={nodes.Book1_Open001_1.geometry}
         material={materials['DarkRed.005']}
       >
