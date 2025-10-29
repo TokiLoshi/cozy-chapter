@@ -11,3 +11,5 @@ export type Blog = {
   status: 'toRead' | 'reading' | 'read'
   notes: string | null
 }
+
+export type ReadStatus = 'read' | 'reading' | 'toRead'

@@ -1,6 +1,7 @@
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 // eslint-disable-next-line
 import { UserBlogs, userBlogs } from '../article-schema'
+import type { ReadStatus } from '@/lib/types/Blog'
 import { db } from '@/db'
 
 export async function createArticle(blog: UserBlogs) {
@@ -13,6 +14,14 @@ export async function getArticlesbyId(id: string) {
     .select()
     .from(userBlogs)
     .where(eq(userBlogs.userId, id))
+  return result
+}
+
+export async function getArticleByStatus(id: string, readStatus: ReadStatus) {
+  const result = await db
+    .select()
+    .from(userBlogs)
+    .where(and(eq(userBlogs.userId, id), eq(userBlogs.status, readStatus)))
   return result
 }
 

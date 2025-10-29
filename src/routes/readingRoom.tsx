@@ -3,10 +3,10 @@ import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { useState } from 'react'
 import Experience from '../components/Experience'
-import type { Blog } from '@/lib/types/Blog'
+import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
-import { signOut } from '@/lib/auth-client'
-import { getArticlesbyId } from '@/db/queries/articles'
+// import { signOut } from '@/lib/auth-client'
+import { getArticleByStatus, getArticlesbyId } from '@/db/queries/articles'
 
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
@@ -21,6 +21,16 @@ const getUserBlogs = createServerFn({ method: 'GET' }).handler(async () => {
   return blogs
 })
 
+const getUserBlogsByStatus = createServerFn({ method: 'GET' })
+  .inputValidator((data: ReadStatus) => data)
+  .handler(async ({ data: status }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    const userId = session.user.id
+    const blogs = await getArticleByStatus(userId, status)
+    return blogs
+  })
+
 export const Route = createFileRoute('/readingroom')({
   loader: async () => {
     const session = await getSessionServer()
@@ -34,6 +44,7 @@ export const Route = createFileRoute('/readingroom')({
 
 function ReadingRoomComponent() {
   const { session, blogs } = Route.useLoaderData()
+  console.log('Reading room session: ', session)
   const navigate = useNavigate()
   const [showBlogsOverlay, setShowBlogsOverlay] = useState(false)
 
@@ -109,24 +120,6 @@ function ReadingRoomComponent() {
             </div>
           </div>
         )}
-
-        <div className="mx-auto text-white bg-slate-500 py-2 px-3 rounded">
-          <h1 className="text-2xl">Welcome to the reading room</h1>
-          <p>Name: {session.user.name}</p>
-          <p>Email: {session.user.email}</p>
-          <div>
-            <button
-              onClick={async () => {
-                console.log('Logout clicked')
-                await signOut()
-                navigate({ to: '/login' })
-              }}
-              className="bg-green-500 text-white py-2 px-2 rounded mt-6"
-            >
-              Logout user
-            </button>
-          </div>
-        </div>
       </div>
     </>
   )

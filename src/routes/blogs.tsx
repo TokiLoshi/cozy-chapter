@@ -11,6 +11,7 @@ import {
   updateArticle,
 } from '@/db/queries/articles'
 import { useAppForm } from '@/hooks/form'
+import { signOut } from '@/lib/auth-client'
 
 // import { getSessionServer } from '@/lib/utils'
 
@@ -286,7 +287,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
   )
 }
 
-const BlogCard = ({ blog }: { blog: Blog }) => {
+const BlogCard = async ({ blog }: { blog: Blog }) => {
   // const navigate = useNavigate()
   // const handleEdit = (id: string) => {
   //   const newStatus =
@@ -311,6 +312,9 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
 
   //   console.log('Edit blog: ', id)
   // }
+  const session = await getSessionServer()
+  const navigate = useNavigate()
+
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this article?')) return
     console.log('In client with the desire to delete: ', id)
@@ -324,6 +328,23 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
   }
   return (
     <>
+      <div className="mx-auto text-white bg-slate-500 py-2 px-3 rounded">
+        <h1 className="text-2xl">Welcome to the reading room</h1>
+        <p>Name: {session?.user.name}</p>
+        <p>Email: {session?.user.email}</p>
+        <div>
+          <button
+            onClick={async () => {
+              console.log('Logout clicked')
+              await signOut()
+              navigate({ to: '/login' })
+            }}
+            className="bg-green-500 text-white py-2 px-2 rounded mt-6"
+          >
+            Logout user
+          </button>
+        </div>
+      </div>
       <div className="bg-white/10 border border-white/20 rounded-lg p-5 backdrop-blur-sm hover:bg-white/15 transition-all duration200">
         <div className="flex justify-between items-start gap-4 mb-3">
           <div className="flex-1 mt-2">
