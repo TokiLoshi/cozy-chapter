@@ -3,6 +3,7 @@ import { OrbitControls } from '@react-three/drei'
 import { useRef } from 'react'
 import Isometricroom from '../components/Isometricroom'
 import { useControls } from 'leva'
+import { Sky } from '@react-three/drei'
 
 export default function Experience({ onBookcaseClick }) {
   const {
@@ -22,18 +23,6 @@ export default function Experience({ onBookcaseClick }) {
     },
     { collapsed: true },
   )
-
-  const { cameraX, cameraY, cameraZ, fov } = useControls(
-    'CameraControls',
-    {
-      cameraX: { value: 5, min: -20, max: 20, step: 0.5 },
-      cameraY: { value: 4, min: 0, max: 20, step: 0.5 },
-      cameraZ: { value: 5, min: 20, max: 100, step: 5 },
-      fov: { value: 75, min: 20, max: 100, step: 5 },
-    },
-    { collapsed: true },
-  )
-
   const { bgColor } = useControls(
     'SceneControls',
     {
@@ -47,7 +36,7 @@ export default function Experience({ onBookcaseClick }) {
       <div className="w-full h-screen">
         <Canvas
           toneMapping="ACESFILMIC"
-          camera={{ position: [cameraX, cameraY, cameraZ], fov: fov }}
+          camera={{ position: [5, 4, 3], fov: 75 }}
           shadows
         >
           <color attach="background" args={[bgColor]} />
@@ -56,7 +45,11 @@ export default function Experience({ onBookcaseClick }) {
           <pointLight position={[0, 3, 0]} intensity={0.5} color="#ffeedd" />
           <pointLight position={[-2, 1, 1]} intensity={0.8} color="ff6d3d" />
           <OrbitControls />
-          <Isometricroom onBookcaseClick={onBookcaseClick} receiveShadow />
+          <Isometricroom
+            onBookcaseClick={onBookcaseClick}
+            receiveShadow
+            scale={2}
+          />
         </Canvas>
       </div>
     </>
