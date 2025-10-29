@@ -16,17 +16,28 @@ export default function Experience({ onBookcaseClick }) {
     {
       ambientIntensity: { value: 0.8, min: 0, max: 2, step: 0.1 },
       directionalIntensity: { value: 1.5, min: 0, max: 3, step: 0.1 },
-      directionalX: { value: 10, min: -20, max: 20, step: 1 },
-      directionalY: { value: 15, min: 0, max: 30, step: 1 },
+      directionalX: { value: 5, min: -20, max: 20, step: 1 },
+      directionalY: { value: 10, min: 0, max: 30, step: 1 },
       directionalZ: { value: 5, min: -20, max: 20, step: 1 },
     },
     { collapsed: true },
   )
 
-  const { bgColor } = useControls(
-    'Scene',
+  const { cameraX, cameraY, cameraZ, fov } = useControls(
+    'CameraControls',
     {
-      bgColor: '2c1810',
+      cameraX: { value: 5, min: -20, max: 20, step: 0.5 },
+      cameraY: { value: 4, min: 0, max: 20, step: 0.5 },
+      cameraZ: { value: 5, min: 20, max: 100, step: 5 },
+      fov: { value: 75, min: 20, max: 100, step: 5 },
+    },
+    { collapsed: true },
+  )
+
+  const { bgColor } = useControls(
+    'SceneControls',
+    {
+      bgColor: '#1a233e',
     },
     { collapsed: true },
   )
@@ -36,13 +47,16 @@ export default function Experience({ onBookcaseClick }) {
       <div className="w-full h-screen">
         <Canvas
           toneMapping="ACESFILMIC"
-          camera={{ position: [0, 0, 5], fov: 75 }}
-          style={{ bgColor }}
+          camera={{ position: [cameraX, cameraY, cameraZ], fov: fov }}
+          shadows
         >
+          <color attach="background" args={[bgColor]} />
           <ambientLight intensity={ambientIntensity} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
+          <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
+          <pointLight position={[0, 3, 0]} intensity={0.5} color="#ffeedd" />
+          <pointLight position={[-2, 1, 1]} intensity={0.8} color="ff6d3d" />
           <OrbitControls />
-          <Isometricroom onBookcaseClick={onBookcaseClick} />
+          <Isometricroom onBookcaseClick={onBookcaseClick} receiveShadow />
         </Canvas>
       </div>
     </>
