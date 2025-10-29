@@ -54,6 +54,15 @@ function ReadingRoomComponent() {
     return blogs.filter((blog: Blog) => blog.status === selectedStatus)
   }, [blogs, selectedStatus])
 
+  const stats = useMemo(() => {
+    return {
+      toRead: blogs.filter((blog: Blog) => blog.status === 'toRead').length,
+      reading: blogs.filter((blog: Blog) => blog.status === 'reading').length,
+      read: blogs.filter((blog: Blog) => blog.status === 'read').length,
+      total: blogs.length,
+    }
+  }, [blogs])
+
   const handleBookcaseClick = (status: ReadStatus) => {
     setSelectedStatus(status)
   }
@@ -78,7 +87,54 @@ function ReadingRoomComponent() {
   return (
     <>
       <div className="relative w-full h-screen">
+        {/** Stats Overlay - Top Left */}
+        <div className="absolute top-6 left-6 z-10 bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-white mb-1">
+              welcome back, {session.user.name}!
+            </h2>
+            <p className="text-sm text-gray-400">
+              {stats.total} {stats.total === 1 ? 'article' : 'articles'} in
+              total
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span className="text-sm text-gray-300">To Read</span>
+              </div>
+              <span className="text-lg font-semibold text-white">
+                {stats.toRead}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                <span className="text-sm text-gray-300">Reading</span>
+              </div>
+              <span className="text-lg font-semibold text-white">
+                {stats.reading}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-sm text-gray-300">Read</span>
+              </div>
+              <span className="text-lg font-semibold text-white">
+                {stats.toRead}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/** 3D component  */}
         <Experience onBookcaseClick={handleBookcaseClick} />
+
         {/** Blogs Overlay */}
 
         {selectedStatus && (
