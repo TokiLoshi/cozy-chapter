@@ -17,7 +17,7 @@ export default function Header() {
         </button>
         <h1 className="ml-4 text-xl font-semibold">
           <Link to="/">
-            <img src="/birb.png" alt="beach birb" className="h-10" />
+            <img src="/coffee.png" alt="beach birb" className="h-10" />
           </Link>
         </h1>
         <h3 className="ml-4 text-xl font-semibold">Cozy Chapter</h3>
