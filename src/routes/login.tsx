@@ -52,7 +52,7 @@ function LoginRoute() {
 
           <form
             onSubmit={handleSubmit}
-            className="bg-blue-900 rounded-xl shadow-2xl p-8 border border-gray-700"
+            className="bg-slate-900 rounded-xl shadow-2xl p-8 border border-gray-700"
           >
             {error && (
               <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
@@ -71,7 +71,7 @@ function LoginRoute() {
                 name="email"
                 placeholder="your@email.com"
                 required
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-call"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-all"
               />
             </div>
             <div className="mb-4">
@@ -80,13 +80,13 @@ function LoginRoute() {
                 name="password"
                 placeholder="Password (min 8 characters)"
                 required
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-call"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-all"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Logging in... ' : 'Login'}
             </button>
@@ -94,7 +94,7 @@ function LoginRoute() {
               Don't have an account?{' '}
               <a
                 href="/signup"
-                className="text-cyan-500 hover:text-indigo-400 font-medium"
+                className="text-cyan-500 hover:bg-cyan-600 font-medium"
               >
                 Sign Up
               </a>

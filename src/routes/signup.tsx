@@ -49,7 +49,7 @@ function SignupPage() {
   }
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen bg-gray-800">
+      <div className="flex items-center justify-center min-h-screen bg-slate-800">
         <div className="w-full max-w-md px-6">
           <div className="text-center mb-8">
             <img
@@ -60,9 +60,10 @@ function SignupPage() {
             <h1 className="text-3xl font-bold text-white">Join Cozy Chapter</h1>
             <p className="text-gray-400 mt-2">Start your reading journey</p>
           </div>
+
           <form
             onSubmit={handleSubmit}
-            className="bg-gray-900 rounded-xl shadow-2xl p-8 border border-gray-700"
+            className="bg-slate-900 rounded-xl shadow-2xl p-8 border border-gray-700"
           >
             {error && (
               <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
@@ -77,12 +78,11 @@ function SignupPage() {
                 Name
               </label>
               <input
-                id="name"
                 type="text"
                 name="name"
                 placeholder="Username / full name"
                 required
-                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-all"
               />
             </div>
             <div className="mb-4">
@@ -93,12 +93,11 @@ function SignupPage() {
                 Email
               </label>
               <input
-                id="email"
                 type="email"
                 name="email"
                 placeholder="email"
                 required
-                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-all"
               />
             </div>
             <div className="mb-4">
@@ -114,7 +113,7 @@ function SignupPage() {
                 name="password"
                 placeholder="Password (min 8 characters)"
                 required
-                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-all"
               />
             </div>
             <div className="mb-4">
@@ -128,20 +127,24 @@ function SignupPage() {
                 id="passwordConfirmation"
                 type="password"
                 name="passwordConfirmation"
+                placeholder="confirm password"
                 required
-                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus-ring-cyan-600 focus:border-transparent tranistion-all"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account... ' : 'Sign Up'}
             </button>
-            <p className="mt-4 text-center text-sm text-gray-600">
+            <p className="mt-6 text-center text-sm text-gray-400">
               Already have an account?{' '}
-              <a href="/users/login" className="text-blue-500 hover:underline">
+              <a
+                href="/users/login"
+                className="text-cyan-500 hover:bg-cyan-600 font-medium"
+              >
                 Login
               </a>
             </p>
