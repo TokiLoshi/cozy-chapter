@@ -77,6 +77,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
       console.log('Updating blog with: ', data.id, data.updates)
       const updatedBlog = await updateArticle(data.id, data.updates)
       console.log('Updates from DB: ', updatedBlog)
+      window.location.reload()
       return { success: true, id: data.id }
     } catch (error) {
       console.error('Error updating blog: ', data.id, data.updates)

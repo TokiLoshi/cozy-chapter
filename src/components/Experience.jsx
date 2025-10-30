@@ -1,11 +1,16 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Loader, OrbitControls } from '@react-three/drei'
+import { Loader, OrbitControls, useHelper } from '@react-three/drei'
 import { Suspense, useRef } from 'react'
 import Isometricroom from '../components/Isometricroom'
 import { useControls } from 'leva'
-import { Sky } from '@react-three/drei'
-import { ACESFilmicToneMapping } from 'three'
+import { ACESFilmicToneMapping, DirectionalLightHelper } from 'three'
 import * as THREE from 'three'
+
+function DirectionalLightWithHelper({ position, intensity }) {
+  const lightRef = useRef()
+  useHelper(lightRef, DirectionalLightHelper, 1, 'red')
+  return <directionalLight ref={lightRef} intensity={intensity} castShadow />
+}
 
 export default function Experience({ onBookcaseClick }) {
   const {
@@ -45,6 +50,10 @@ export default function Experience({ onBookcaseClick }) {
         >
           <color attach="background" args={[bgColor]} />
           <ambientLight intensity={ambientIntensity} />
+          {/* <DirectionalLightWithHelper
+            position={[directionalX, directionalY, directionalZ]}
+            intensity={directionalIntensity}
+          /> */}
           <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
           <pointLight position={[0, 3, 0]} intensity={0.5} color="#ffeedd" />
           <pointLight position={[-2, 1, 1]} intensity={0.8} color="#ff6d3d" />
