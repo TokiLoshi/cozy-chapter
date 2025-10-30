@@ -14,6 +14,7 @@ import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { auth } from '@/lib/auth'
+import { Toaster } from '@/components/ui/sonner'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -65,6 +66,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <Header isAuthenticated={isAuthenticated} />
         {children}
+        <Toaster
+          toastOptions={{
+            style: {
+              background: '#1e293b',
+              borderColor: '#334155',
+              color: '#f1f5f9',
+            },
+          }}
+        />
         {/* <TanStackDevtools
           config={{
             position: 'bottom-right',

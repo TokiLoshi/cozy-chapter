@@ -3,6 +3,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { Edit, Link, Trash, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import Experience from '../components/Experience'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
@@ -319,16 +320,54 @@ function ReadingRoomComponent() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this article?')) return
-    console.log('In client with the desire to delete: ', id)
-    try {
-      await deleteBlogs({ data: id })
-      navigate({ to: '/readingroom' })
-    } catch (error) {
-      console.error('Failed to delete:', error)
-      alert('Failed to delete article')
-    }
+  const handleDelete = (id: string) => {
+    toast('Are you sure you want to delete this article?', {
+      description: 'This action cannot be undone.',
+      classNames: {
+        toast: 'bg-slate-800 border-slate-700',
+        title: 'text-slate-100',
+        description: 'text-slate-400',
+        actionButton: 'bg-amber-600 hover:bg-amber-500 text-white',
+        cancelButton: 'bg-slate-600 hover:bg-slate-500 text-slate-200',
+      },
+      action: {
+        label: 'Delete',
+        onClick: async () => {
+          const loadingToast = toast.loading('Deleting article...', {
+            classNames: {
+              toast: 'bg-slate-800 border-slate-700',
+              title: 'text-slate-100',
+            },
+          })
+          try {
+            await deleteBlogs({ data: id })
+            toast.dismiss(loadingToast)
+            toast.success('Article deleted successfully!', {
+              classNames: {
+                toast: 'bg-slate-800 border-slate-700',
+                title: 'text-slate-100',
+              },
+            })
+            navigate({ to: '/readingroom' })
+          } catch (error) {
+            toast.dismiss(loadingToast)
+            toast.error('Failed to delete article', {
+              description: 'Please try again.',
+              classNames: {
+                toast: 'bg-slate-800 border-slate-700',
+                title: 'text-slate-100',
+                description: 'text-slate-400',
+              },
+            })
+            console.error('Something went wrong deleting blog: ', error, id)
+          }
+        },
+      },
+      cancel: {
+        label: 'Cancel',
+        onClick: () => {},
+      },
+    })
   }
 
   return (
