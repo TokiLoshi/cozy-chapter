@@ -1,9 +1,15 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { BookCopy, BookOpen, Home, LogIn, Menu, X } from 'lucide-react'
+import { BookCopy, BookOpen, Home, LogIn, LogOut, Menu, X } from 'lucide-react'
+import { signOut } from '@/lib/auth-client'
 
-export default function Header() {
+export default function Header({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean
+}) {
   const [isOpen, setIsOpen] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <>
@@ -43,10 +49,10 @@ export default function Header() {
           <Link
             to="/"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+            className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800/900 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-slate-600 hover:bg-slate-800 transition-colors mb-2',
             }}
           >
             <Home size={20} />
@@ -54,47 +60,78 @@ export default function Header() {
           </Link>
 
           {/* Reading Links */}
+          {!isAuthenticated && (
+            <>
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                }}
+              >
+                <LogIn size={20} />
+                <span className="font-medium">Login</span>
+              </Link>
+              <Link
+                to="/signup"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                }}
+              >
+                <LogIn size={20} />
+                <span className="font-medium">Sign up</span>
+              </Link>
+            </>
+          )}
+          {isAuthenticated && (
+            <>
+              <Link
+                to="/readingroom"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                }}
+              >
+                <BookOpen size={20} />
+                <span className="font-medium">Reading Room</span>
+              </Link>
 
-          <Link
-            to="/login"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <LogIn size={20} />
-            <span className="font-medium">Login</span>
-          </Link>
-
-          <Link
-            to="/readingroom"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-            activeProps={{
-              className:
-                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-            }}
-          >
-            <BookOpen size={20} />
-            <span className="font-medium">Reading Room</span>
-          </Link>
-
-          <div className="flex flex-row justify-between">
-            <Link
-              to="/blogs"
-              onClick={() => setIsOpen(false)}
-              className="flex-1 flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-              activeProps={{
-                className:
-                  'flex-1 flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
-              }}
-            >
-              <BookCopy size={20} />
-              <span className="font-medium">Blogs</span>
-            </Link>
-          </div>
+              <div className="flex flex-row justify-between">
+                <Link
+                  to="/blogs"
+                  onClick={() => setIsOpen(false)}
+                  className="flex-1 flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors mb-2"
+                  activeProps={{
+                    className:
+                      'flex-1 flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2',
+                  }}
+                >
+                  <BookCopy size={20} />
+                  <span className="font-medium">Blogs</span>
+                </Link>
+              </div>
+              {/** Divider */}
+              <div className="my-4 border-t border-gray-700"></div>
+              <button
+                onClick={async () => {
+                  await signOut()
+                  setIsOpen(false)
+                  navigate({ to: '/login' })
+                }}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-400 transition-colors mb-2 w-full text-left"
+              >
+                <LogOut size={20} />
+                <span className="font-medium">Sign Out</span>
+              </button>
+            </>
+          )}
 
           {/* Links End */}
         </nav>

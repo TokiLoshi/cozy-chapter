@@ -24,19 +24,7 @@ function Floor({ onBookcaseClick }) {
 
 export default function IsometricRoom({ onBookcaseClick }) {
   const bookcaseRef = useRef({ onBookcaseClick })
-  const { firePosX, firePosY, firePosZ, fireRotX, fireRotY, fireRotZ } =
-    useControls(
-      'Fireplace',
-      {
-        firePosX: { value: 0, min: -20, max: 20, step: 0.01 },
-        firePosY: { value: 0, min: -20, max: 20, step: 0.01 },
-        firePosZ: { value: -4.2, min: -20, max: 20, step: 0.01 },
-        fireRotX: { value: 0, min: -20, max: 20, step: 0.01 },
-        fireRotY: { value: 0, min: -20, max: 20, step: 0.01 },
-        fireRotZ: { value: 0, min: -20, max: 20, step: 0.01 },
-      },
-      { collapsed: true },
-    )
+
   const {
     huskyPosX,
     huskyPosY,
