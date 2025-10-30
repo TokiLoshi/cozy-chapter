@@ -43,7 +43,7 @@ export default function Experience({ onBookcaseClick }) {
           <ambientLight intensity={ambientIntensity} />
           <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
           <pointLight position={[0, 3, 0]} intensity={0.5} color="#ffeedd" />
-          <pointLight position={[-2, 1, 1]} intensity={0.8} color="ff6d3d" />
+          <pointLight position={[-2, 1, 1]} intensity={0.8} color="#ff6d3d" />
           <OrbitControls />
           <Isometricroom
             onBookcaseClick={onBookcaseClick}
