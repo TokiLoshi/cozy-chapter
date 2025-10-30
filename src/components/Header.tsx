@@ -13,7 +13,7 @@ export default function Header({
 
   return (
     <>
-      <header className="p-4 flex items-center bg-gray-800 text-white shadow-lg">
+      <header className="p-4 flex items-center bg-slate-900/90 text-white shadow-lg">
         <button
           onClick={() => setIsOpen(true)}
           className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
@@ -23,7 +23,11 @@ export default function Header({
         </button>
         <h1 className="ml-4 text-xl font-semibold">
           <Link to="/">
-            <img src="/coffee.png" alt="beach birb" className="h-10" />
+            <img
+              src="/coffee.png"
+              alt="beach birb"
+              className="h-10 rounded-xl"
+            />
           </Link>
         </h1>
         <h3 className="ml-4 text-xl font-semibold">Cozy Chapter</h3>
@@ -35,7 +39,7 @@ export default function Header({
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          <h2 className="text-xl font-bold">Menu</h2>
+          <h2 className="text-xl font-bold">Cozy Menu</h2>
           <button
             onClick={() => setIsOpen(false)}
             className="p-2 hover:bg-gray-800 rounded-lg transition-colors"

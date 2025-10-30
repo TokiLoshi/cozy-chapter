@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { Github } from 'lucide-react'
 
 export default function Footer() {
   const currentDate: Date = new Date()
@@ -9,7 +10,11 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src="/coffee.png" alt="Cozy Chapter" className="h-8" />
+              <img
+                src="/coffee.png"
+                alt="Cozy Chapter"
+                className="h-8 rounded-xl"
+              />
               <span className="text-lg font-semibold text-white">
                 Cozy Chapter
               </span>
@@ -25,7 +30,10 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-cyan-400 transition-colors"
               >
-                GitHub
+                <span className="flex items-center gap-2">
+                  <Github />
+                  GitHub
+                </span>
               </Link>
             </div>
           </div>
