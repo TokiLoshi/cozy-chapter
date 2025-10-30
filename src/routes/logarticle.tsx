@@ -92,7 +92,7 @@ function ArticleForm() {
         console.log('Submitting before db...')
         const article = await submitArticle({ data: value })
         console.log('Article successfully submitted: ', article)
-        navigate({ to: '/blogs' })
+        navigate({ to: '/readingroom' })
       } catch (error) {
         console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
       }

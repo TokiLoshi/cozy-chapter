@@ -1,6 +1,7 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
+import { Edit, Link, Trash, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import Experience from '../components/Experience'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
@@ -165,9 +166,10 @@ const EditModal = ({ blog }: { blog: Blog }) => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+        className="px-8 py-3 bg-indigo-800/90 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
       >
-        Edit
+        <Edit className="w-4 h-4" />
+        <span className="text-sm">Edit</span>
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -322,7 +324,7 @@ function ReadingRoomComponent() {
     console.log('In client with the desire to delete: ', id)
     try {
       await deleteBlogs({ data: id })
-      window.location.reload()
+      navigate({ to: '/readingroom' })
     } catch (error) {
       console.error('Failed to delete:', error)
       alert('Failed to delete article')
@@ -396,14 +398,20 @@ function ReadingRoomComponent() {
                 <h2 className="text-3xl font-bold text-white">
                   {getModalTitle()}
                 </h2>
+
                 <button
                   className="text-gray-400 hover:text-white text-2xl"
                   onClick={closeModal}
                 >
-                  x
+                  <XIcon />
                 </button>
               </div>
-
+              <button
+                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-cyan-500 hover:bg-gray-100 rounded-lg px-6"
+                onClick={() => navigate({ to: '/logarticle' })}
+              >
+                + Add Article
+              </button>
               {/** Empty State */}
               {filteredBlogs.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
@@ -422,47 +430,54 @@ function ReadingRoomComponent() {
                       <h3 className="text-lg font-semibold text-white mb-2">
                         {blog.title}
                       </h3>
+                      {blog.author && (
+                        <p className="text-sm text-gray-300 mb-2 line-clamp-2">
+                          <span className="text-l font-semibold">Author: </span>
+                          {blog.author}
+                        </p>
+                      )}
                       {blog.description && (
                         <p className="text-sm text-gray-300 mb-2 line-clamp-2">
+                          <span className="text-l font-semibold">
+                            Description:{' '}
+                          </span>
                           {blog.description}
                         </p>
                       )}
                       <div className="flex items-center gap-2 text-xs text-gray-400">
-                        <span
-                          className={`px-2 py-1 rounded-full ${
-                            blog.status === 'toRead'
-                              ? 'bg-yellow-500/20 text-yellow-200'
-                              : blog.status === 'reading'
-                                ? 'bg-blue-500/20 text-blue-200'
-                                : 'bg-green-50/20 text-green-200'
-                          }`}
-                        >
-                          {blog.status === 'toRead'
-                            ? 'To Read'
-                            : blog.status === 'reading'
-                              ? 'Reading'
-                              : 'Read'}
-                        </span>
-                        {blog.url && (
-                          <a
-                            href={blog.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-300 hover:text-blue-200 text-sm mb-4 inline-block hover:underline"
-                          >
-                            {blog.url.length > 50
-                              ? blog.url.substring(0, 50) + '...'
-                              : blog.url}
-                          </a>
+                        {blog.notes && (
+                          <p className="text-sm text-gray-300 mb-2 line-clamp-2">
+                            <span className="text-l font-semibold">Notes:</span>{' '}
+                            {blog.notes}
+                          </p>
                         )}
                       </div>
-                      <div className="flex gap-2 mt-4 pt-4 border-t border-white/10">
+                      <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
+                        {blog.url && (
+                          <>
+                            <Link className="w-4 h-4 flex-shrink-0" />
+                            <a
+                              href={blog.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-300 hover:text-blue-200 text-sm hover:underline truncate"
+                            >
+                              {blog.url.length > 50
+                                ? blog.url.substring(0, 50) + '...'
+                                : blog.url}
+                            </a>
+                          </>
+                        )}
+                      </div>
+                      <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
                         <EditModal blog={blog} />
+                        <div className="flex-1"></div>
                         <button
                           onClick={() => handleDelete(blog.id)}
-                          className="flex-2 bg-red-500 hover:bg-red-800 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+                          className=" bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                         >
-                          Delete
+                          <Trash className="w-4 h-4" />
+                          <span className="text-sm">Delete</span>
                         </button>
                       </div>
                     </div>
