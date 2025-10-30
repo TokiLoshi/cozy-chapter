@@ -1,17 +1,7 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
-// import * as z from "zod"
-// import { toast } from "sonner"
-// import { Button } from "@components/ui/button"
-// import { Card, CardContent, CardDescription, CardFooter, CardHeader, }
+import Footer from '../components/Footer'
 import { signUp } from '@/lib/auth-client'
-
-// TODO: implement zod validation
-// TODO: implement the tanstack form with shadcn documentation https://ui.shadcn.com/docs/forms/tanstack-form
-// const userSchema = z.object({
-//   email: z.ZodEmail(),
-//   password: z.string().min(8),
-// })
 
 export const Route = createFileRoute('/signup')({
   component: SignupPage,
@@ -111,6 +101,7 @@ function SignupPage() {
           </p>
         </form>
       </div>
+      <Footer />
     </>
   )
 }

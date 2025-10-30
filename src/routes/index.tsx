@@ -1,12 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import {
-  Panda,
-  Route as RouteIcon,
-  Shield,
-  Sparkles,
-  Waves,
-} from 'lucide-react'
+import { Panda, Sparkles, Waves } from 'lucide-react'
+import Footer from '../components/Footer'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -16,35 +11,21 @@ function App() {
   const features = [
     {
       icon: <Sparkles className="w-12 h-12 text-cyan-400" />,
-      title: 'Easy to use',
+      title: 'Easy to use (hopefully)',
       description: 'Track your reading in a cozy 3D environment.',
     },
-    {
-      icon: <Shield className="w-12 h-12 text-cyan-400" />,
-      title: 'Your Reading is you time',
-      description: 'Removes the social pressure of tracking your reading',
-    },
-    {
-      icon: <RouteIcon className="w-12 h-12 text-cyan-400" />,
-      title: 'APIs Utilized',
-      description:
-        'Search from Google Books and choose your books or manually add your own',
-    },
+
     {
       icon: <Waves className="w-12 h-12 text-cyan-400" />,
-      title: 'Work in progress',
-      description:
-        'Time to make some ways with a different approach to reading apps',
+      title: 'Work in progress (WIP)',
+      description: 'Trying to make article tracking cozy and more fun.',
     },
     {
       icon: <Panda className="w-12 h-12 text-cyan-400" />,
-      title: 'Chaotic Curiosity',
-      description:
-        'Built with curiosity and chaos. Spoiler: I have no idea what I am doing.',
+      title: 'Coded with chaotic curiosity',
+      description: 'Built to learn tanstack start and practice three.js.',
     },
   ]
-  const currentDate: Date = new Date()
-  const currentYear: number = currentDate.getFullYear()
 
   return (
     <>
@@ -103,9 +84,10 @@ function App() {
           </div>
         </section>
       </div>
-      <footer className="py-16 px-6 max-w-7xl mx-auto text-center bg-slate-800 text-emerald-600">
+      {/* <footer className="py-16 px-6 max-w-7xl mx-auto text-center bg-slate-800 text-emerald-600">
         &copy; {currentYear} coded with chaotic curiosity by TokiLoshi
-      </footer>
+      </footer> */}
+      <Footer />
     </>
   )
 }

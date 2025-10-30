@@ -1,9 +1,7 @@
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
+import Footer from '../components/Footer'
 import { signIn } from '@/lib/auth-client'
-
-// TODO: implement zod validation
-// TODO: implement the tanstack form with shadcn documentation https://ui.shadcn.com/docs/forms/tanstack-form
 
 export const Route = createFileRoute('/login')({
   component: LoginRoute,
@@ -80,6 +78,7 @@ function LoginRoute() {
           </p>
         </form>
       </div>
+      <Footer />
     </>
   )
 }
