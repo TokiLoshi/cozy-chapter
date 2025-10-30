@@ -42,64 +42,111 @@ function SignupPage() {
     } catch (err) {
       console.error('Error signing up user, ', err, error)
       setError(err instanceof Error ? err.message : 'Failed to create account')
+      return
     } finally {
       setLoading(false)
     }
   }
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen bg-slate-700">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-blue-200 border-blue-400 rounded-2xl text-slate-500 px-4 py-3 mb-4"
-        >
-          <h1 className="text-2xl font-bold mb-6">Sign Up</h1>
-          {error && (
-            <div className="bg-blue-300 border-blue-500 text-red-400 px-4 py-3 rounded mb-4">
-              {error}
-            </div>
-          )}
-          <input
-            type="text"
-            name="name"
-            placeholder="Username / full name"
-            required
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="email"
-            required
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password (min 8 characters)"
-            required
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            name="passwordConfirmation"
-            required
-            className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+      <div className="flex items-center justify-center min-h-screen bg-gray-800">
+        <div className="w-full max-w-md px-6">
+          <div className="text-center mb-8">
+            <img
+              src="/coffee.png"
+              alt="Cozy Chapter"
+              className="h-16 mx-auto mb-4"
+            />
+            <h1 className="text-3xl font-bold text-white">Join Cozy Chapter</h1>
+            <p className="text-gray-400 mt-2">Start your reading journey</p>
+          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="bg-gray-900 rounded-xl shadow-2xl p-8 border border-gray-700"
           >
-            {loading ? 'Creating account... ' : 'Sign Up'}
-          </button>
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <a href="/users/login" className="text-blue-500 hover:underline">
-              Login
-            </a>
-          </p>
-        </form>
+            {error && (
+              <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
+                {error}
+              </div>
+            )}
+            <div className="mb-4">
+              <label
+                htmlFor="name"
+                className="block text-gray-300 text-sm font-medium mb-2"
+              >
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                name="name"
+                placeholder="Username / full name"
+                required
+                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="email"
+                className="block text-gray-300 text-sm font-medium mb-2"
+              >
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="email"
+                required
+                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="password"
+                className="block text-gray-300 text-sm font-medium mb-2"
+              >
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Password (min 8 characters)"
+                required
+                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="passwordConfirmation"
+                className="block text-gray-300 text-sm font-medium mb-2"
+              >
+                Password Confirmation
+              </label>
+              <input
+                id="passwordConfirmation"
+                type="password"
+                name="passwordConfirmation"
+                required
+                className="w-full px-4 py-2 mb-4 border rounded focus:outline-none focus:ring-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-900 text-white py-2 rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating account... ' : 'Sign Up'}
+            </button>
+            <p className="mt-4 text-center text-sm text-gray-600">
+              Already have an account?{' '}
+              <a href="/users/login" className="text-blue-500 hover:underline">
+                Login
+              </a>
+            </p>
+          </form>
+        </div>
       </div>
       <Footer />
     </>
