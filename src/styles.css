@@ -11,6 +11,7 @@ body {
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #1a233e;
 }
 
 code {
@@ -133,6 +134,7 @@ code {
     @apply border-border outline-ring/50;
   }
   body {
+    background-color: #1a233d !important;
     @apply bg-background text-foreground;
   }
 }

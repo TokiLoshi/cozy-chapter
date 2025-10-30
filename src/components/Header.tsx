@@ -13,7 +13,7 @@ export default function Header({
 
   return (
     <>
-      <header className="p-4 flex items-center bg-slate-900/90 text-white shadow-lg">
+      <header className="p-4 flex items-center bg-slate-800/90 text-white shadow-lg">
         <button
           onClick={() => setIsOpen(true)}
           className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
@@ -26,11 +26,13 @@ export default function Header({
             <img
               src="/coffee.png"
               alt="beach birb"
-              className="h-10 rounded-xl"
+              className="h-10 rounded-2xl"
             />
           </Link>
         </h1>
-        <h3 className="ml-4 text-xl font-semibold">Cozy Chapter</h3>
+        <Link to="/">
+          <h3 className="ml-4 text-xl font-semibold">Cozy Chapter</h3>
+        </Link>
       </header>
 
       <aside

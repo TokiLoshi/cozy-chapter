@@ -1,9 +1,11 @@
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
-import { useRef } from 'react'
+import { Loader, OrbitControls } from '@react-three/drei'
+import { Suspense, useRef } from 'react'
 import Isometricroom from '../components/Isometricroom'
 import { useControls } from 'leva'
 import { Sky } from '@react-three/drei'
+import { ACESFilmicToneMapping } from 'three'
+import * as THREE from 'three'
 
 export default function Experience({ onBookcaseClick }) {
   const {
@@ -35,7 +37,9 @@ export default function Experience({ onBookcaseClick }) {
     <>
       <div className="w-full h-screen">
         <Canvas
-          toneMapping="ACESFILMIC"
+          gl={{
+            toneMapping: ACESFilmicToneMapping,
+          }}
           camera={{ position: [5, 4, 3], fov: 75 }}
           shadows
         >
@@ -45,31 +49,47 @@ export default function Experience({ onBookcaseClick }) {
           <pointLight position={[0, 3, 0]} intensity={0.5} color="#ffeedd" />
           <pointLight position={[-2, 1, 1]} intensity={0.8} color="#ff6d3d" />
           <OrbitControls />
-          <Isometricroom
-            onBookcaseClick={onBookcaseClick}
-            receiveShadow
-            scale={2}
-          />
+          <Suspense fallback={null}>
+            <Isometricroom
+              onBookcaseClick={onBookcaseClick}
+              receiveShadow
+              scale={2}
+            />
+          </Suspense>
         </Canvas>
+        <Loader
+          containerStyles={{
+            background:
+              'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+            backdropFilter: 'blur(10px)',
+          }}
+          innerStyles={{
+            background: 'rgba(148, 163, 184, 0.1)',
+            width: '300px',
+            height: '6px',
+            borderRadius: '3px',
+            overflow: 'hidden',
+          }}
+          barStyles={{
+            background: 'linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)',
+            height: '6px',
+            borderRadius: '3px',
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.5)',
+          }}
+          dataStyles={{
+            color: '#e2e8f0',
+            fontFamily: '"Inter", "SF Pro Display", -apple-system, sans-serif',
+            fontSize: '16px',
+            fontWeight: '500',
+            letterSpacing: '0.5px',
+            textAlign: 'center',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+          }}
+          dataInterpolation={(p) =>
+            `${p < 100 ? '📚 Loading Reading Room...' : '✨ Ready!'}\n${p.toFixed(0)}%`
+          }
+        />
       </div>
     </>
   )
 }
-
-// function RotatingCube() {
-//   const meshRef = useRef()
-
-//   useFrame((state, delta) => {
-//     if (meshRef.current) {
-//       meshRef.current.rotation.x += delta
-//       meshRef.current.rotation.y += delta * 0.5
-//     }
-//   })
-
-//   return (
-//     <mesh ref={meshRef}>
-//       <boxGeometry args={[2, 2, 2]} />
-//       <meshStandardMaterial color="hotpink" />
-//     </mesh>
-//   )
-// }
