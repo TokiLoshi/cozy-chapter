@@ -266,7 +266,10 @@ const EditModal = ({ blog }: { blog: Blog }) => {
 
               <div className="flex justify-end">
                 <form.AppForm>
-                  <form.SubmitButton label="Submit" />
+                  <form.SubmitButton
+                    label="Submit"
+                    className="bg-amber-600/90 p-2 w-25 font-semibold"
+                  />
                 </form.AppForm>
               </div>
             </form>

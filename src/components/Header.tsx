@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { BookCopy, BookOpen, Home, LogIn, LogOut, Menu, X } from 'lucide-react'
+import { BookOpen, Home, LogIn, LogOut, Menu, X } from 'lucide-react'
 import { signOut } from '@/lib/auth-client'
 
 export default function Header({
@@ -109,7 +109,7 @@ export default function Header({
                 <span className="font-medium">Reading Room</span>
               </Link>
 
-              <div className="flex flex-row justify-between">
+              {/* <div className="flex flex-row justify-between">
                 <Link
                   to="/blogs"
                   onClick={() => setIsOpen(false)}
@@ -122,7 +122,7 @@ export default function Header({
                   <BookCopy size={20} />
                   <span className="font-medium">Blogs</span>
                 </Link>
-              </div>
+              </div> */}
               {/** Divider */}
               <div className="my-4 border-t border-gray-700"></div>
               <button

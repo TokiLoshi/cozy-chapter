@@ -8,12 +8,18 @@ import * as ShadcnSelect from '@/components/ui/select'
 import { Slider as ShadcnSlider } from '@/components/ui/slider'
 import { Switch as ShadcnSwitch } from '@/components/ui/switch'
 
-export function SubmitButton({ label }: { label: string }) {
+export function SubmitButton({
+  label,
+  className,
+}: {
+  label: string
+  className?: string
+}) {
   const form = useFormContext()
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} className={className}>
           {label}
         </Button>
       )}

@@ -100,17 +100,19 @@ function ArticleForm() {
   })
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-4 text-white"
-      style={{
-        backgroundImage:
-          'radial-gradient(50% 50% at 5% 40%, #add8e6 0%, #0000ff 70%, #00008b 100%)',
-      }}
-    >
-      <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-        <h2 className="w-full max-w-2xl p-8 text-white text-2xl text-center">
-          Log new article
-        </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+        <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-10">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-white">Log new article</h2>
+              <p className="text-sm text-gray-400 mt-1">
+                What are you reading?
+              </p>
+            </div>
+          </div>
+        </div>
+
         <form
           onSubmit={(e) => {
             console.log('Clicked!')
@@ -118,26 +120,40 @@ function ArticleForm() {
             e.stopPropagation()
             form.handleSubmit()
           }}
-          className="space-y-6"
+          className="p-6 space-y-6 text-gray-100"
         >
           {/** Title field */}
           <form.AppField name="title">
-            {(field) => <field.TextField label="Title" />}
+            {(field) => (
+              <field.TextField label="Title" placeholder="Article title" />
+            )}
           </form.AppField>
 
           {/** URL field */}
           <form.AppField name="url">
-            {(field) => <field.TextField label="URL" placeholder="url" />}
+            {(field) => (
+              <field.TextField
+                label="Article URL"
+                placeholder="http://www.example.com"
+              />
+            )}
           </form.AppField>
 
           {/** Author field */}
           <form.AppField name="author">
-            {(field) => <field.TextField label="Author" />}
+            {(field) => (
+              <field.TextField label="Author" placeholder="article author" />
+            )}
           </form.AppField>
 
           {/** Description field */}
           <form.AppField name="description">
-            {(field) => <field.TextField label="Description" />}
+            {(field) => (
+              <field.TextField
+                label="Description"
+                placeholder="what is it about?"
+              />
+            )}
           </form.AppField>
 
           {/** Notes field */}
@@ -165,7 +181,10 @@ function ArticleForm() {
 
           <div className="flex justify-end">
             <form.AppForm>
-              <form.SubmitButton label="Submit" />
+              <form.SubmitButton
+                label="Submit"
+                className="bg-amber-600/90 p-2 w-25 font-semibold"
+              />
             </form.AppForm>
           </div>
         </form>

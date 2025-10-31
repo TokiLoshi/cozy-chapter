@@ -22,7 +22,7 @@ export default function Experience({ onBookcaseClick }) {
   } = useControls(
     'Lighting',
     {
-      ambientIntensity: { value: 0.8, min: 0, max: 2, step: 0.1 },
+      ambientIntensity: { value: 0.5, min: 0, max: 2, step: 0.1 },
       directionalIntensity: { value: 1.5, min: 0, max: 3, step: 0.1 },
       directionalX: { value: 5, min: -20, max: 20, step: 1 },
       directionalY: { value: 10, min: 0, max: 30, step: 1 },
