@@ -415,7 +415,7 @@ function ReadingRoomComponent() {
                 <span className="text-sm text-gray-300">Read</span>
               </div>
               <span className="text-lg font-semibold text-white">
-                {stats.toRead}
+                {stats.read}
               </span>
             </div>
           </div>

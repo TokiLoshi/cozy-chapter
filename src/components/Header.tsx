@@ -4,7 +4,6 @@ import {
   BookOpen,
   Home,
   LogIn,
-  LogInIcon,
   LogOut,
   Menu,
   Sparkles,
