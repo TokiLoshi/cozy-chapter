@@ -5,6 +5,7 @@ import Isometricroom from '../components/Isometricroom'
 import { useControls } from 'leva'
 import { ACESFilmicToneMapping, DirectionalLightHelper } from 'three'
 import * as THREE from 'three'
+import { Leva } from 'leva'
 
 function DirectionalLightWithHelper({ position, intensity }) {
   const lightRef = useRef()
@@ -70,6 +71,7 @@ export default function Experience({ onBookcaseClick }) {
             />
           </Suspense>
         </Canvas>
+        <Leva hidden />
         <Loader
           containerStyles={{
             background:
