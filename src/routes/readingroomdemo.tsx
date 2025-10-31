@@ -148,7 +148,9 @@ const EditModal = ({ blog }: { blog: Blog }) => {
                     Make changes to your article here
                   </p>
                 </div>
-                <button onClick={() => setOpen(false)}>x</button>
+                <button onClick={() => setOpen(false)}>
+                  <XIcon className="text-white" />
+                </button>
               </div>
             </div>
 
@@ -212,7 +214,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
                   <field.Select
                     label="Reading Status"
                     values={[
-                      { label: 'To Read', value: 'toRead' },
+                      { label: 'Want to Read', value: 'toRead' },
                       { label: 'Reading', value: 'reading' },
                       { label: 'Read', value: 'read' },
                     ]}
@@ -356,7 +358,7 @@ function ReadingRoomDemoComponent() {
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <span className="text-sm text-gray-300">To Read</span>
+                <span className="text-sm text-gray-300">Want to Read</span>
               </div>
               <span className="text-lg font-semibold text-white">
                 {stats.toRead}
@@ -413,7 +415,7 @@ function ReadingRoomDemoComponent() {
                 </button>
               </div>
               <button
-                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-cyan-500 hover:bg-gray-100 rounded-lg px-6"
+                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-900 hover:bg-gray-100 rounded-lg px-6"
                 onClick={() => navigate({ to: '/logdemo' })}
               >
                 + Add Article

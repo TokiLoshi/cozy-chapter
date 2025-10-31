@@ -191,7 +191,9 @@ const EditModal = ({ blog }: { blog: Blog }) => {
                     Make changes to your article here
                   </p>
                 </div>
-                <button onClick={() => setOpen(false)}>x</button>
+                <button onClick={() => setOpen(false)}>
+                  <XIcon className="text-white" />
+                </button>
               </div>
             </div>
 
