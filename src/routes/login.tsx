@@ -20,7 +20,6 @@ function LoginRoute() {
     const formData = new FormData(e.currentTarget)
     const email = String(formData.get('email'))
     const password = String(formData.get('password'))
-    console.log(`Trying to log user in with ${email} ${password}`)
     try {
       const user = await signIn.email({
         email,

@@ -66,9 +66,25 @@ function App() {
                 Sign up
               </a>
               <p className="text-gray-400 text-sm mt-2">
-                Create an account so you can begin a new cozy reading journey{' '}
+                Create an account if you want to begin your own cozy reading
+                journey{' '}
                 <code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
                   in 3D
+                </code>
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-4">
+              <a
+                href="./readingroomdemo"
+                rel="noopener noreferrer"
+                className="px-8 mt-4 py-3 bg-violet-600/90 hover:bg-violet-700/90 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
+              >
+                Demo
+              </a>
+              <p className="text-gray-400 text-sm mt-2">
+                Try the one made for{' '}
+                <code className="px-2 py-1 bg-violet-600/90 rounded text-white">
+                  three.js journey
                 </code>
               </p>
             </div>
