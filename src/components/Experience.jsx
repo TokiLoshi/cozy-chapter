@@ -45,7 +45,7 @@ export default function Experience({ onBookcaseClick }) {
           gl={{
             toneMapping: ACESFilmicToneMapping,
           }}
-          camera={{ position: [5, 4, 3], fov: 75 }}
+          camera={{ position: [5, 3, 3], fov: 75 }}
           shadows
         >
           <color attach="background" args={[bgColor]} />
@@ -56,8 +56,12 @@ export default function Experience({ onBookcaseClick }) {
           /> */}
           <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
           <pointLight position={[0, 3, 0]} intensity={0.5} color="#ffeedd" />
-          <pointLight position={[-2, 1, 1]} intensity={0.8} color="#ff6d3d" />
-          <OrbitControls />
+          <pointLight position={[-3.1, 2, 0]} intensity={0.8} color="#ff6d3d" />
+          <pointLight position={[-1, 1, -1]} intensity={0.8} color="#ff6d3d" />
+          <OrbitControls
+            minPolarAngle={-Math.PI * 0.5}
+            maxPolarAngle={Math.PI / 2.2}
+          />
           <Suspense fallback={null}>
             <Isometricroom
               onBookcaseClick={onBookcaseClick}
