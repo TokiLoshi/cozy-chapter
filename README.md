@@ -18,6 +18,8 @@ Built for Bruno Simon's Three.js Journey challenge.
 - **Deployment**: Netlify
 - **Validation**: Zod
 
+![demo](https://github.com/TokiLoshi/cozy-chapter/blob/main/public/homedemo.png)
+
 ## 🙌 Attributions:
 
 1. Bookcase with Books by Quaternius via [polypizza](https://poly.pizza/m/tACDGJ4CGW)
