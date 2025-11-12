@@ -325,6 +325,10 @@ function ReadingRoomComponent() {
     }
   }
 
+  const handleCreditsClick = () => {
+    console.log('Clicked credits')
+  }
+
   const handleDelete = (id: string) => {
     toast('Are you sure you want to delete this article?', {
       description: 'This action cannot be undone.',
@@ -424,7 +428,10 @@ function ReadingRoomComponent() {
         </div>
 
         {/** 3D component  */}
-        <Experience onBookcaseClick={handleBookcaseClick} />
+        <Experience
+          onBookcaseClick={handleBookcaseClick}
+          onCreditsClick={handleCreditsClick}
+        />
 
         {/** Blogs Overlay */}
 

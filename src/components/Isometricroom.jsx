@@ -22,7 +22,7 @@ function Floor({ onBookcaseClick }) {
   )
 }
 
-export default function IsometricRoom({ onBookcaseClick }) {
+export default function IsometricRoom({ onBookcaseClick, onCreditsClick }) {
   const bookcaseRef = useRef({ onBookcaseClick })
 
   const {
@@ -54,7 +54,10 @@ export default function IsometricRoom({ onBookcaseClick }) {
         scale={huskyScale}
       />
       <Sparkles count={10} scale={10 * 2} size={6} speed={0.4} />
-      <CozyRoom onBookcaseClick={onBookcaseClick} />
+      <CozyRoom
+        onBookcaseClick={onBookcaseClick}
+        onCreditsClick={onCreditsClick}
+      />
     </>
   )
 }

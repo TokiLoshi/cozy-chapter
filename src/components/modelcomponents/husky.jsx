@@ -30,9 +30,6 @@ export default function Husky(props) {
     ACTION_MAP.idle2,
     ACTION_MAP.idleHeadlow,
   ]
-  console.log('Idle animations: ', idleAnimations)
-
-  console.log('Husky actions: ', actions)
 
   useEffect(() => {
     if (!actions) return

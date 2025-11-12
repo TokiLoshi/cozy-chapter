@@ -62,7 +62,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
     } catch (error) {
       console.error('Error updating blog: ', data.id, data.updates)
     }
-    throw new Error('Something bad happend')
+    throw new Error('Something bad happened')
   })
 
 const EditModal = ({ blog }: { blog: Blog }) => {
@@ -120,6 +120,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
       }
     },
   })
+
   return (
     <>
       <button
@@ -339,6 +340,10 @@ function ReadingRoomDemoComponent() {
     })
   }
 
+  const handleCreditsClick = () => {
+    console.log('Clicked credits')
+  }
+
   return (
     <>
       <div className="relative w-full h-screen">
@@ -388,7 +393,10 @@ function ReadingRoomDemoComponent() {
         </div>
 
         {/** 3D component  */}
-        <Experience onBookcaseClick={handleBookcaseClick} />
+        <Experience
+          onBookcaseClick={handleBookcaseClick}
+          onCreditsClick={handleCreditsClick}
+        />
 
         {/** Blogs Overlay */}
 
