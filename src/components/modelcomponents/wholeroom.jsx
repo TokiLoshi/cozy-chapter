@@ -89,6 +89,7 @@ export default function CozyRoom({
           material={materials['Material.007']}
           onPointerOver={() => setIsCreditsHovered(true)}
           onPointerOut={() => setIsCreditsHovered(false)}
+          onClick={onCreditsClick}
         >
           {isCreditsHovered && <Outlines thickness={2} color="#d1ccad" />}
         </mesh>

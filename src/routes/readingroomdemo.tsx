@@ -3,6 +3,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { Edit, Link, Trash, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import {
@@ -340,8 +341,12 @@ function ReadingRoomDemoComponent() {
     })
   }
 
+  const [isCreditsOpen, setIsCreditsOpen] = useState(false)
+
   const handleCreditsClick = () => {
     console.log('Clicked credits')
+    setIsCreditsOpen(!isCreditsOpen)
+    console.log('Credits status: ', isCreditsOpen)
   }
 
   return (
@@ -392,6 +397,8 @@ function ReadingRoomDemoComponent() {
           </div>
         </div>
 
+        {/** Credits Overlay */}
+
         {/** 3D component  */}
         <Experience
           onBookcaseClick={handleBookcaseClick}
@@ -399,6 +406,12 @@ function ReadingRoomDemoComponent() {
         />
 
         {/** Blogs Overlay */}
+        {isCreditsOpen && (
+          <CreditsModal
+            isOpen={isCreditsOpen}
+            onClose={() => setIsCreditsOpen(false)}
+          />
+        )}
 
         {selectedStatus && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
