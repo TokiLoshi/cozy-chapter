@@ -23,21 +23,15 @@ function SignupPage() {
     const passwordConfirmation = String(formData.get('passwordConfirmation'))
     const name = String(formData.get('name'))
 
-    console.log(
-      `about to try login in ${name} with email: ${email} and password: ${password} and confirmation: ${passwordConfirmation}`,
-    )
-
     try {
       if (password !== passwordConfirmation) {
-        console.log("Passwords don't match")
         setError('Bad Request')
       }
-      const user = await signUp.email({
+      await signUp.email({
         email,
         password,
         name,
       })
-      console.log('User post signup: ', user)
       router.navigate({ to: '/login' })
     } catch (err) {
       console.error('Error signing up user, ', err, error)

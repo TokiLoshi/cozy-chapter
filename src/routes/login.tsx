@@ -21,11 +21,10 @@ function LoginRoute() {
     const email = String(formData.get('email'))
     const password = String(formData.get('password'))
     try {
-      const user = await signIn.email({
+      await signIn.email({
         email,
         password,
       })
-      console.log('Result of user sign in: ', user)
       router.navigate({ to: '/readingroom' })
     } catch (err) {
       console.error('Login failed: ', err)

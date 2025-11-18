@@ -1,5 +1,6 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
+// import { XIcon } from 'lucide-react'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { getRequest } from '@tanstack/react-start/server'
@@ -33,14 +34,12 @@ const submitArticle = createServerFn({ method: 'POST' })
       userId: session.user.id,
     }
     const article = await createArticle(articleData)
-    console.log('Article submitted: ', article)
     return article
   })
 
 export const Route = createFileRoute('/logarticle')({
   loader: async () => {
     const session = await getSessionServer()
-    console.log('Session in article form: ', session)
     if (!session) throw redirect({ to: '/login' })
     return { session }
   },
@@ -87,11 +86,8 @@ function ArticleForm() {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log('Submitting form with: ', value)
       try {
-        console.log('Submitting before db...')
-        const article = await submitArticle({ data: value })
-        console.log('Article successfully submitted: ', article)
+        await submitArticle({ data: value })
         navigate({ to: '/readingroom' })
       } catch (error) {
         console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
@@ -115,7 +111,6 @@ function ArticleForm() {
 
         <form
           onSubmit={(e) => {
-            console.log('Clicked!')
             e.preventDefault()
             e.stopPropagation()
             form.handleSubmit()
