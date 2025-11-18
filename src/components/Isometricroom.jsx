@@ -1,26 +1,8 @@
 import { Sparkles, useGLTF } from '@react-three/drei'
-import { Bookcase } from '../components/modelcomponents/boookcase'
 import { useControls } from 'leva'
 import { useRef } from 'react'
-import { Fireplace } from '../components/modelcomponents/fireplace'
-import { Planks } from '../components/modelcomponents/planks'
-import { Wall } from '../components/modelcomponents/wall'
-import { WallCorner } from '../components/modelcomponents/wallcorner'
-import { Window } from '../components/modelcomponents/window'
 import CozyRoom from '../components/modelcomponents/wholeroom'
 import Husky from '../components/modelcomponents/husky'
-
-function Floor({ onBookcaseClick }) {
-  return (
-    <>
-      <Planks position={[0.1, 0.1, 1]} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.1, 0]}>
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="#8B7355" />
-      </mesh>
-    </>
-  )
-}
 
 export default function IsometricRoom({ onBookcaseClick, onCreditsClick }) {
   const bookcaseRef = useRef({ onBookcaseClick })
