@@ -27,7 +27,6 @@ export const getBlogs = createServerFn({ method: 'GET' }).handler(async () => {
   if (!session) throw redirect({ to: '/login' })
   const userId = session.user.id
   const blogs = await getArticlesbyId(userId)
-  console.log('Blogs from DB: ', blogs)
   return { session, blogs }
 })
 
@@ -53,9 +52,7 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
     if (!session) throw redirect({ to: '/login' })
     const blogId = data
     try {
-      console.log('In delete server function passing this to the query: ', data)
-      const deletedBlog = await deleteArticle(blogId)
-      console.log('Deleted: ', deletedBlog)
+      await deleteArticle(blogId)
       return { success: true, id: blogId }
     } catch (error) {
       console.error(
@@ -74,9 +71,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
     try {
-      console.log('Updating blog with: ', data.id, data.updates)
-      const updatedBlog = await updateArticle(data.id, data.updates)
-      console.log('Updates from DB: ', updatedBlog)
+      await updateArticle(data.id, data.updates)
       window.location.reload()
       return { success: true, id: data.id }
     } catch (error) {
@@ -89,11 +84,6 @@ export const Route = createFileRoute('/blogs')({
   loader: async () => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-    // const userId = session.user.id
-    // const blogs = await getArticlesbyId(userId)
-    // console.log('Blogs from DB: ', blogs)
-
-    // return { session, blogs }
     const { blogs } = await getBlogs()
     return { session, blogs }
   },
@@ -157,17 +147,13 @@ const EditModal = ({ blog }: { blog: Blog }) => {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log('Submitting form with: ', value)
       try {
-        console.log('Submitting before db...')
-        const article = await updateBlog({
+        await updateBlog({
           data: {
             id: blog.id,
             updates: value,
           },
         })
-        console.log('Article successfully submitted: ', article)
-
         navigate({ to: '/blogs' })
         setOpen(false)
       } catch (error) {
@@ -289,34 +275,8 @@ const EditModal = ({ blog }: { blog: Blog }) => {
 }
 
 const BlogCard = ({ blog }: { blog: Blog }) => {
-  // const navigate = useNavigate()
-  // const handleEdit = (id: string) => {
-  //   const newStatus =
-  //     blog.status === 'toRead'
-  //       ? 'reading'
-  //       : blog.status === 'reading'
-  //         ? 'read'
-  //         : 'toRead'
-  //   try {
-  //     updateBlog({
-  //       data: {
-  //         id,
-  //         updates: { status: newStatus },
-  //       },
-  //     })
-  //     console.log('All seems ok')
-  //     navigate({ to: '/blogs' })
-  //   } catch (error) {
-  //     console.warn('error updating article')
-  //     throw new Error('Error in client component')
-  //   }
-
-  //   console.log('Edit blog: ', id)
-  // }
-
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this article?')) return
-    console.log('In client with the desire to delete: ', id)
     try {
       await deleteBlogs({ data: id })
       window.location.reload()
@@ -379,9 +339,6 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
 function BlogComponent() {
   // get user session
   const { session, blogs } = Route.useLoaderData()
-  console.log('Blogs: ', blogs)
-
-  console.log('User Id')
   const navigate = useNavigate()
 
   // Add buttons for mutate

@@ -53,7 +53,6 @@ export async function updateArticle(
       .set(updates)
       .where(eq(userBlogs.id, id))
       .returning()
-    console.log('Updated article: ', result)
     return { success: true, blog: result[0] }
   } catch (error) {
     console.warn('Error editing article with id: ', id, error)
@@ -61,10 +60,6 @@ export async function updateArticle(
 }
 
 export async function deleteArticle(id: string) {
-  console.log('In delete with: ', id)
-  const article = await db.select().from(userBlogs).where(eq(userBlogs.id, id))
-  console.log('Sanity check: does article exist: ', article)
   const result = await db.delete(userBlogs).where(eq(userBlogs.id, id))
-  console.log('Result after passing to id: and what will be returned', result)
   return result
 }
