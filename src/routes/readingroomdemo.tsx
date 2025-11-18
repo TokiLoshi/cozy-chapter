@@ -307,7 +307,7 @@ function ReadingRoomDemoComponent() {
                         )}
                       </div>
                       <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
-                        <EditModal blog={blog} />
+                        <EditModal blog={blog} refreshPath="/readingroomdemo" />
                         <div className="flex-1"></div>
                         <button
                           onClick={() => handleDelete(blog.id)}

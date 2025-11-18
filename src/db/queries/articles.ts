@@ -30,7 +30,6 @@ export async function getSingleBlog(blogId: string) {
     .select()
     .from(userBlogs)
     .where(eq(userBlogs.id, blogId))
-  console.log('Single Blog returning from DB: ', result)
   return result
 }
 

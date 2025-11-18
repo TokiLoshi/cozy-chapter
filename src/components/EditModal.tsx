@@ -10,9 +10,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
   .inputValidator((data: { id: string; updates: Partial<Blog> }) => data)
   .handler(async ({ data }) => {
     try {
-      console.log('Updating blog with: ', data.id, data.updates)
-      const updatedBlog = await updateArticle(data.id, data.updates)
-      console.log('Updates from DB: ', updatedBlog)
+      await updateArticle(data.id, data.updates)
       return { success: true, id: data.id }
     } catch (error) {
       console.error('Error updating blog: ', data.id, data.updates)
@@ -20,7 +18,13 @@ export const updateBlog = createServerFn({ method: 'POST' })
     throw new Error('Something bad happened')
   })
 
-export default function EditModal({ blog }: { blog: Blog }) {
+export default function EditModal({
+  blog,
+  refreshPath,
+}: {
+  blog: Blog
+  refreshPath: string
+}) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
   const form = useAppForm({
@@ -57,18 +61,15 @@ export default function EditModal({ blog }: { blog: Blog }) {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log('Submitting form with: ', value)
       try {
-        console.log('Submitting before db...')
-        const article = await updateBlog({
+        await updateBlog({
           data: {
             id: blog.id,
             updates: value,
           },
         })
-        console.log('Article successfully submitted: ', article)
 
-        navigate({ to: '/readingroomdemo' })
+        navigate({ to: refreshPath })
         setOpen(false)
       } catch (error) {
         console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
