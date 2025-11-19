@@ -25,7 +25,7 @@ export const getBlogToEdit = createServerFn({ method: 'GET' })
     try {
       const blogId = data.id
       const singleBlog = getSingleBlog(blogId)
-      console.log('Single blog: ', singleBlog)
+      return singleBlog
     } catch (error) {
       console.log('Something went wrong getting blog: ', data.id)
       throw new Error('Issue getting single blog')
@@ -37,9 +37,7 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const blogId = data
     try {
-      console.log('In delete server function passing this to the query: ', data)
-      const deletedBlog = await deleteArticle(blogId)
-      console.log('Deleted: ', deletedBlog)
+      await deleteArticle(blogId)
       return { success: true, id: blogId }
     } catch (error) {
       console.error(
@@ -154,9 +152,7 @@ function ReadingRoomDemoComponent() {
   const [isCreditsOpen, setIsCreditsOpen] = useState(false)
 
   const handleCreditsClick = () => {
-    console.log('Clicked credits')
     setIsCreditsOpen(!isCreditsOpen)
-    console.log('Credits status: ', isCreditsOpen)
   }
 
   return (

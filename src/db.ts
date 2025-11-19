@@ -17,7 +17,7 @@ let client: ReturnType<typeof neon>
 
 export async function getClient() {
   if (!process.env.VITE_DATABASE_URL) {
-    console.log('DB missing')
+    console.log('ERROR: DB missing')
     return undefined
   }
   // eslint-disable-next-line

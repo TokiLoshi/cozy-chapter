@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
+import ArticleModal from '../components/ArticleModal'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
 // import { signOut } from '@/lib/auth-client'
@@ -41,7 +42,7 @@ export const getBlogToEdit = createServerFn({ method: 'GET' })
     try {
       const blogId = data.id
       const singleBlog = getSingleBlog(blogId)
-      console.log('Single. blog back from db: ', singleBlog)
+      return singleBlog
     } catch (error) {
       console.log('Something went wrong getting blog: ', data.id)
       throw new Error('Issue getting single blog')
@@ -56,9 +57,7 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
     if (!session) throw redirect({ to: '/login' })
     const blogId = data
     try {
-      console.log('In delete server function passing this to the query: ', data)
-      const deletedBlog = await deleteArticle(blogId)
-      console.log('Deleted: ', deletedBlog)
+      await deleteArticle(blogId)
       return { success: true, id: blogId }
     } catch (error) {
       console.error(
@@ -77,9 +76,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
     try {
-      console.log('Updating blog with: ', data.id, data.updates)
-      const updatedBlog = await updateArticle(data.id, data.updates)
-      console.log('Updates from DB: ', updatedBlog)
+      await updateArticle(data.id, data.updates)
       return { success: true, id: data.id }
     } catch (error) {
       console.error('Error updating blog: ', data.id, data.updates)
@@ -90,7 +87,6 @@ export const updateBlog = createServerFn({ method: 'POST' })
 export const Route = createFileRoute('/readingroom')({
   loader: async () => {
     const session = await getSessionServer()
-    console.log('Session: ', session)
     if (!session) throw redirect({ to: '/login' })
     const blogs = await getUserBlogs()
     return { session, blogs }
@@ -101,7 +97,6 @@ export const Route = createFileRoute('/readingroom')({
 // Reading Room with modal
 function ReadingRoomComponent() {
   const { session, blogs } = Route.useLoaderData()
-  console.log('Reading room session: ', session)
   const navigate = useNavigate()
   // const [showBlogsOverlay, setShowBlogsOverlay] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
@@ -194,10 +189,10 @@ function ReadingRoomComponent() {
   const [isCreditsOpen, setIsCreditsOpen] = useState(false)
 
   const handleCreditsClick = () => {
-    console.log('Clicked credits')
     setIsCreditsOpen(!isCreditsOpen)
-    console.log('Credits status: ', isCreditsOpen)
   }
+
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false)
 
   return (
     <>
@@ -261,6 +256,14 @@ function ReadingRoomComponent() {
           />
         )}
 
+        {/** Article modal */}
+
+        <ArticleModal
+          isOpen={isArticleModalOpen}
+          onClose={() => setIsArticleModalOpen(false)}
+          refreshPath="/readingRoom"
+        />
+
         {/** Blogs Overlay */}
 
         {selectedStatus && (
@@ -287,10 +290,14 @@ function ReadingRoomComponent() {
               </div>
               <button
                 className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-cyan-500 hover:bg-gray-100 rounded-lg px-6"
-                onClick={() => navigate({ to: '/logarticle' })}
+                onClick={() => {
+                  closeModal()
+                  setIsArticleModalOpen(true)
+                }}
               >
                 + Add Article
               </button>
+
               {/** Empty State */}
               {filteredBlogs.length === 0 && (
                 <div className="text-center text-gray-400 py-8">

@@ -38,7 +38,7 @@ export const getBlogToEdit = createServerFn({ method: 'GET' })
     try {
       const blogId = data.id
       const singleBlog = getSingleBlog(blogId)
-      console.log('Single. blog back from db: ', singleBlog)
+      return singleBlog
     } catch (error) {
       console.log('Something went wrong getting blog: ', data.id)
       throw new Error('Issue getting single blog')

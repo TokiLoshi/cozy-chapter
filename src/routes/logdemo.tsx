@@ -27,7 +27,6 @@ const submitArticle = createServerFn({ method: 'POST' })
       userId: demoId,
     }
     const article = await createArticle(articleData)
-    console.log('Article submitted: ', article)
     return article
   })
 
@@ -75,11 +74,8 @@ function DemoArticle() {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log('Submitting form with: ', value)
       try {
-        console.log('Submitting before db...')
-        const article = await submitArticle({ data: value })
-        console.log('Article successfully submitted: ', article)
+        await submitArticle({ data: value })
         navigate({ to: '/readingroomdemo' })
       } catch (error) {
         console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
@@ -149,10 +145,6 @@ function DemoArticle() {
             {(field) => <field.TextArea label="Notes" />}
           </form.AppField>
 
-          {/** Tags field */}
-          {/* <form.AppField name="status">
-              {(field) => <field.TextField label="status" />}
-            </form.AppField> */}
           <form.AppField name="status">
             {(field) => (
               <field.Select
