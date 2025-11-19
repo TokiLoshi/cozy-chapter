@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
+import ArticleModal from '../components/ArticleModal'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
 // import { signOut } from '@/lib/auth-client'
@@ -191,6 +192,8 @@ function ReadingRoomComponent() {
     setIsCreditsOpen(!isCreditsOpen)
   }
 
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false)
+
   return (
     <>
       <div className="relative w-full h-screen">
@@ -253,6 +256,14 @@ function ReadingRoomComponent() {
           />
         )}
 
+        {/** Article modal */}
+
+        <ArticleModal
+          isOpen={isArticleModalOpen}
+          onClose={() => setIsArticleModalOpen(false)}
+          refreshPath="/readingRoom"
+        />
+
         {/** Blogs Overlay */}
 
         {selectedStatus && (
@@ -279,10 +290,14 @@ function ReadingRoomComponent() {
               </div>
               <button
                 className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-cyan-500 hover:bg-gray-100 rounded-lg px-6"
-                onClick={() => navigate({ to: '/logarticle' })}
+                onClick={() => {
+                  closeModal()
+                  setIsArticleModalOpen(true)
+                }}
               >
                 + Add Article
               </button>
+
               {/** Empty State */}
               {filteredBlogs.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
