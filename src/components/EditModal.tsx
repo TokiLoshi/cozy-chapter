@@ -81,7 +81,7 @@ export default function EditModal({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="px-8 py-3 bg-indigo-800/90 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        className="cursor-pointer px-8 py-3 bg-indigo-800/90 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
       >
         <Edit className="w-4 h-4" />
         <span className="text-sm">Edit</span>

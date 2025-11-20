@@ -282,14 +282,14 @@ function ReadingRoomComponent() {
                 </h2>
 
                 <button
-                  className="text-gray-400 hover:text-white text-2xl"
+                  className="cursor-pointer text-gray-400 hover:text-white text-2xl"
                   onClick={closeModal}
                 >
                   <XIcon />
                 </button>
               </div>
               <button
-                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-cyan-500 hover:bg-gray-100 rounded-lg px-6"
+                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
                 onClick={() => {
                   closeModal()
                   setIsArticleModalOpen(true)
@@ -357,10 +357,11 @@ function ReadingRoomComponent() {
                       </div>
                       <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
                         <EditModal blog={blog} refreshPath="/readingroom" />
+
                         <div className="flex-1"></div>
                         <button
                           onClick={() => handleDelete(blog.id)}
-                          className=" bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                         >
                           <Trash className="w-4 h-4" />
                           <span className="text-sm">Delete</span>
