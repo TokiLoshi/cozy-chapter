@@ -261,7 +261,7 @@ function ReadingRoomComponent() {
         <ArticleModal
           isOpen={isArticleModalOpen}
           onClose={() => setIsArticleModalOpen(false)}
-          refreshPath="/readingRoom"
+          refreshPath="/readingroom"
         />
 
         {/** Blogs Overlay */}

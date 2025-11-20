@@ -165,7 +165,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
+        className="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors"
       >
         Edit
       </button>
@@ -359,7 +359,7 @@ function BlogComponent() {
           </p>
         </div>
         <button
-          className="bg-white mb-2 text-blue-600 hover:bg-gray-100 rounded-lg px-6"
+          className="bg-white mb-2 text-blue-600 hover:bg-gray-100 rounded-lg px-6 "
           onClick={() => navigate({ to: '/logarticle' })}
         >
           + Add Article
