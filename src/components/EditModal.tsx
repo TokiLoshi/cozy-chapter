@@ -90,12 +90,12 @@ export default function EditModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/** Backdrop */}
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm text-white"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
           {/** Modal */}
           <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-10">
+            <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md  border-slate-700/50 p-6 z-10">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
@@ -105,8 +105,11 @@ export default function EditModal({
                     Make changes to your article here
                   </p>
                 </div>
-                <button onClick={() => setOpen(false)}>
-                  <XIcon className="text-white" />
+                <button
+                  className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+                  onClick={() => setOpen(false)}
+                >
+                  <XIcon className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -184,7 +187,7 @@ export default function EditModal({
                 <form.AppForm>
                   <form.SubmitButton
                     label="Submit"
-                    className="bg-amber-600/90 p-2 w-25 font-semibold"
+                    className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                   />
                 </form.AppForm>
               </div>

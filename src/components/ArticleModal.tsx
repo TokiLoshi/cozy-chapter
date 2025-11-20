@@ -108,7 +108,7 @@ export default function ArticleForm({
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
@@ -124,12 +124,14 @@ export default function ArticleForm({
                   What are you reading today?
                 </p>
               </div>
-              <button onClick={onClose}>
-                <XIcon className=" text-white cursor-pointer hover:bg-white/10 rounded-md " />
+              <button
+                onClick={onClose}
+                className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+              >
+                <XIcon className=" w-5 h-5 " />
               </button>
             </div>
           </div>
-          <div className="border border-white">test</div>
           <form
             onSubmit={(e) => {
               e.preventDefault()
@@ -199,7 +201,7 @@ export default function ArticleForm({
               <form.AppForm>
                 <form.SubmitButton
                   label="Submit"
-                  className="bg-amber-600/90 p-2 w-25 font-semibold"
+                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                 />
               </form.AppForm>
             </div>

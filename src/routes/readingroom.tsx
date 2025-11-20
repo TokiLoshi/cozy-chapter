@@ -17,6 +17,7 @@ import {
   getSingleBlog,
   updateArticle,
 } from '@/db/queries/articles'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -307,69 +308,75 @@ function ReadingRoomComponent() {
 
               {/** Blogs Grid */}
               {filteredBlogs.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredBlogs.map((blog: Blog) => (
-                    <div
-                      key={blog.id}
-                      className="bg-white/10 border border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
-                    >
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        {blog.title}
-                      </h3>
-                      {blog.author && (
-                        <p className="text-sm text-gray-300 mb-2 line-clamp-2">
-                          <span className="text-l font-semibold">Author: </span>
-                          {blog.author}
-                        </p>
-                      )}
-                      {blog.description && (
-                        <p className="text-sm text-gray-300 mb-2 line-clamp-2">
-                          <span className="text-l font-semibold">
-                            Description:{' '}
-                          </span>
-                          {blog.description}
-                        </p>
-                      )}
-                      <div className="flex items-center gap-2 text-xs text-gray-400">
-                        {blog.notes && (
+                <ScrollArea className="h-[500px] p-2 ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredBlogs.map((blog: Blog) => (
+                      <div
+                        key={blog.id}
+                        className="bg-white/10 border border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
+                      >
+                        <h3 className="text-lg font-semibold text-white mb-2">
+                          {blog.title}
+                        </h3>
+                        {blog.author && (
                           <p className="text-sm text-gray-300 mb-2 line-clamp-2">
-                            <span className="text-l font-semibold">Notes:</span>{' '}
-                            {blog.notes}
+                            <span className="text-l font-semibold">
+                              Author:{' '}
+                            </span>
+                            {blog.author}
                           </p>
                         )}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
-                        {blog.url && (
-                          <>
-                            <Link className="w-4 h-4 flex-shrink-0" />
-                            <a
-                              href={blog.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-300 hover:text-blue-200 text-sm hover:underline truncate"
-                            >
-                              {blog.url.length > 50
-                                ? blog.url.substring(0, 50) + '...'
-                                : blog.url}
-                            </a>
-                          </>
+                        {blog.description && (
+                          <p className="text-sm text-gray-300 mb-2 line-clamp-2">
+                            <span className="text-l font-semibold">
+                              Description:{' '}
+                            </span>
+                            {blog.description}
+                          </p>
                         )}
-                      </div>
-                      <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
-                        <EditModal blog={blog} refreshPath="/readingroom" />
+                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                          {blog.notes && (
+                            <p className="text-sm text-gray-300 mb-2 line-clamp-2">
+                              <span className="text-l font-semibold">
+                                Notes:
+                              </span>{' '}
+                              {blog.notes}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
+                          {blog.url && (
+                            <>
+                              <Link className="w-4 h-4 flex-shrink-0" />
+                              <a
+                                href={blog.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-300 hover:text-blue-200 text-sm hover:underline truncate"
+                              >
+                                {blog.url.length > 50
+                                  ? blog.url.substring(0, 50) + '...'
+                                  : blog.url}
+                              </a>
+                            </>
+                          )}
+                        </div>
+                        <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
+                          <EditModal blog={blog} refreshPath="/readingroom" />
 
-                        <div className="flex-1"></div>
-                        <button
-                          onClick={() => handleDelete(blog.id)}
-                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                        >
-                          <Trash className="w-4 h-4" />
-                          <span className="text-sm">Delete</span>
-                        </button>
+                          <div className="flex-1"></div>
+                          <button
+                            onClick={() => handleDelete(blog.id)}
+                            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                          >
+                            <Trash className="w-4 h-4" />
+                            <span className="text-sm">Delete</span>
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                </ScrollArea>
               )}
             </div>
           </div>

@@ -118,10 +118,10 @@ export function Select({
         value={field.state.value}
         onValueChange={(value) => field.handleChange(value)}
       >
-        <ShadcnSelect.SelectTrigger className="w-full">
+        <ShadcnSelect.SelectTrigger className="w-full p-3">
           <ShadcnSelect.SelectValue placeholder={placeholder} />
         </ShadcnSelect.SelectTrigger>
-        <ShadcnSelect.SelectContent>
+        <ShadcnSelect.SelectContent className="bg-slate-900 text-white">
           <ShadcnSelect.SelectGroup>
             <ShadcnSelect.SelectLabel>{label}</ShadcnSelect.SelectLabel>
             {values.map((value) => (
