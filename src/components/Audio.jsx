@@ -21,15 +21,15 @@ export default function AudioComponent() {
     '/sound/embrace-364091.mp3',
     '/sound/slow-edm-atmospheric-background-music-258550.mp3',
   ]
-  const trackNames = {
-    1: 'cozy',
-    2: 'lofi',
-    3: 'abstract',
-    4: 'atmospheric',
-    5: 'cascade',
-    6: 'embrace',
-    7: 'slow',
-  }
+  const trackNames = [
+    'cozy',
+    'lofi',
+    'abstract',
+    'atmospheric',
+    'cascade',
+    'embrace',
+    'slow',
+  ]
   console.log('Playing: ', tracks[currentTrackIndex])
 
   useEffect(() => {
@@ -78,25 +78,47 @@ export default function AudioComponent() {
   const handleBack = () => {
     setCurrentTrackIndex((prev) => (prev - 1) % tracks.length)
   }
+  console.log('Should be: ', trackNames[currentTrackIndex])
   return (
     <>
-      <div>
-        <button onClick={handleClick}>
+      <div className="flex flex-col items-center gap-4">
+        <h3 className="text-white text-lg font-semibold">music player</h3>
+        {currentTrackIndex >= 1 && (
+          <button
+            onClick={handleBack}
+            aria-label="Previous Track"
+            className="text-white/80 hover:text-white transition-all hover:scale-100 active:scale-95"
+          >
+            <CircleArrowLeft className="text-white" />
+          </button>
+        )}
+        <button
+          onClick={handleClick}
+          aria-label={isPlaying ? 'Pause music' : 'Play music'}
+          className="text-white/80 hover:text-white transition-all hover:scale-100 active:scale-95"
+        >
           {isPlaying ? (
             <CirclePause className="text-white" />
           ) : (
             <CirclePlay className="text-white" />
           )}
         </button>
-        <button onClick={handleNext}>
+        <button
+          onClick={handleNext}
+          aria-label="Next Track"
+          className="text-white/80 hover:text-white transition-all hover:scale-100 active:scale-95"
+        >
           <CircleArrowRight className="text-white" />
         </button>
-        <button onClick={handleBack}>
-          <CircleArrowLeft className="text-white" />
-        </button>
-        <p className="text-white text-sm">
-          Now playing: {trackNames[currentTrackIndex]}
-        </p>
+
+        <div className="text-center">
+          <p className="text-white/80 text-sm font-medium">
+            {isPlaying ? 'Now playing:' : ''}
+          </p>
+          <p className="text-white/80 text-sm font-medium">
+            {isPlaying ? trackNames[currentTrackIndex] : ''}
+          </p>
+        </div>
       </div>
     </>
   )

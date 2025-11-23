@@ -106,7 +106,7 @@ export default function CreditsModal({ isOpen, onClose }) {
             onClick={onClose}
             className="text-gray-400 ms-2 hover:text-white transition-colors"
           >
-            <XIcon className="text-white" />
+            <XIcon className="text-white hover:text-gray-300 hover:cursor-pointer" />
           </button>
         </div>
         <ScrollArea className="h-[500px] p-2 ">
