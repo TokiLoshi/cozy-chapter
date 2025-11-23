@@ -6,7 +6,6 @@ import { useControls } from 'leva'
 import { ACESFilmicToneMapping, DirectionalLightHelper } from 'three'
 import * as THREE from 'three'
 import { Leva } from 'leva'
-import { Howl, Howler } from 'howler'
 
 function DirectionalLightWithHelper({ position, intensity }) {
   const lightRef = useRef()
@@ -39,23 +38,6 @@ export default function Experience({ onBookcaseClick, onCreditsClick }) {
     },
     { collapsed: true },
   )
-
-  const soundRef = useRef(null)
-
-  useEffect(() => {
-    soundRef.current = new Howl({
-      src: ['/sound/cozy.mp3'],
-      loop: true,
-      volume: 0.3,
-    })
-    soundRef.current.play()
-    return () => {
-      if (soundRef.current) {
-        soundRef.current.stop()
-        soundRef.current.unload()
-      }
-    }
-  }, [])
 
   return (
     <>
