@@ -15,16 +15,32 @@ export default function CozyRoom({
   const toReadRef = useRef()
   const readingRef = useRef()
   const paintingRef = useRef()
+  const guitarRef = useRef()
+
   const [isBookcaseHovered, setIsBookcaseHovered] = useState(false)
   const [isToReadHovered, setIsToReadHovered] = useState(false)
   const [isReadingHovered, setIsReadingHovered] = useState(false)
   const [isCreditsHovered, setIsCreditsHovered] = useState(false)
+  const [isGuitarHovered, setIsGuitarHovered] = useState(false)
+  const [isLampHovered, setIsLampHovered] = useState(false)
+  const [isFireHovered, setIsFireHovered] = useState(false)
+  const [isDeckHovered, setIsDeckHovered] = useState(false)
+  const [isHeadphonesHovered, setIsHeadphonesHovered] = useState(false)
+  const [isOrchidHovered, setIsOrchidHovered] = useState(false)
+  const [isPlantHovered, setIsPlantHovered] = useState(false)
 
   useCursor(
     isBookcaseHovered ||
       isToReadHovered ||
       isReadingHovered ||
-      isCreditsHovered,
+      isCreditsHovered ||
+      isGuitarHovered ||
+      isLampHovered ||
+      isFireHovered ||
+      isDeckHovered ||
+      isOrchidHovered ||
+      isPlantHovered ||
+      isHeadphonesHovered,
   )
 
   return (
@@ -49,6 +65,7 @@ export default function CozyRoom({
           geometry={nodes.Wall1.geometry}
           material={materials['colormap.003']}
         />
+
         {/* Floor */}
         <mesh
           castShadow
@@ -74,6 +91,7 @@ export default function CozyRoom({
           geometry={nodes.plank4.geometry}
           material={materials['restaurant.001']}
         />
+
         {/* Table */}
         <mesh
           castShadow
@@ -81,7 +99,8 @@ export default function CozyRoom({
           geometry={nodes.Table.geometry}
           material={materials['wood.001']}
         />
-        {/* */}
+
+        {/* Painting for Credits */}
         <mesh
           castShadow
           receiveShadow
@@ -93,12 +112,18 @@ export default function CozyRoom({
         >
           {isCreditsHovered && <Outlines thickness={2} color="#d1ccad" />}
         </mesh>
+
+        {/* DJ Decks */}
         <mesh
           castShadow
           receiveShadow
           geometry={nodes.DJDeck.geometry}
           material={materials['DJGear_mat.001']}
+          onPointerOver={() => setIsDeckHovered(true)}
+          onPointerOut={() => setIsDeckHovered(false)}
         />
+
+        {/* Windows */}
         <mesh
           castShadow
           receiveShadow
@@ -111,48 +136,57 @@ export default function CozyRoom({
           geometry={nodes.Window_mesh_1.geometry}
           material={materials['mat22.003']}
         />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh.geometry}
-          material={materials['lambert5SG.002']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh_1.geometry}
-          material={materials['lambert6SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh_2.geometry}
-          material={materials['lambert4SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh_3.geometry}
-          material={materials['lambert3SG.002']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh_4.geometry}
-          material={materials['lambert9SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh_5.geometry}
-          material={materials['lambert8SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.fireplace_mesh_6.geometry}
-          material={materials['lambert7SG.002']}
-        />
+
+        {/* Fireplace */}
+        <group
+          onPointerOver={() => setIsFireHovered(true)}
+          onPointerOut={() => setIsFireHovered(false)}
+        >
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh.geometry}
+            material={materials['lambert5SG.002']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh_1.geometry}
+            material={materials['lambert6SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh_2.geometry}
+            material={materials['lambert4SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh_3.geometry}
+            material={materials['lambert3SG.002']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh_4.geometry}
+            material={materials['lambert9SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh_5.geometry}
+            material={materials['lambert8SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.fireplace_mesh_6.geometry}
+            material={materials['lambert7SG.002']}
+          />
+        </group>
+
+        {/* Couch */}
         <mesh
           castShadow
           receiveShadow
@@ -165,36 +199,51 @@ export default function CozyRoom({
           geometry={nodes.Couch_L_mesh_1.geometry}
           material={materials['Couch_Beige.001']}
         />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Lamp_mesh.geometry}
-          material={materials['LightMetal.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Lamp_mesh_1.geometry}
-          material={materials['White.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Plant_mesh.geometry}
-          material={materials['Black.002']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Plant_mesh_1.geometry}
-          material={materials['Brown.002']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Plant_mesh_2.geometry}
-          material={materials['Plant_Green.001']}
-        />
+
+        {/* Lamp */}
+        <group
+          onPointerOver={() => setIsLampHovered(true)}
+          onPointerOut={() => setIsLampHovered(false)}
+        >
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Lamp_mesh.geometry}
+            material={materials['LightMetal.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Lamp_mesh_1.geometry}
+            material={materials['White.001']}
+          />
+        </group>
+
+        {/* Plant */}
+        <group
+          onPointerOver={() => setIsPlantHovered(true)}
+          onPointerOut={() => setIsPlantHovered(false)}
+        >
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Plant_mesh.geometry}
+            material={materials['Black.002']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Plant_mesh_1.geometry}
+            material={materials['Brown.002']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Plant_mesh_2.geometry}
+            material={materials['Plant_Green.001']}
+          />
+        </group>
+
         {/** Read Bookcase */}
         <group
           onPointerOver={() => setIsBookcaseHovered(true)}
@@ -281,96 +330,118 @@ export default function CozyRoom({
             material={materials['Metal.001']}
           />
         </group>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.guitar_mesh.geometry}
-          material={materials['_LightGray_.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.guitar_mesh_1.geometry}
-          material={materials['_Tan_.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.guitar_mesh_2.geometry}
-          material={materials['_SaddleBrown_.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.guitar_mesh_3.geometry}
-          material={materials['_Gold_.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.guitar_mesh_4.geometry}
-          material={materials['scan_4.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.guitar_mesh_5.geometry}
-          material={materials['_Gray_.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Orchid_mesh.geometry}
-          material={materials['lambert23SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Orchid_mesh_1.geometry}
-          material={materials['lambert20SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Orchid_mesh_2.geometry}
-          material={materials['lambert21SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Orchid_mesh_3.geometry}
-          material={materials['lambert22SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Orchid_mesh_4.geometry}
-          material={materials['lambert25SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Orchid_mesh_5.geometry}
-          material={materials['lambert24SG.001']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.headphones_mesh.geometry}
-          material={materials['lambert7SG.003']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.headphones_mesh_1.geometry}
-          material={materials['lambert5SG.003']}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.headphones_mesh_2.geometry}
-          material={materials['lambert3SG.003']}
-        />
+
+        {/* Guitar */}
+        <group
+          onPointerOver={() => setIsGuitarHovered(true)}
+          onPointerOut={() => setIsGuitarHovered(false)}
+        >
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.guitar_mesh.geometry}
+            material={materials['_LightGray_.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.guitar_mesh_1.geometry}
+            material={materials['_Tan_.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.guitar_mesh_2.geometry}
+            material={materials['_SaddleBrown_.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.guitar_mesh_3.geometry}
+            material={materials['_Gold_.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.guitar_mesh_4.geometry}
+            material={materials['scan_4.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.guitar_mesh_5.geometry}
+            material={materials['_Gray_.001']}
+          />
+        </group>
+
+        {/* Orchid */}
+        <group
+          onPointerOver={() => setIsOrchidHovered(true)}
+          onPointerOut={() => setIsOrchidHovered(false)}
+        >
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Orchid_mesh.geometry}
+            material={materials['lambert23SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Orchid_mesh_1.geometry}
+            material={materials['lambert20SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Orchid_mesh_2.geometry}
+            material={materials['lambert21SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Orchid_mesh_3.geometry}
+            material={materials['lambert22SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Orchid_mesh_4.geometry}
+            material={materials['lambert25SG.001']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Orchid_mesh_5.geometry}
+            material={materials['lambert24SG.001']}
+          />
+        </group>
+
+        {/* Headphones */}
+        <group
+          onPointerOver={() => setIsHeadphonesHovered(true)}
+          onPointerOut={() => setIsHeadphonesHovered(false)}
+        >
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.headphones_mesh.geometry}
+            material={materials['lambert7SG.003']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.headphones_mesh_1.geometry}
+            material={materials['lambert5SG.003']}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.headphones_mesh_2.geometry}
+            material={materials['lambert3SG.003']}
+          />
+        </group>
+
         {/** TO READ Models */}
         <mesh
           castShadow
@@ -422,6 +493,7 @@ export default function CozyRoom({
           geometry={nodes.top_book_mesh_2.geometry}
           material={materials['Beige.004']}
         />
+
         {/** READING */}
         <mesh
           castShadow
