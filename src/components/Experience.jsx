@@ -62,6 +62,8 @@ export default function Experience({ onBookcaseClick, onCreditsClick }) {
           <OrbitControls
             minPolarAngle={-Math.PI * 0.5}
             maxPolarAngle={Math.PI / 2.2}
+            maxDistance={15}
+            minDistance={3}
           />
           <Suspense fallback={null}>
             <Isometricroom

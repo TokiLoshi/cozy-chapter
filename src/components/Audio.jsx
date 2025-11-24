@@ -87,15 +87,15 @@ export default function AudioComponent() {
           <button
             onClick={handleBack}
             aria-label="Previous Track"
-            className="text-white/80 hover:text-white transition-all hover:scale-100 active:scale-95"
+            className="text-white/80 hover:text-white transition-all hover:scale-100 hover:cursor-pointer active:scale-95"
           >
-            <CircleArrowLeft className="text-white" />
+            <CircleArrowLeft className="text-white " />
           </button>
         )}
         <button
           onClick={handleClick}
           aria-label={isPlaying ? 'Pause music' : 'Play music'}
-          className="text-white/80 hover:text-white transition-all hover:scale-100 active:scale-95"
+          className="text-white/80 hover:text-white transition-all hover:scale-100 hover:cursor-pointer active:scale-95"
         >
           {isPlaying ? (
             <CirclePause className="text-white" />
@@ -106,7 +106,7 @@ export default function AudioComponent() {
         <button
           onClick={handleNext}
           aria-label="Next Track"
-          className="text-white/80 hover:text-white transition-all hover:scale-100 active:scale-95"
+          className="text-white/80 hover:text-white transition-all hover:scale-100 hover:cursor-pointer active:scale-95"
         >
           <CircleArrowRight className="text-white" />
         </button>
