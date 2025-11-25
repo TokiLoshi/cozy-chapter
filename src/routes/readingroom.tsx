@@ -9,9 +9,12 @@ import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
 import ArticleModal from '../components/ArticleModal'
 import {
+  closeBookSound,
   handleDecksClick,
   handleFirePlaceClick,
   handleGuitarClick,
+  lampClickSound,
+  pagesTurning,
 } from '../components/SoundEffects'
 import AudioComponent from '../components/Audio'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
@@ -123,10 +126,12 @@ function ReadingRoomComponent() {
   }, [blogs])
 
   const handleBookcaseClick = (status: ReadStatus) => {
+    pagesTurning()
     setSelectedStatus(status)
   }
 
   const closeModal = () => {
+    closeBookSound()
     setSelectedStatus(null)
   }
 
@@ -204,7 +209,7 @@ function ReadingRoomComponent() {
   const [isLampOn, setIsLampOn] = useState(false)
 
   const handleLampClick = () => {
-    console.log('Lamp clicked')
+    lampClickSound()
     setIsLampOn(!isLampOn)
   }
 

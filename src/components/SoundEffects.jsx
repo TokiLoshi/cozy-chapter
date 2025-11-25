@@ -6,8 +6,6 @@ let fireSound = null
 let guitarSound = null
 
 export function handleDecksClick() {
-  console.log('Decks clicked in function')
-
   if (deckSound) {
     deckSound.stop()
     deckSound.unload()
@@ -20,7 +18,6 @@ export function handleDecksClick() {
   ]
 
   const trackToPlay = tracks[Math.floor(Math.random() * tracks.length)]
-  console.log('Track to play: ', trackToPlay)
   deckSound = new Howl({
     src: [trackToPlay],
     loop: false,
@@ -30,8 +27,6 @@ export function handleDecksClick() {
 }
 
 export function handleGuitarClick() {
-  console.log('Guitar clicked')
-
   if (guitarSound) {
     guitarSound.stop()
     guitarSound.unload()
@@ -46,7 +41,6 @@ export function handleGuitarClick() {
     '/sound/guitar-strumming.mp3',
   ]
   const trackToPlay = tracks[Math.floor(Math.random() * tracks.length)]
-  console.log('TRack to play: ', trackToPlay)
   guitarSound = new Howl({
     src: [trackToPlay],
     loop: false,
@@ -56,7 +50,6 @@ export function handleGuitarClick() {
 }
 
 export function handleFirePlaceClick() {
-  console.log('Fireplace clicked')
   const tracks = ['fireplace.mp3']
   if (fireSound) {
     fireSound.stop()
@@ -70,4 +63,31 @@ export function handleFirePlaceClick() {
     volume: 0.3,
   })
   fireSound.play()
+}
+
+export function lampClickSound() {
+  const lampClickSound = new Howl({
+    src: '/sound/desklamp.mp3',
+    loop: false,
+    volume: 0.3,
+  })
+  lampClickSound.play()
+}
+
+export function pagesTurning() {
+  const turnPages = new Howl({
+    src: '/sound/turningpage.mp3',
+    loop: false,
+    volume: 0.3,
+  })
+  turnPages.play()
+}
+
+export function closeBookSound() {
+  const sound = new Howl({
+    src: '/sound/book-close.mp3',
+    loop: false,
+    volume: 0.3,
+  })
+  sound.play()
 }

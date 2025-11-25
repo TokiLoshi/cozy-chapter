@@ -30,7 +30,6 @@ export default function AudioComponent() {
     'embrace',
     'slow',
   ]
-  console.log('Playing: ', tracks[currentTrackIndex])
 
   useEffect(() => {
     // Clean up old track
@@ -78,7 +77,7 @@ export default function AudioComponent() {
   const handleBack = () => {
     setCurrentTrackIndex((prev) => (prev - 1) % tracks.length)
   }
-  console.log('Should be: ', trackNames[currentTrackIndex])
+
   return (
     <>
       <div className="flex flex-col items-center gap-4">
