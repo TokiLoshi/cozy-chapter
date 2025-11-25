@@ -30,6 +30,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
+    "@react-three/postprocessing": "^3.0.4",
     "@sentry/tanstackstart-react": "^10.17.0",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/db": "^0.4.3",

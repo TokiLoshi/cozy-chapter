@@ -1,6 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Loader, OrbitControls, useHelper } from '@react-three/drei'
 import { Suspense, useEffect, useRef } from 'react'
+import { EffectComposer, Bloom, ToneMapping } from '@react-three/postprocessing'
 import Isometricroom from '../components/Isometricroom'
 import { useControls } from 'leva'
 import { ACESFilmicToneMapping, DirectionalLightHelper } from 'three'
@@ -19,6 +20,8 @@ export default function Experience({
   onDecksClick,
   onFireClick,
   onGuitarClick,
+  onLampClick,
+  isLampOn,
 }) {
   const {
     ambientIntensity,
@@ -52,6 +55,7 @@ export default function Experience({
           gl={{
             toneMapping: ACESFilmicToneMapping,
           }}
+          flat
           camera={{ position: [5, 3, 3], fov: 75 }}
           shadows
         >
@@ -78,10 +82,15 @@ export default function Experience({
               onDecksClick={onDecksClick}
               onFireClick={onFireClick}
               onGuitarClick={onGuitarClick}
+              onLampClick={onLampClick}
+              isLampOn={isLampOn}
               receiveShadow
               scale={2}
             />
           </Suspense>
+          {/* <EffectComposer> */}
+          {/* <Bloom intensity={1} luminanceThreshold={1.5} /> */}
+          {/* </EffectComposer> */}
         </Canvas>
         <Leva hidden />
         <Loader

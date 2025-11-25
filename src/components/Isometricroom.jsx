@@ -10,6 +10,8 @@ export default function IsometricRoom({
   onDecksClick,
   onFireClick,
   onGuitarClick,
+  onLampClick,
+  isLampOn,
 }) {
   const bookcaseRef = useRef({ onBookcaseClick })
 
@@ -48,6 +50,8 @@ export default function IsometricRoom({
         onDecksClick={onDecksClick}
         onFireClick={onFireClick}
         onGuitarClick={onGuitarClick}
+        onLampClick={onLampClick}
+        isLampOn={isLampOn}
       />
     </>
   )

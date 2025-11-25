@@ -201,6 +201,13 @@ function ReadingRoomComponent() {
 
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false)
 
+  const [isLampOn, setIsLampOn] = useState(false)
+
+  const handleLampClick = () => {
+    console.log('Lamp clicked')
+    setIsLampOn(!isLampOn)
+  }
+
   return (
     <>
       {/** Audio Overlay top right */}
@@ -261,6 +268,8 @@ function ReadingRoomComponent() {
           onDecksClick={handleDecksClick}
           onFireClick={handleFirePlaceClick}
           onGuitarClick={handleGuitarClick}
+          onLampClick={handleLampClick}
+          isLampOn={isLampOn}
         />
 
         {/** Credits Overlay */}

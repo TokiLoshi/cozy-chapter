@@ -160,6 +160,13 @@ function ReadingRoomDemoComponent() {
     setIsCreditsOpen(!isCreditsOpen)
   }
 
+  const [isLampOn, setIsLampOn] = useState(false)
+
+  const handleLampClick = () => {
+    console.log('Lamp clicked')
+    setIsLampOn(!isLampOn)
+  }
+
   return (
     <>
       <div className="relative w-full h-screen">
@@ -215,6 +222,8 @@ function ReadingRoomDemoComponent() {
           onDecksClick={handleDecksClick}
           onFireClick={handleFirePlaceClick}
           onGuitarClick={handleGuitarClick}
+          onLampClick={handleLampClick}
+          isLampOn={isLampOn}
         />
 
         {/** Credits Overlay */}
