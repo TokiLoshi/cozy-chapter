@@ -14,6 +14,7 @@ export default function CozyRoom({
   onGuitarClick,
   onLampClick,
   isLampOn,
+  onPlantClick,
   ...props
 }) {
   const { nodes, materials } = useGLTF('models/cozyroom.glb')
@@ -255,6 +256,7 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.Plant_mesh_2.geometry}
             material={materials['Plant_Green.001']}
+            onClick={onPlantClick}
           />
         </group>
 

@@ -91,3 +91,12 @@ export function closeBookSound() {
   })
   sound.play()
 }
+
+export function bushSound() {
+  const sound = new Howl({
+    src: '/sound/bush.mp3',
+    loop: false,
+    volume: 0.3,
+  })
+  sound.play()
+}

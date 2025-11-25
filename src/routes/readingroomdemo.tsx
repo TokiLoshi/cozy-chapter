@@ -3,13 +3,18 @@ import { createServerFn } from '@tanstack/react-start'
 import { Link, Trash, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import ArticleModal from '../components/ArticleModal'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
 import {
+  bushSound,
+  closeBookSound,
   handleDecksClick,
   handleFirePlaceClick,
   handleGuitarClick,
+  lampClickSound,
+  pagesTurning,
 } from '../components/SoundEffects'
 import AudioComponent from '../components/Audio'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
@@ -84,10 +89,12 @@ function ReadingRoomDemoComponent() {
   }, [blogs])
 
   const handleBookcaseClick = (status: ReadStatus) => {
+    pagesTurning()
     setSelectedStatus(status)
   }
 
   const closeModal = () => {
+    closeBookSound()
     setSelectedStatus(null)
   }
 
@@ -161,10 +168,12 @@ function ReadingRoomDemoComponent() {
     setIsCreditsOpen(!isCreditsOpen)
   }
 
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false)
+
   const [isLampOn, setIsLampOn] = useState(false)
 
   const handleLampClick = () => {
-    console.log('Lamp clicked')
+    lampClickSound()
     setIsLampOn(!isLampOn)
   }
 
@@ -228,6 +237,7 @@ function ReadingRoomDemoComponent() {
           onGuitarClick={handleGuitarClick}
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
+          onPlantClick={bushSound}
         />
 
         {/** Credits Overlay */}
@@ -237,6 +247,13 @@ function ReadingRoomDemoComponent() {
             onClose={() => setIsCreditsOpen(false)}
           />
         )}
+
+        <ArticleModal
+          isOpen={isArticleModalOpen}
+          onClose={() => setIsArticleModalOpen(false)}
+          refreshPath="/readingroomdemo"
+        />
+        {/** Blogs Overlay */}
 
         {selectedStatus && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -254,7 +271,7 @@ function ReadingRoomDemoComponent() {
                 </h2>
 
                 <button
-                  className="text-gray-400 hover:text-white text-2xl"
+                  className="text-gray-400 hover:text-white hover:cursor-pointer text-2xl"
                   onClick={closeModal}
                 >
                   <XIcon />

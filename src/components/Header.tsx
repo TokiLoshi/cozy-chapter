@@ -25,7 +25,7 @@ export default function Header({
       <header className="p-4 flex items-center bg-slate-800/90 text-white shadow-lg">
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-700 hover:cursor-pointer rounded-lg transition-colors"
           aria-label="Open menu"
         >
           <Menu size={24} />
@@ -53,7 +53,7 @@ export default function Header({
           <h2 className="text-xl font-bold">Cozy Menu</h2>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-800 hover:cursor-pointer rounded-lg transition-colors"
             aria-label="Close menu"
           >
             <X size={24} />
@@ -67,7 +67,7 @@ export default function Header({
             className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800/900 transition-colors mb-2"
             activeProps={{
               className:
-                'flex items-center gap-3 p-3 rounded-lg bg-slate-600 hover:bg-slate-800 transition-colors mb-2',
+                'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-slate-800 transition-colors mb-2',
             }}
           >
             <Home size={20} />
@@ -152,7 +152,7 @@ export default function Header({
                   setIsOpen(false)
                   navigate({ to: '/login' })
                 }}
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-400 transition-colors mb-2 w-full text-left"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-400 hover:cursor-pointer transition-colors mb-2 w-full text-left"
               >
                 <LogOut size={20} />
                 <span className="font-medium">Sign Out</span>

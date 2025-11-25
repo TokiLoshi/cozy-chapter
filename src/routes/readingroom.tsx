@@ -9,6 +9,7 @@ import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
 import ArticleModal from '../components/ArticleModal'
 import {
+  bushSound,
   closeBookSound,
   handleDecksClick,
   handleFirePlaceClick,
@@ -275,6 +276,7 @@ function ReadingRoomComponent() {
           onGuitarClick={handleGuitarClick}
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
+          onPlantClick={bushSound}
         />
 
         {/** Credits Overlay */}
