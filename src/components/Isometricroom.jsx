@@ -4,7 +4,13 @@ import { useRef } from 'react'
 import CozyRoom from '../components/modelcomponents/wholeroom'
 import Husky from '../components/modelcomponents/husky'
 
-export default function IsometricRoom({ onBookcaseClick, onCreditsClick }) {
+export default function IsometricRoom({
+  onBookcaseClick,
+  onCreditsClick,
+  onDecksClick,
+  onFireClick,
+  onGuitarClick,
+}) {
   const bookcaseRef = useRef({ onBookcaseClick })
 
   const {
@@ -39,6 +45,9 @@ export default function IsometricRoom({ onBookcaseClick, onCreditsClick }) {
       <CozyRoom
         onBookcaseClick={onBookcaseClick}
         onCreditsClick={onCreditsClick}
+        onDecksClick={onDecksClick}
+        onFireClick={onFireClick}
+        onGuitarClick={onGuitarClick}
       />
     </>
   )

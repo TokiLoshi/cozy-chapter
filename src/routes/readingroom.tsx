@@ -8,6 +8,11 @@ import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
 import ArticleModal from '../components/ArticleModal'
+import {
+  handleDecksClick,
+  handleFirePlaceClick,
+  handleGuitarClick,
+} from '../components/SoundEffects'
 import AudioComponent from '../components/Audio'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
@@ -253,6 +258,9 @@ function ReadingRoomComponent() {
         <Experience
           onBookcaseClick={handleBookcaseClick}
           onCreditsClick={handleCreditsClick}
+          onDecksClick={handleDecksClick}
+          onFireClick={handleFirePlaceClick}
+          onGuitarClick={handleGuitarClick}
         />
 
         {/** Credits Overlay */}

@@ -8,14 +8,15 @@ import { Outlines, useCursor, useGLTF } from '@react-three/drei'
 export default function CozyRoom({
   onBookcaseClick,
   onCreditsClick,
+  onDecksClick,
+  onFireClick,
+  onGuitarClick,
   ...props
 }) {
   const { nodes, materials } = useGLTF('models/cozyroom.glb')
   const bookRef = useRef()
   const toReadRef = useRef()
   const readingRef = useRef()
-  const paintingRef = useRef()
-  const guitarRef = useRef()
 
   const [isBookcaseHovered, setIsBookcaseHovered] = useState(false)
   const [isToReadHovered, setIsToReadHovered] = useState(false)
@@ -121,6 +122,7 @@ export default function CozyRoom({
           material={materials['DJGear_mat.001']}
           onPointerOver={() => setIsDeckHovered(true)}
           onPointerOut={() => setIsDeckHovered(false)}
+          onClick={onDecksClick}
         />
 
         {/* Windows */}
@@ -165,6 +167,7 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.fireplace_mesh_3.geometry}
             material={materials['lambert3SG.002']}
+            onClick={onFireClick}
           />
           <mesh
             castShadow
@@ -341,6 +344,7 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.guitar_mesh.geometry}
             material={materials['_LightGray_.001']}
+            onClick={onGuitarClick}
           />
           <mesh
             castShadow
@@ -353,6 +357,7 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.guitar_mesh_2.geometry}
             material={materials['_SaddleBrown_.001']}
+            onClick={onGuitarClick}
           />
           <mesh
             castShadow

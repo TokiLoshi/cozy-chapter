@@ -6,6 +6,11 @@ import { toast } from 'sonner'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
+import {
+  handleDecksClick,
+  handleFirePlaceClick,
+  handleGuitarClick,
+} from '../components/SoundEffects'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import {
   deleteArticle,
@@ -207,6 +212,9 @@ function ReadingRoomDemoComponent() {
         <Experience
           onBookcaseClick={handleBookcaseClick}
           onCreditsClick={handleCreditsClick}
+          onDecksClick={handleDecksClick}
+          onFireClick={handleFirePlaceClick}
+          onGuitarClick={handleGuitarClick}
         />
 
         {/** Credits Overlay */}

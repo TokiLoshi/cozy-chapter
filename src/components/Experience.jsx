@@ -13,7 +13,13 @@ function DirectionalLightWithHelper({ position, intensity }) {
   return <directionalLight ref={lightRef} intensity={intensity} castShadow />
 }
 
-export default function Experience({ onBookcaseClick, onCreditsClick }) {
+export default function Experience({
+  onBookcaseClick,
+  onCreditsClick,
+  onDecksClick,
+  onFireClick,
+  onGuitarClick,
+}) {
   const {
     ambientIntensity,
     directionalIntensity,
@@ -69,6 +75,9 @@ export default function Experience({ onBookcaseClick, onCreditsClick }) {
             <Isometricroom
               onBookcaseClick={onBookcaseClick}
               onCreditsClick={onCreditsClick}
+              onDecksClick={onDecksClick}
+              onFireClick={onFireClick}
+              onGuitarClick={onGuitarClick}
               receiveShadow
               scale={2}
             />
