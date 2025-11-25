@@ -11,6 +11,7 @@ import {
   handleFirePlaceClick,
   handleGuitarClick,
 } from '../components/SoundEffects'
+import AudioComponent from '../components/Audio'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import {
   deleteArticle,
@@ -170,6 +171,9 @@ function ReadingRoomDemoComponent() {
   return (
     <>
       <div className="relative w-full h-screen">
+        <div className="absolute top-6 right-6 z-10 items-center bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
+          <AudioComponent />
+        </div>
         {/** Stats Overlay - Top Left */}
         <div className="absolute top-6 left-6 z-10 bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
           <div className="mb-4">
