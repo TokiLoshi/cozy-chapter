@@ -15,6 +15,7 @@ export default function CozyRoom({
   onLampClick,
   isLampOn,
   onPlantClick,
+  onOrchidClick,
   ...props
 }) {
   const { nodes, materials } = useGLTF('models/cozyroom.glb')
@@ -396,6 +397,7 @@ export default function CozyRoom({
         <group
           onPointerOver={() => setIsOrchidHovered(true)}
           onPointerOut={() => setIsOrchidHovered(false)}
+          onClick={onOrchidClick}
         >
           <mesh
             castShadow

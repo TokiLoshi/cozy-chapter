@@ -23,6 +23,7 @@ export default function Experience({
   onLampClick,
   isLampOn,
   onPlantClick,
+  onOrchidClick,
 }) {
   const {
     ambientIntensity,
@@ -88,6 +89,7 @@ export default function Experience({
               receiveShadow
               scale={2}
               onPlantClick={onPlantClick}
+              onOrchidClick={onOrchidClick}
             />
           </Suspense>
           {/* <EffectComposer> */}

@@ -8,6 +8,7 @@ import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
 import ArticleModal from '../components/ArticleModal'
+import PlantModal from '../components/PlantModal'
 import {
   bushSound,
   closeBookSound,
@@ -214,6 +215,12 @@ function ReadingRoomComponent() {
     setIsLampOn(!isLampOn)
   }
 
+  const [isPlantModalOpen, setIsPlantModalOpen] = useState(false)
+
+  const handleOrchidClick = () => {
+    setIsPlantModalOpen(!isPlantModalOpen)
+  }
+
   return (
     <>
       {/** Audio Overlay top right */}
@@ -277,7 +284,17 @@ function ReadingRoomComponent() {
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
           onPlantClick={bushSound}
+          onOrchidClick={handleOrchidClick}
         />
+
+        {/** Plant Modal */}
+        {isPlantModalOpen && (
+          <PlantModal
+            isOpen={isPlantModalOpen}
+            onClose={() => setIsPlantModalOpen(false)}
+            refreshPath="/readingroom"
+          />
+        )}
 
         {/** Credits Overlay */}
         {isCreditsOpen && (

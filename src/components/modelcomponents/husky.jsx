@@ -92,7 +92,6 @@ export default function Husky(props) {
   }, [currentAction, actions])
 
   const handleClick = () => {
-    console.log('Husky clicked ')
     if (soundRef.current) {
       soundRef.current.play()
     }
