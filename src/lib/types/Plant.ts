@@ -1,8 +1,9 @@
 export type Plant = {
   id: string
   userId: string
-  type: string
-  reccommendedWateringInterval: string
+  species: string
+  recommendedWateringIntervalDays: number
+  group: string
   lastWatered: Date | null
   health: 'thriving' | 'ok' | 'needsAttention'
   notes: string | null
