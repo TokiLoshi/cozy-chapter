@@ -23,7 +23,7 @@ type PlantFormProps = {
   refreshPath: string
 }
 
-export default function ArticleForm({ isOpen, onClose }: PlantFormProps) {
+export default function PlantForm({ isOpen, onClose }: PlantFormProps) {
   if (!isOpen) return null
   return (
     <>
