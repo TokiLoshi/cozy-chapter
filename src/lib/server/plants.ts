@@ -34,7 +34,8 @@ export const getUserPlants = createServerFn({ method: 'GET' }).handler(
 
 export const createPlantServer = createServerFn({ method: 'POST' })
   .inputValidator(
-    (data: Omit<UserPlants, 'id' | 'createdAt' | 'updatedAt'>) => data,
+    (data: Omit<UserPlants, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) =>
+      data,
   )
   .handler(async ({ data }) => {
     const session = await getSessionServer()
