@@ -56,8 +56,8 @@ export const updatePlantServer = createServerFn({ method: 'POST' })
     const result = await updatePlant(data.id, session.user.id, data.updates)
     if (!result.success) {
       throw new Error('Failed to update plant')
-      return result.data
     }
+    return result.data
   })
 
 export const deletePlantServer = createServerFn({ method: 'POST' })
