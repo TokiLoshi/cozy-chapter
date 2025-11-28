@@ -2,7 +2,7 @@ import { XIcon } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { createPlantServer } from '@/lib/server/plants'
-import { useAppForm } from '@/hooks/demo.form'
+import { useAppForm } from '@/hooks/form'
 
 type PlantFormProps = {
   isOpen: boolean
@@ -148,7 +148,7 @@ export default function PlantForm({
             {/** last watered */}
             <form.AppField name="lastWatered">
               {(field) => (
-                <field.TextField
+                <field.DateField
                   label="date last watered"
                   placeholder="last week"
                 />

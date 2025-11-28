@@ -1,4 +1,6 @@
 import { useStore } from '@tanstack/react-form'
+import { useState } from 'react'
+import { ChevronDownIcon } from 'lucide-react'
 import { useFieldContext, useFormContext } from '@/hooks/demo.form-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,6 +9,60 @@ import { Textarea as ShadcnTextarea } from '@/components/ui/textarea'
 import * as ShadcnSelect from '@/components/ui/select'
 import { Slider as ShadcnSlider } from '@/components/ui/slider'
 import { Switch as ShadcnSwitch } from '@/components/ui/switch'
+
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+
+export function DateField({
+  label,
+  placeholder,
+}: {
+  label: string
+  placeholder?: string
+}) {
+  const field = useFieldContext<Date | null>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div>
+      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+        {label}
+      </Label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            id={label}
+            className="w-full justify-between font-normal"
+            type="button"
+          >
+            {field.state.value
+              ? field.state.value.toLocaleString()
+              : placeholder || 'Select Date'}
+            <ChevronDownIcon className="w-5 h-5" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={field.state.value || undefined}
+            captionLayout="dropdown"
+            onSelect={(date) => {
+              field.handleChange(date || null)
+              setOpen(false)
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
+    </div>
+  )
+}
 
 export function SubmitButton({
   label,
