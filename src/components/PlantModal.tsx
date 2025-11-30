@@ -131,7 +131,7 @@ export default function PlantForm({
             {/** recommended watering */}
             <form.AppField name="recommendedWateringIntervalDays">
               {(field) => (
-                <field.TextField
+                <field.NumberField
                   label="Recommended Days between Waterings"
                   placeholder="7"
                 />

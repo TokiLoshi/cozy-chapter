@@ -128,6 +128,45 @@ export function TextField({
   )
 }
 
+export function NumberField({
+  label,
+  placeholder,
+  min,
+  max,
+}: {
+  label: string
+  placeholder?: string
+  min?: number
+  max?: number
+}) {
+  const field = useFieldContext<number>()
+  const errors = useStore(field.store, (state) => state.meta.errors)
+
+  return (
+    <div>
+      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+        {label}
+      </Label>
+      <Input
+        id={label}
+        type="number"
+        value={field.state.value}
+        placeholder={placeholder}
+        min={min}
+        max={max}
+        step="1"
+        onBlur={field.handleBlur}
+        onChange={(e) => {
+          const value = e.target.value
+          const parsedValue = value == '' ? (min ?? 0) : parseInt(value, 10)
+          field.handleChange(parsedValue)
+        }}
+      />
+      {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
+    </div>
+  )
+}
+
 export function TextArea({
   label,
   rows = 3,
