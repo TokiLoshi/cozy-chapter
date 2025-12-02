@@ -3,6 +3,16 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { createPlantServer } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type PlantFormProps = {
   isOpen: boolean
@@ -110,76 +120,108 @@ export default function PlantForm({
               </button>
             </div>
           </div>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
-            className="p-6 space-y-6 text-gray-100"
-          >
-            {/** species */}
-            <form.AppField name="species">
-              {(field) => (
-                <field.TextField
-                  label="Species"
-                  placeholder="Species / type of plant e.g Orchid"
-                />
-              )}
-            </form.AppField>
+          <Tabs defaultValue="plants">
+            <TabsList>
+              <TabsTrigger value="plants">Plants</TabsTrigger>
+              <TabsTrigger value="addPlants">Add Plants</TabsTrigger>
+              <TabsContent value="plants">
+                <Card>
+                  <CardHeader>Your Plants</CardHeader>
+                  <CardDescription>
+                    Dont forget to water your plants
+                  </CardDescription>
+                  <div>
+                    <Button>Water Plants</Button>
+                  </div>
+                </Card>
+              </TabsContent>
+              <TabsContent value="addPlants">Add Plants</TabsContent>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Add Plants Here</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      form.handleSubmit()
+                    }}
+                    className="p-6 space-y-6 text-gray-100"
+                  >
+                    {/** species */}
+                    <form.AppField name="species">
+                      {(field) => (
+                        <field.TextField
+                          label="Species"
+                          placeholder="Species / type of plant e.g Orchid"
+                        />
+                      )}
+                    </form.AppField>
 
-            {/** recommended watering */}
-            <form.AppField name="recommendedWateringIntervalDays">
-              {(field) => (
-                <field.NumberField
-                  label="Recommended Days between Waterings"
-                  placeholder="7"
-                />
-              )}
-            </form.AppField>
+                    {/** recommended watering */}
+                    <form.AppField name="recommendedWateringIntervalDays">
+                      {(field) => (
+                        <field.NumberField
+                          label="Recommended Days between Waterings"
+                          placeholder="7"
+                        />
+                      )}
+                    </form.AppField>
 
-            {/** group */}
-            <form.AppField name="group">
-              {(field) => (
-                <field.TextField label="group" placeholder="lounge. plants" />
-              )}
-            </form.AppField>
+                    {/** group */}
+                    <form.AppField name="group">
+                      {(field) => (
+                        <field.TextField
+                          label="group"
+                          placeholder="lounge. plants"
+                        />
+                      )}
+                    </form.AppField>
 
-            {/** last watered */}
-            <form.AppField name="lastWatered">
-              {(field) => (
-                <field.DateField
-                  label="date last watered"
-                  placeholder="last week"
-                />
-              )}
-            </form.AppField>
+                    {/** last watered */}
+                    <form.AppField name="lastWatered">
+                      {(field) => (
+                        <field.DateField
+                          label="date last watered"
+                          placeholder="last week"
+                        />
+                      )}
+                    </form.AppField>
 
-            {/** Plant Health */}
-            <form.AppField name="plantHealth">
-              {(field) => (
-                <field.Select
-                  label="Plant Health"
-                  values={[
-                    { label: 'Thriving', value: 'thriving' },
-                    { label: 'Ok', value: 'ok' },
-                    { label: 'Needs Attention', value: 'needsAttention' },
-                  ]}
-                  placeholder="Select status"
-                />
-              )}
-            </form.AppField>
+                    {/** Plant Health */}
+                    <form.AppField name="plantHealth">
+                      {(field) => (
+                        <field.Select
+                          label="Plant Health"
+                          values={[
+                            { label: 'Thriving', value: 'thriving' },
+                            { label: 'Ok', value: 'ok' },
+                            {
+                              label: 'Needs Attention',
+                              value: 'needsAttention',
+                            },
+                          ]}
+                          placeholder="Select status"
+                        />
+                      )}
+                    </form.AppField>
 
-            {/** Notes */}
-            <form.AppField name="notes">
-              {(field) => (
-                <field.TextField
-                  label="notes"
-                  placeholder="add your thoughts here"
-                />
-              )}
-            </form.AppField>
-          </form>
+                    {/** Notes */}
+                    <form.AppField name="notes">
+                      {(field) => (
+                        <field.TextField
+                          label="notes"
+                          placeholder="add your thoughts here"
+                        />
+                      )}
+                    </form.AppField>
+                  </form>
+                </CardContent>
+                <CardFooter>This is a footer</CardFooter>
+              </Card>
+            </TabsList>
+          </Tabs>
         </div>
       </div>
     </>
