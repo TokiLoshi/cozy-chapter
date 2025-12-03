@@ -29,6 +29,8 @@ import {
   updateArticle,
 } from '@/db/queries/articles'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { getUsersPlants } from '@/db/queries/plants'
+import { getUserPlants } from '@/lib/server/plants'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -101,7 +103,8 @@ export const Route = createFileRoute('/readingroom')({
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
     const blogs = await getUserBlogs()
-    return { session, blogs }
+    const plants = await getUserPlants()
+    return { session, blogs, plants }
   },
   component: ReadingRoomComponent,
 })
@@ -229,6 +232,7 @@ function ReadingRoomComponent() {
         <div className="absolute top-6 right-6 z-10 items-center bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
           <AudioComponent />
         </div>
+
         {/** Stats Overlay - Top Left */}
         <div className="absolute top-6 left-6 z-10 bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
           <div className="mb-4">

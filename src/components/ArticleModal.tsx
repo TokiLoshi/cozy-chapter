@@ -200,7 +200,7 @@ export default function ArticleForm({
             <div className="flex justify-end">
               <form.AppForm>
                 <form.SubmitButton
-                  label="Submit"
+                  label="Add article"
                   className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                 />
               </form.AppForm>
