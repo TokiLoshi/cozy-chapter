@@ -177,6 +177,12 @@ function ReadingRoomDemoComponent() {
     setIsLampOn(!isLampOn)
   }
 
+  const [isPlantModalOpen, setIsPlantModalOpen] = useState(false)
+
+  const handleOrchidClick = () => {
+    setIsPlantModalOpen(!isPlantModalOpen)
+  }
+
   return (
     <>
       <div className="relative w-full h-screen">
@@ -238,6 +244,7 @@ function ReadingRoomDemoComponent() {
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
           onPlantClick={bushSound}
+          onOrchidClick={handleOrchidClick}
         />
 
         {/** Credits Overlay */}
