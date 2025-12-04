@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { ScrollArea } from './ui/scroll-area'
+import type { Plant } from '@/lib/types/Plant'
 import { createPlantServer } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
 import { Button } from '@/components/ui/button'
@@ -11,15 +12,18 @@ type PlantFormProps = {
   isOpen: boolean
   onClose: () => void
   refreshPath: string
+  plants?: Array<Plant>
 }
 
 export default function PlantModal({
   isOpen,
   onClose,
   refreshPath,
+  plants = [],
 }: PlantFormProps) {
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
   const plantsPlaceholder = []
+  console.log(' Plants in plant modal: ', plants)
 
   if (!isOpen) return null
 
@@ -63,6 +67,7 @@ export default function PlantModal({
             isOpen={isAddFormOpen}
             onClose={() => setisAddFormOpen(false)}
             refreshPath={refreshPath}
+            plants={plants}
           />
 
           {/** Empty State */}

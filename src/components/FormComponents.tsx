@@ -38,7 +38,7 @@ export function DateField({
           <Button
             variant="outline"
             id={label}
-            className="w-full justify-between font-normal"
+            className="w-full justify-between font-normal bg-slate-900 text-white"
             type="button"
           >
             {field.state.value
@@ -47,7 +47,7 @@ export function DateField({
             <ChevronDownIcon className="w-5 h-5" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+        <PopoverContent className="w-auto overflow-hidden p-0 " align="start">
           <Calendar
             mode="single"
             selected={field.state.value || undefined}

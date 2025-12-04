@@ -1,12 +1,16 @@
-export type Plant = {
+import type { userPlants } from '@/db/plant-schema'
+
+export type PlantType = {
   id: string
   userId: string
   species: string
   recommendedWateringIntervalDays: number
   group: string
   lastWatered: Date | null
-  health: 'thriving' | 'ok' | 'needsAttention'
+  plantHealth: 'thriving' | 'ok' | 'needsAttention'
   notes: string | null
 }
 
 export type healthStatus = 'thriving' | 'ok' | 'needsAttention'
+
+export type Plant = typeof userPlants.$inferSelect

@@ -111,7 +111,8 @@ export const Route = createFileRoute('/readingroom')({
 
 // Reading Room with modal
 function ReadingRoomComponent() {
-  const { session, blogs } = Route.useLoaderData()
+  const { session, blogs, plants } = Route.useLoaderData()
+  console.log('Plants: ', plants)
   const navigate = useNavigate()
   // const [showBlogsOverlay, setShowBlogsOverlay] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
