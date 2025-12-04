@@ -29,7 +29,6 @@ import {
   updateArticle,
 } from '@/db/queries/articles'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { getUsersPlants } from '@/db/queries/plants'
 import { getUserPlants } from '@/lib/server/plants'
 
 // Authentication
@@ -298,6 +297,7 @@ function ReadingRoomComponent() {
             isOpen={isPlantModalOpen}
             onClose={() => setIsPlantModalOpen(false)}
             refreshPath="/readingroom"
+            plants={plants || []}
           />
         )}
 

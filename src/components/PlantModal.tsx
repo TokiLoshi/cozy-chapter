@@ -4,14 +4,18 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import { ScrollArea } from './ui/scroll-area'
 import type { Plant } from '@/lib/types/Plant'
-import { createPlantServer } from '@/lib/server/plants'
+import {
+  createPlantServer,
+  deletePlantServer,
+  updatePlantServer,
+} from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
-import { Button } from '@/components/ui/button'
 
 type PlantFormProps = {
   isOpen: boolean
   onClose: () => void
   refreshPath: string
+  // userId: string
   plants?: Array<Plant>
 }
 
@@ -20,10 +24,11 @@ export default function PlantModal({
   onClose,
   refreshPath,
   plants = [],
+  // userId,
 }: PlantFormProps) {
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
-  const plantsPlaceholder = []
-  console.log(' Plants in plant modal: ', plants)
+
+  console.log('Plant Data in modal: ', plants)
 
   if (!isOpen) return null
 
@@ -34,6 +39,31 @@ export default function PlantModal({
 
   const handleDelete = (id: string) => {
     console.log('User wants to delete plant: ', id)
+  }
+
+  const getHealthColor = (health: Plant['plantHealth']) => {
+    switch (health) {
+      case 'thriving':
+        return 'text-green-500'
+      case 'ok':
+        return 'text-yellow-500'
+      case 'needsAttention':
+        return 'text-rose-400'
+    }
+  }
+
+  const checkWaterNeeds = (
+    lastWatered: Date | null,
+    recommendedWatering: Plant['recommendedWateringIntervalDays'],
+  ) => {
+    if (!lastWatered || !recommendedWatering) return false
+
+    const today = new Date()
+    const lastDate = new Date(lastWatered)
+    const minutesSince = today.getTime() - lastDate.getTime()
+    const daysSince = Math.floor(minutesSince / (1000 * 60 * 60 * 24))
+
+    return daysSince > recommendedWatering
   }
 
   return (
@@ -67,45 +97,79 @@ export default function PlantModal({
             isOpen={isAddFormOpen}
             onClose={() => setisAddFormOpen(false)}
             refreshPath={refreshPath}
-            plants={plants}
           />
 
           {/** Empty State */}
-          {plantsPlaceholder.length === 0 && (
+          {plants.length === 0 && (
             <div className="text-center text-gray-400 py-8">
               No plants added to inventory yet
             </div>
           )}
 
-          {plantsPlaceholder.length > 0 && (
-            <ScrollArea className="h-[500px] p-2">
-              <div
-                key={1}
-                className="bg-white/10 border border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
-              >
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Plant 1 title
-                </h3>
-                <p className="text-lg font-semibold text-white mb-2">
-                  <span className="text-l font-semibold">Some info</span>
-                  more info
-                </p>
-              </div>
-              <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
-                <button
-                  onClick={() => console.log('Edit button should go here')}
-                  className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                >
-                  Edit
-                </button>
-                <div className="flex-1"></div>
-                <button
-                  onClick={() => handleDelete('1')}
-                  className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                >
-                  <Trash className="w-4 h-4" />
-                </button>
-              </div>
+          {plants.length > 0 && (
+            <ScrollArea className="h-[500px] p-2 mb-2">
+              {plants.map((plant: Plant) => (
+                <>
+                  <div
+                    key={plant.id}
+                    className="bg-white/10 border border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
+                  >
+                    <h3 className="text-lg font-semibold text-white mb-2">
+                      {plant.species} {plant.group ? `(in ${plant.group})` : ''}
+                    </h3>
+                    <p className="text-lg font-semibold text-white mb-2">
+                      <span className={getHealthColor(plant.plantHealth)}>
+                        {' '}
+                        {plant.plantHealth}
+                      </span>
+                    </p>
+                    <p className="text-lg font-semibold text-white mb-2">
+                      {plant.lastWatered ? (
+                        <span className="text-l font-semibold">
+                          Last watered: {plant.lastWatered.toLocaleDateString()}
+                        </span>
+                      ) : (
+                        'Plant has not yet been watered'
+                      )}
+                    </p>
+                    <p className="text-lg font-semibold text-white mb-2">
+                      <span className="text-l font-semibold">
+                        Recommended watering interval:{' '}
+                      </span>
+                      {plant.recommendedWateringIntervalDays} days
+                    </p>
+                    {checkWaterNeeds(
+                      plant.lastWatered,
+                      plant.recommendedWateringIntervalDays,
+                    ) && (
+                      <p className=" text-white mb-2">plant needs watering</p>
+                    )}
+                    {plant.notes && (
+                      <p className="text-lg  text-white mb-2">
+                        <span className="font-semibold">Notes: </span>
+                        {plant.notes}
+                      </p>
+                    )}
+                    <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
+                      <button
+                        onClick={() =>
+                          console.log('Edit button should go here')
+                        }
+                        className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                      >
+                        Edit
+                      </button>
+                      <div className="flex-1"></div>
+                      <button
+                        onClick={() => handleDelete(plant.id)}
+                        className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                      >
+                        <Trash className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ))}
             </ScrollArea>
           )}
         </div>
