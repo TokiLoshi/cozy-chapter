@@ -42,7 +42,7 @@ export function DateField({
             type="button"
           >
             {field.state.value
-              ? field.state.value.toLocaleString()
+              ? field.state.value.toLocaleDateString()
               : placeholder || 'Select Date'}
             <ChevronDownIcon className="w-5 h-5" />
           </Button>
@@ -52,6 +52,7 @@ export function DateField({
             mode="single"
             selected={field.state.value || undefined}
             captionLayout="dropdown"
+            disabled={{ after: new Date() }}
             onSelect={(date) => {
               field.handleChange(date || null)
               setOpen(false)

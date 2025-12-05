@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Edit, XIcon } from 'lucide-react'
+import { toast } from 'sonner'
+import { XIcon } from 'lucide-react'
 import type { Plant } from '@/lib/types/Plant'
 import { useAppForm } from '@/hooks/form'
 import { updatePlantServer } from '@/lib/server/plants'
@@ -39,6 +39,12 @@ export default function EditPlantModal({
       },
     },
     onSubmit: async ({ value }) => {
+      const loadingToast = toast.loading('Updating plant...', {
+        classNames: {
+          toast: 'bg-slate-800 border-slate-700',
+          title: 'text-slate-100',
+        },
+      })
       try {
         await updatePlantServer({
           data: {
@@ -46,11 +52,25 @@ export default function EditPlantModal({
             updates: value,
           },
         })
-
+        toast.dismiss(loadingToast)
+        toast.success('Plant updated successfully!', {
+          classNames: {
+            toast: 'bg-slate-800 border-slate-700',
+            title: 'text-slate-100',
+          },
+        })
         navigate({ to: refreshPath })
         onClose()
       } catch (error) {
         console.log('Uh oh spaghetti os, something went wrong', error)
+        toast.error('Failed to update plant', {
+          description: 'Please try again',
+          classNames: {
+            toast: 'bg-slate-800 border-slate-700',
+            title: 'text-slate-100',
+            description: 'text-slate-400',
+          },
+        })
       }
     },
   })

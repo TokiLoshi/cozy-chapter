@@ -1,4 +1,4 @@
-import { Trash, XIcon } from 'lucide-react'
+import { Edit, Trash, XIcon } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useState } from 'react'
@@ -115,7 +115,6 @@ export default function PlantModal({
   const [plantToEdit, setPlantToEdit] = useState<Plant | null>(null)
 
   const handleEdit = (plant: Plant) => {
-    console.log('User wants to edit: ', plant)
     setPlantToEdit(plant)
     setIsEditOpen(true)
   }
@@ -222,6 +221,7 @@ export default function PlantModal({
                           onClick={() => handleEdit(plant)}
                           className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                         >
+                          <Edit className="w-5 h-5" />
                           Edit
                         </button>
                         <div className="flex-1"></div>

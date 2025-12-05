@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { createServerFn } from '@tanstack/react-start'
 import { Edit, XIcon } from 'lucide-react'
+import { toast } from 'sonner'
 import type { Blog } from '@/lib/types/Blog'
 import { useAppForm } from '@/hooks/form'
 import { updateArticle } from '@/db/queries/articles'
@@ -61,6 +62,12 @@ export default function EditModal({
       },
     },
     onSubmit: async ({ value }) => {
+      const loadingToast = toast.loading('Updating plant...', {
+        classNames: {
+          toast: 'bg-slate-800 border-slate-700',
+          title: 'text-slate-100',
+        },
+      })
       try {
         await updateBlog({
           data: {
@@ -68,10 +75,24 @@ export default function EditModal({
             updates: value,
           },
         })
-
+        toast.dismiss(loadingToast)
+        toast.success('Article updated successfully!', {
+          classNames: {
+            toast: 'bg-slate-800 border-slate-700',
+            title: 'text-slate-100',
+          },
+        })
         navigate({ to: refreshPath })
         setOpen(false)
       } catch (error) {
+        toast.error('Failed to update plant', {
+          description: 'Please try again',
+          classNames: {
+            toast: 'bg-slate-800 border-slate-700',
+            title: 'text-slate-100',
+            description: 'text-slate-400',
+          },
+        })
         console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
       }
     },
