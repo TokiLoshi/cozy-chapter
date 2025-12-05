@@ -2,13 +2,9 @@ import { Trash, XIcon } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { ScrollArea } from './ui/scroll-area'
+import EditPlantModal from './EditPlantModal'
 import type { Plant } from '@/lib/types/Plant'
-import {
-  createPlantServer,
-  deletePlantServer,
-  updatePlantServer,
-} from '@/lib/server/plants'
+import { createPlantServer, deletePlantServer } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
 
 type PlantFormProps = {
@@ -115,6 +111,15 @@ export default function PlantModal({
     return daysSince > recommendedWatering
   }
 
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [plantToEdit, setPlantToEdit] = useState<Plant | null>(null)
+
+  const handleEdit = (plant: Plant) => {
+    console.log('User wants to edit: ', plant)
+    setPlantToEdit(plant)
+    setIsEditOpen(true)
+  }
+
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -123,105 +128,117 @@ export default function PlantModal({
           className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
           onClick={closeModal}
         />
-        {/** Modal Content */}
-        <div className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-white">Your plants 🌱</h2>
-            <button
-              className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-              onClick={closeModal}
-            >
-              <XIcon />
-            </button>
-          </div>
-          <button
-            className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
-            onClick={() => {
-              setisAddFormOpen(true)
-            }}
-          >
-            + Add Plant
-          </button>
-          <PlantForm
-            isOpen={isAddFormOpen}
-            onClose={() => setisAddFormOpen(false)}
-            refreshPath={refreshPath}
+
+        {/** Edit modal */}
+        {isEditOpen && plantToEdit && (
+          <EditPlantModal
+            plant={plantToEdit}
+            refreshPath="/readingroom"
+            onClose={() => setIsEditOpen(false)}
           />
+        )}
 
-          {/** Empty State */}
-          {plants.length === 0 && (
-            <div className="text-center text-gray-400 py-8">
-              No plants added to inventory yet
+        {/** Modal Content */}
+        {!isEditOpen && (
+          <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold text-white">Your plants 🌱</h2>
+              <button
+                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                onClick={closeModal}
+              >
+                <XIcon />
+              </button>
             </div>
-          )}
+            <button
+              className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
+              onClick={() => {
+                setisAddFormOpen(true)
+              }}
+            >
+              + Add Plant
+            </button>
+            <PlantForm
+              isOpen={isAddFormOpen}
+              onClose={() => setisAddFormOpen(false)}
+              refreshPath={refreshPath}
+            />
 
-          {plants.length > 0 && (
-            <ScrollArea className="h-[500px] p-2 mb-2">
-              {plants.map((plant: Plant) => (
-                <>
-                  <div
-                    key={plant.id}
-                    className="bg-white/10 border mt-2 border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
-                  >
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {plant.species} {plant.group ? `(in ${plant.group})` : ''}
-                    </h3>
-                    <p className="text-lg font-semibold text-white mb-2">
-                      <span className={getHealthColor(plant.plantHealth)}>
-                        {' '}
-                        {plant.plantHealth}
-                      </span>
-                    </p>
-                    <p className="text-lg font-semibold text-white mb-2">
-                      {plant.lastWatered ? (
-                        <span className="text-l font-semibold">
-                          Last watered: {plant.lastWatered.toLocaleDateString()}
+            {/** Empty State */}
+            {plants.length === 0 && (
+              <div className="text-center text-gray-400 py-8">
+                No plants added to inventory yet
+              </div>
+            )}
+
+            {plants.length > 0 && (
+              <>
+                {plants.map((plant: Plant) => (
+                  <>
+                    <div
+                      key={plant.id}
+                      className="bg-white/10 border mt-2 border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
+                    >
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        {plant.species}{' '}
+                        {plant.group ? `(in ${plant.group})` : ''}
+                      </h3>
+                      <p className="text-lg font-semibold text-white mb-2">
+                        <span className={getHealthColor(plant.plantHealth)}>
+                          {' '}
+                          {plant.plantHealth}
                         </span>
-                      ) : (
-                        'Plant has not yet been watered'
-                      )}
-                    </p>
-                    <p className="text-lg font-semibold text-white mb-2">
-                      <span className="text-l font-semibold">
-                        Recommended watering interval:{' '}
-                      </span>
-                      {plant.recommendedWateringIntervalDays} days
-                    </p>
-                    {checkWaterNeeds(
-                      plant.lastWatered,
-                      plant.recommendedWateringIntervalDays,
-                    ) && (
-                      <p className=" text-white mb-2">plant needs watering</p>
-                    )}
-                    {plant.notes && (
-                      <p className="text-lg  text-white mb-2">
-                        <span className="font-semibold">Notes: </span>
-                        {plant.notes}
                       </p>
-                    )}
-                    <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
-                      <button
-                        onClick={() =>
-                          console.log('Edit button should go here')
-                        }
-                        className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                      >
-                        Edit
-                      </button>
-                      <div className="flex-1"></div>
-                      <button
-                        onClick={() => handleDelete(plant.id)}
-                        className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                      >
-                        <Trash className="w-4 h-4" />
-                      </button>
+                      <p className="text-lg font-semibold text-white mb-2">
+                        {plant.lastWatered ? (
+                          <span className="text-l font-semibold">
+                            Last watered:{' '}
+                            {plant.lastWatered.toLocaleDateString()}
+                          </span>
+                        ) : (
+                          'Plant has not yet been watered'
+                        )}
+                      </p>
+                      <p className="text-lg font-semibold text-white mb-2">
+                        <span className="text-l font-semibold">
+                          Recommended watering interval:{' '}
+                        </span>
+                        {plant.recommendedWateringIntervalDays} days
+                      </p>
+                      {checkWaterNeeds(
+                        plant.lastWatered,
+                        plant.recommendedWateringIntervalDays,
+                      ) && (
+                        <p className=" text-white mb-2">plant needs watering</p>
+                      )}
+                      {plant.notes && (
+                        <p className="text-lg  text-white mb-2">
+                          <span className="font-semibold">Notes: </span>
+                          {plant.notes}
+                        </p>
+                      )}
+                      <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
+                        <button
+                          onClick={() => handleEdit(plant)}
+                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                        >
+                          Edit
+                        </button>
+                        <div className="flex-1"></div>
+                        <button
+                          onClick={() => handleDelete(plant.id)}
+                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                        >
+                          <Trash className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </>
-              ))}
-            </ScrollArea>
-          )}
-        </div>
+                  </>
+                ))}
+              </>
+            )}
+          </div>
+        )}
       </div>
     </>
   )
@@ -346,7 +363,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             <form.AppField name="recommendedWateringIntervalDays">
               {(field) => (
                 <field.NumberField
-                  label="Recommended Days between Waterings"
+                  label="Recommended days between waterings"
                   placeholder="7"
                 />
               )}
