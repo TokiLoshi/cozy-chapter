@@ -49,7 +49,7 @@ export default function PlantModal({
       action: {
         label: 'Delete',
         onClick: async () => {
-          const loadingToast = toast.loading('Deleting article...', {
+          const loadingToast = toast.loading('Removing plant...', {
             classNames: {
               toast: 'bg-slate-800 border-slate-700',
               title: 'text-slate-100',

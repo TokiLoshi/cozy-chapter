@@ -21,81 +21,16 @@ import {
 import AudioComponent from '../components/Audio'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
-// import { signOut } from '@/lib/auth-client'
-import {
-  deleteArticle,
-  getArticlesbyId,
-  getSingleBlog,
-  updateArticle,
-} from '@/db/queries/articles'
+
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { getUserPlants } from '@/lib/server/plants'
+import { deleteBlogs, getUserBlogs } from '@/lib/server/articles'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
   return session
 })
-
-// User's blogs
-const getUserBlogs = createServerFn({ method: 'GET' }).handler(async () => {
-  const session = await getSessionServer()
-  if (!session) throw redirect({ to: '/login' })
-  const userId = session.user.id
-  const blogs = await getArticlesbyId(userId)
-  return blogs
-})
-
-// Edit blog
-export const getBlogToEdit = createServerFn({ method: 'GET' })
-  .inputValidator((data: { id: string }) => data)
-  .handler(async ({ data }) => {
-    const session = await getSessionServer()
-    if (!session) throw redirect({ to: '/login' })
-    try {
-      const blogId = data.id
-      const singleBlog = getSingleBlog(blogId)
-      return singleBlog
-    } catch (error) {
-      console.log('Something went wrong getting blog: ', data.id)
-      throw new Error('Issue getting single blog')
-    }
-  })
-
-// Delete blog
-export const deleteBlogs = createServerFn({ method: 'POST' })
-  .inputValidator((data: string) => data)
-  .handler(async ({ data }) => {
-    const session = await getSessionServer()
-    if (!session) throw redirect({ to: '/login' })
-    const blogId = data
-    try {
-      await deleteArticle(blogId)
-      return { success: true, id: blogId }
-    } catch (error) {
-      console.error(
-        'Oops, something went wrong deleting the article: ',
-        error,
-        blogId,
-      )
-      throw new Error('Something bad happened')
-    }
-  })
-
-// Update blog
-export const updateBlog = createServerFn({ method: 'POST' })
-  .inputValidator((data: { id: string; updates: Partial<Blog> }) => data)
-  .handler(async ({ data }) => {
-    const session = await getSessionServer()
-    if (!session) throw redirect({ to: '/login' })
-    try {
-      await updateArticle(data.id, data.updates)
-      return { success: true, id: data.id }
-    } catch (error) {
-      console.error('Error updating blog: ', data.id, data.updates)
-    }
-    throw new Error('Something bad happend')
-  })
 
 export const Route = createFileRoute('/readingroom')({
   loader: async () => {
@@ -227,7 +162,6 @@ function ReadingRoomComponent() {
   return (
     <>
       {/** Audio Overlay top right */}
-
       <div className="relative w-full h-screen">
         <div className="absolute top-6 right-6 z-10 items-center bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
           <AudioComponent />
@@ -310,7 +244,6 @@ function ReadingRoomComponent() {
         )}
 
         {/** Article modal */}
-
         <ArticleModal
           isOpen={isArticleModalOpen}
           onClose={() => setIsArticleModalOpen(false)}
@@ -318,7 +251,6 @@ function ReadingRoomComponent() {
         />
 
         {/** Blogs Overlay */}
-
         {selectedStatus && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             {/** Backdrop */}

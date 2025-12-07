@@ -1,40 +1,8 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { createServerFn } from '@tanstack/react-start'
 import { XIcon } from 'lucide-react'
-import { z } from 'zod'
-import { createInsertSchema } from 'drizzle-zod'
-import { getRequest } from '@tanstack/react-start/server'
-import { auth } from '../lib/auth'
 import { useAppForm } from '@/hooks/form'
-import { createArticle } from '@/db/queries/articles'
+import { submitArticle } from '@/lib/server/articles'
 import { getSessionServer } from '@/lib/utils'
-
-import { userBlogs } from '@/db/article-schema'
-
-const insertArticlesSchema = createInsertSchema(userBlogs, {
-  title: z.string().min(1, 'title is required'),
-  url: z.string().optional().or(z.literal('')),
-  author: z.string().optional(),
-  description: z.string().optional(),
-  estimatedReadingTime: z.number().min(0).optional(),
-  wordCount: z.number().optional(),
-  status: z.enum(['toRead', 'reading', 'read']).default('toRead'),
-  notes: z.string().optional(),
-})
-
-const submitArticle = createServerFn({ method: 'POST' })
-  .inputValidator(insertArticlesSchema)
-  .handler(async ({ data }) => {
-    const session = await auth.api.getSession({ headers: getRequest().headers })
-    if (!session) throw new Error('Unauthorized')
-
-    const articleData = {
-      ...data,
-      userId: session.user.id,
-    }
-    const article = await createArticle(articleData)
-    return article
-  })
 
 export const Route = createFileRoute('/logarticle')({
   loader: async () => {

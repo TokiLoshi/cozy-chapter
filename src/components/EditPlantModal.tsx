@@ -87,7 +87,7 @@ export default function EditPlantModal({
           <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-10">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-white">Edit article</h2>
+                <h2 className="text-2xl font-bold text-white">Edit Plant</h2>
                 <p className="text-sm text-gray-400 mt-1">
                   Update your plant info here
                 </p>
