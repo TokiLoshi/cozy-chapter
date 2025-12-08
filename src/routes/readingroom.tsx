@@ -161,7 +161,7 @@ function ReadingRoomComponent() {
   }
 
   const [isBookModalOpen, setIsBookModalOpen] = useState(false)
-
+  console.log('modal: ', isBookModalOpen)
   return (
     <>
       {/** Audio Overlay top right */}
