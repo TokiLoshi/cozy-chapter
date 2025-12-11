@@ -9,10 +9,16 @@ count.txt
 .tanstack
 .output
 .vinxi
-todos.json
+
 src/routeTree.gen.ts
 **/routeTree.gen.ts
 
 # Local Netlify folder
 .netlify
+
+# Local to dos 
 todos.md
+spotifyDocs.md
+todos.json
+gpiNotes.md
+audio.json
