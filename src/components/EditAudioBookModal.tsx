@@ -1,5 +1,5 @@
-import { useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
+// import { useNavigate } from '@tanstack/react-router'
+// import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import type { AudioBook } from '@/lib/types/AudioBook'
 import { useAppForm } from '@/hooks/form'
@@ -15,7 +15,10 @@ export default function EditAudioBookModal({
   refreshPath: string
   onClose: () => void
 }) {
-  const navigate = useNavigate()
+  console.log('Audio book: ', audioBook)
+  console.log('Refresh path: ', refreshPath)
+
+  // const navigate = useNavigate()
   const form = useAppForm({
     // TODO wire up server side values and types here
   })

@@ -1,9 +1,13 @@
-import { Edit, Trash, XIcon } from 'lucide-react'
-import { useNavigate } from '@tanstac/react-router'
+import { 
+  // Edit, 
+  // Trash, 
+  XIcon } from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import EditAudioBookModal from './EditAudioBookModal'
-import { useAppForm } from '@/hooks/form'
+// import { useAppForm } from '@/hooks/form'
+import type { AudioBook } from '@/lib/types/AudioBook'
 
 type AudioBooksFormProps = {
   isOpen: boolean
@@ -17,7 +21,8 @@ export default function AudioBooksModal({
   onClose,
   refreshPath,
   audiobooks = [],
-}: AudioBooksFormProps ) {
+}: AudioBooksFormProps ) 
+{
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
   console.log('Audiobook data in modal: ', audiobooks)
   if (!isOpen) return null
@@ -43,7 +48,7 @@ export default function AudioBooksModal({
       action: {
         label: 'Delete', 
         onClick: async () => {
-          const loadingToast = toast.loading('Removing audiobook...' {
+          const loadingToast = toast.loading('Removing audiobook...', {
             classNames: {
               toast: 'bg-slate-800 border-slate-700', 
               title: 'text-slate-100'
@@ -51,6 +56,8 @@ export default function AudioBooksModal({
           })
           try {
             // TODO: add server logic here
+            console.log("User wants to delete audiobook")
+            navigate({ to: "/readingroom"})
           } catch (error) {
             console.error("Uh oh spahetti ohs something went wrong")
           }
@@ -72,7 +79,7 @@ export default function AudioBooksModal({
   }
 
   return (
-    <>
+   <>
     <div className="fixed inset-0 z-50 flex items-center justify-center">
 
       {/** Backdrop  */}
@@ -88,38 +95,44 @@ export default function AudioBooksModal({
         <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-white">Your AudioBookd 🎧</h2>
-        <button
-        className="cursor-pointer text-gray0400 hover:text-white text-2xl"
-        onClick={closeModal}
-        >
-          <XIcon />
-        </button>
-        </div>
-        <button className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
-        onClick={() => {
-          setisAddFormOpen(true)
-        }}
-        >
-        + Audio Book
-        </button>
-        <AudioBookForm 
-        isOpen={isAddFormOpen}
-        onClose={() => setisAddFormOpen(false)}
-        refreshPath={refreshPath} 
-        />
+            <button
+              className="cursor-pointer text-gray0400 hover:text-white text-2xl"
+              onClick={closeModal}>
+              <XIcon />
+            </button>
           </div>
-      )}
+          <button className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
+            onClick={() => {
+            setisAddFormOpen(true)
+            }}
+          >
+          + Audio Book
+          </button>
+          <AudioBookForm 
+            isOpen={isAddFormOpen}
+            onClose={() => setisAddFormOpen(false)}
+            refreshPath={refreshPath} 
+          />
+         
+          {/** Empty State */} 
+          { audiobooks.length === 0 && (
+            <div className="text-center text-gray-400 py-8">
+              No audiobooks in your listening library yet
+            </div>
+          )}
 
-
+          {audiobooks.length > 0 && (
+            <>
+            {audiobooks.map((audioBook: AudioBook) => (
+              <div key={audioBook.id} className="bg-white/10 border mt">
+                AudioBooks stuff to go here
+              </div>
+            ))}
+            </>
+          )}
 
     </div>
     </>
   )
-}
-
-function AudioBookForm({ isOpen, onClose, refreshPath}: AudioBooksFormProps) {
-  const navigate = useNavigate()
-  const form = useAppForm({
-    //TODO: wire this up 
-  })
+  
 }
