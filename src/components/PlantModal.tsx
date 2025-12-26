@@ -24,8 +24,6 @@ export default function PlantModal({
 }: PlantFormProps) {
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
 
-  console.log('Plant Data in modal: ', plants)
-
   if (!isOpen) return null
 
   const closeModal = () => {
