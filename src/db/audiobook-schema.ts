@@ -1,6 +1,6 @@
 import {
-  boolean,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   text,
@@ -9,39 +9,42 @@ import {
 } from 'drizzle-orm/pg-core'
 import { user } from './auth-schema'
 
-export const userAudioBook = pgTable('userAudiobooks', {
+export const audioBookStatus = pgEnum('audioBookStatus', [
+  'toListen',
+  'listening',
+  'listened',
+])
+
+// TODO: check this maps correctly
+export const audioBooks = pgTable('audiobooks', {
+  id: text('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description'),
+  edition: text('edition'),
+  externalUrl: text('externalUrl'),
+  href: text('href'),
+  coverImageUrl: text('coverImageUrl'),
+  totalChapters: integer('totalChapters'),
+  authors: jsonb('authors').$type<Array<string>>(),
+  narrators: jsonb('narrators').$type<Array<string>>(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+export const userAudioBooks = pgTable('userAudiobooks', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: text('userId')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
   audioBookId: text('audioBookId')
     .notNull()
-    .references(() => audiobook.id, { onDelete: 'cascade' }),
-})
-
-// TODO: check this maps correctly
-export const audioBook = pgTable('audiobooks', {
-  authors: Array<string>,
-  availableMarkets: Array<string>,
-  description: text('description'),
-  htmlDescription: text('htmlDescription'),
-  edition: 'Unabridged',
-  externalUrls: text,
-  href: text('href'),
-  id: text('id'),
-  title: text('title').notNull(),
-  externalUrl: text('url'),
-  // images: object with url: string, height: int, width: int
-  // narrators array
-  // last chapter
-  // total chapters
+    .references(() => audioBooks.id, { onDelete: 'cascade' }),
+  status: audioBookStatus('status').notNull().default('toListen'),
+  lastChapter: integer('lastChapter').default(0),
+  lastPositionMs: integer('lastPositionMs').default(0),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
 
-export type AudioBooks = typeof AudioBooks.$inferInsert
-
-// last chapter
-// chapters left or % completed
-// created at
-// updated at
+export type AudioBooks = typeof audioBooks.$inferInsert
+export type UserAudioBooks = typeof userAudioBooks.$inferInsert
