@@ -57,7 +57,7 @@ export async function createUserAudiobook(
   }
 }
 
-export async function getUserAudioBooks(userId: string) {
+export async function getUserAudiobooks(userId: string) {
   try {
     const result = await db
       .select({
@@ -74,7 +74,7 @@ export async function getUserAudioBooks(userId: string) {
   }
 }
 
-export async function updateUserAudioBook(
+export async function updateUserAudiobook(
   id: string,
   userId: string,
   updates: Partial<UserAudioBooks>,
@@ -93,7 +93,7 @@ export async function updateUserAudioBook(
   }
 }
 
-export async function deleteUserAudioBook(userId: string, id: string) {
+export async function deleteUserAudiobook(userId: string, id: string) {
   try {
     await db
       .delete(userAudioBooks)

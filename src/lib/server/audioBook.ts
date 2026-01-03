@@ -2,21 +2,19 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../auth'
+import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
 import {
-  upsertAudiobook,
   createUserAudiobook,
+  deleteUserAudiobook,
   getUserAudiobooks,
   updateUserAudiobook,
-  deleteUserAudiobook,
-} from '@/db/queries/audiobooks'
-import type { Audiobooks, UserAudiobooks } from '@/db/audiobook-schema'
+  upsertAudiobook,
+} from '@/db/queries/audibooks'
 
-const getSessionServer = createServerFun({ method: 'GET' }).handler(
-  async () => {
-    const session = await auth.api.getSession({ headers: getRequest().headers })
-    return session
-  },
-)
+const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
+  const session = await auth.api.getSession({ headers: getRequest().headers })
+  return session
+})
 
 let cachedToken: { token: string; expiresAt: number } | null = null
 
@@ -31,7 +29,7 @@ async function getSpotifyToken(): Promise<string> {
   const response = await fetch('https://accounts.spotify.com/api/token', {
     method: 'POST',
     headers: {
-      ContentType: 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: new URLSearchParams({
       grant_type: 'client_credentials',
@@ -46,8 +44,8 @@ async function getSpotifyToken(): Promise<string> {
 
   const data = await response.json()
   cachedToken = {
-    token: data.accesss_token,
-    expiresAt: (Date.now() + (data.expires_in - 60)) & 10000,
+    token: data.access_token,
+    expiresAt: (Date.now() + (data.expires_in - 60)) * 10000,
   }
   return cachedToken.token
 }
@@ -93,7 +91,7 @@ export const searchAudiobooks = createServerFn({ method: 'GET' })
   })
 
 export const addAudioBook = createServerFn({ method: 'POST' })
-  .inputValidator((data: Omit<Audiobooks, 'createdAt' | 'updatedAt'>) => data)
+  .inputValidator((data: Omit<AudioBooks, 'createdAt' | 'updatedAt'>) => data)
   .handler(async ({ data }) => {
     const session = await getSessionServer()
 
@@ -110,7 +108,7 @@ export const addAudioBook = createServerFn({ method: 'POST' })
     // Link audiobook to user
     const userAudiobookResult = await createUserAudiobook({
       userId: session.user.id,
-      audibookId: data.id,
+      audioBookId: data.id,
     })
     if (!userAudiobookResult.success) {
       throw new Error('Failed to link audiobook to user')
@@ -136,7 +134,7 @@ export const getUserAudiobooksServer = createServerFn({
 
 export const updateUserAudiobookServer = createServerFn({ method: 'POST' })
   .inputValidator(
-    (data: { id: string; updates: Partial<UserAudiobooks> }) => data,
+    (data: { id: string; updates: Partial<UserAudioBooks> }) => data,
   )
   .handler(async ({ data }) => {
     const session = await getSessionServer()
@@ -161,7 +159,7 @@ export const deleteUserAudiobookServer = createServerFn({ method: 'POST' })
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
 
-    const result = deleteUserAudiobook(session.user.id, data)
+    const result = await deleteUserAudiobook(session.user.id, data)
 
     if (!result.success) {
       throw new Error('Error deleting user audiobook')
