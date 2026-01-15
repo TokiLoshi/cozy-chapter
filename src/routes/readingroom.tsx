@@ -8,6 +8,7 @@ import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
 import EditModal from '../components/EditModal'
 import ArticleModal from '../components/ArticleModal'
+import AudioBooksModal from '../components/AudioBooks'
 import PlantModal from '../components/PlantModal'
 import {
   bushSound,
@@ -162,6 +163,14 @@ function ReadingRoomComponent() {
 
   const [isBookModalOpen, setIsBookModalOpen] = useState(false)
   console.log('modal: ', isBookModalOpen)
+
+  const handleHeadPhonesClick = () => {
+    console.log('Headphones clicked')
+    setIsAudioBookModalOpen(!isAudiobookModalOpen)
+  }
+
+  const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
+
   return (
     <>
       {/** Audio Overlay top right */}
@@ -226,6 +235,7 @@ function ReadingRoomComponent() {
           isLampOn={isLampOn}
           onPlantClick={bushSound}
           onOrchidClick={handleOrchidClick}
+          onHeadPhonesClick={handleHeadPhonesClick}
         />
 
         {/** Plant Modal */}
@@ -251,6 +261,12 @@ function ReadingRoomComponent() {
           isOpen={isArticleModalOpen}
           onClose={() => setIsArticleModalOpen(false)}
           refreshPath="/readingroom"
+        />
+
+        {/** Audiobooks modal */}
+        <AudioBooksModal
+          isOpen={isAudiobookModalOpen}
+          onClose={() => setIsAudioBookModalOpen(false)}
         />
 
         {/** Blogs Overlay */}

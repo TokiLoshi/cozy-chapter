@@ -225,60 +225,60 @@ export default function AudioBooksModal({
             </div>
           )}
         </div>
-      </div>
-      {/** User's Library */}
-      <div>
-        <h3 className="text-sm font-medium text-slate-400 mb-3">
-          Your Library
-        </h3>
-        {userAudiobooks?.length === 0 ? (
-          <p className="text-slate-400 text-sm">
-            No audiobooks yet. Search above to add some!
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {userAudiobooks?.map((item) => (
-              <div
-                key={item.audioBook.id}
-                className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg"
-              >
-                {item.audioBook.coverImageUrl && (
-                  <img
-                    src={item.audioBook.coverImageUrl}
-                    alt={item.audioBook.title}
-                    className="w-16 h-16 object-cover rounded"
-                  />
-                )}
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-slate-100 truncate">
-                    {item.audioBook.title}
-                  </h4>
-                  <p className="text-sm text-slate-400 truncate">
-                    {item.audioBook.authors?.join(', ')}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs px-2 py-0.5 rounded bg-slate-600 text-slate-300">
-                      {item.userAudioBook.status}
-                    </span>
-                    {item.userAudioBook.lastChapter &&
-                      item.userAudioBook.lastChapter > 0 && (
-                        <span className="text-xs text-slate-500">
-                          Chapter {item.userAudioBook.lastChapter}/{' '}
-                          {item.audioBook.totalChapters}
-                        </span>
-                      )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleDelete(item.audioBook.id)}
-                  className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+        {/** User's Library */}
+        <div>
+          <h3 className="text-sm font-medium text-slate-400 mb-3">
+            Your Library
+          </h3>
+          {userAudiobooks?.length === 0 ? (
+            <p className="text-slate-400 text-sm">
+              No audiobooks yet. Search above to add some!
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {userAudiobooks?.map((item) => (
+                <div
+                  key={item.audioBook.id}
+                  className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg"
                 >
-                  <XIcon className="w-4 h-4 text-red-400" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+                  {item.audioBook.coverImageUrl && (
+                    <img
+                      src={item.audioBook.coverImageUrl}
+                      alt={item.audioBook.title}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-slate-100 truncate">
+                      {item.audioBook.title}
+                    </h4>
+                    <p className="text-sm text-slate-400 truncate">
+                      {item.audioBook.authors?.join(', ')}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs px-2 py-0.5 rounded bg-slate-600 text-slate-300">
+                        {item.userAudioBook.status}
+                      </span>
+                      {item.userAudioBook.lastChapter &&
+                        item.userAudioBook.lastChapter > 0 && (
+                          <span className="text-xs text-slate-500">
+                            Chapter {item.userAudioBook.lastChapter}/{' '}
+                            {item.audioBook.totalChapters}
+                          </span>
+                        )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDelete(item.userAudioBook.id)}
+                    className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                  >
+                    <XIcon className="w-4 h-4 text-red-400" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
