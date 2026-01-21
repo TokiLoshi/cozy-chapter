@@ -1,21 +1,24 @@
 // import { useNavigate } from '@tanstack/react-router'
 // import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
-import type { AudioBook } from '@/lib/types/AudioBook'
+import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
 import { useAppForm } from '@/hooks/form'
 
 // TODO Wire up server side logic
+
+type EditAudioBookModalProps = {
+  audioBook: AudioBooks
+  refreshPath: string
+  userAudioBook: UserAudioBooks
+  onClose: () => void
+}
 
 export default function EditAudioBookModal({
   audioBook,
   refreshPath,
   onClose,
-}: {
-  audioBook: AudioBook
-  refreshPath: string
-  onClose: () => void
-}) {
-  console.log('Audio book: ', audioBook)
+}: EditAudioBookModalProps) {
+  console.log('Audio book to edit: ', audioBook)
   console.log('Refresh path: ', refreshPath)
 
   // const navigate = useNavigate()
@@ -40,7 +43,7 @@ export default function EditAudioBookModal({
                   Edit Audiobook
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                  Update your audibook here
+                  Update your audibook here {audioBook.title}
                 </p>
               </div>
               <button
@@ -58,7 +61,9 @@ export default function EditAudioBookModal({
               form.handleSubmit()
             }}
             className="p-6 space-y-6 text-gray-100"
-          ></form>
+          >
+            <p>Form fields coming soon</p>
+          </form>
         </div>
       </div>
     </>
