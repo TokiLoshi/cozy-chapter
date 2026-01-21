@@ -64,6 +64,8 @@ export default function AudioBooksModal({
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-audiobooks'] })
+      setSearchQuery('')
+      setDebouncedQuery('')
       toast.success('Audiobook added to your library')
     },
     onError: () => {
@@ -273,13 +275,16 @@ export default function AudioBooksModal({
                           <span className="text-xs px-2 py-0.5 rounded bg-slate-600 text-slate-300">
                             {item.userAudioBook.status}
                           </span>
-                          {item.userAudioBook.lastChapter &&
-                            item.userAudioBook.lastChapter > 0 && (
-                              <span className="text-xs text-slate-300">
-                                Chapter {item.userAudioBook.lastChapter}/{' '}
-                                {item.audioBook.totalChapters}
-                              </span>
-                            )}
+                          <span className="text-slate-300">
+                            last chapter:{' '}
+                            {item.userAudioBook.lastChapter &&
+                              item.userAudioBook.lastChapter > 0 && (
+                                <span className="text-xs text-slate-300">
+                                  Chapter {item.userAudioBook.lastChapter}/{' '}
+                                  {item.audioBook.totalChapters}
+                                </span>
+                              )}
+                          </span>
                         </div>
                       </div>
                       <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
