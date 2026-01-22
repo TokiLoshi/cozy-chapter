@@ -26,6 +26,11 @@ function AudioBookCard({
   onEdit: () => void
   onDelete: () => void
 }) {
+  console.log(
+    'lastChapter value:',
+    item.userAudioBook.lastChapter,
+    typeof item.userAudioBook.lastChapter,
+  )
   return (
     <>
       <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
@@ -43,14 +48,12 @@ function AudioBookCard({
           <p className="text-sm text-slate-400 truncate">
             {item.audioBook.authors?.join(',')}
           </p>
+
           <div className="flex items-center gap-2 mt-1">
-            {item.userAudioBook.lastChapter &&
-              item.userAudioBook.lastChapter > 0 && (
-                <span className="text-xs text-slate-300">
-                  Chapter {item.userAudioBook.lastChapter} /{' '}
-                  {item.audioBook.totalChapters}
-                </span>
-              )}
+            <span className="text-xs text-slate-300">
+              Chapter {item.userAudioBook.lastChapter} /{' '}
+              {item.audioBook.totalChapters}
+            </span>
           </div>
         </div>
         <div className="flex gap-2 items-center">
@@ -62,7 +65,7 @@ function AudioBookCard({
           </button>
           <button
             onClick={onDelete}
-            className="cursor-pointer bg-red-600/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Trash className="w-4 h-4" />
           </button>
@@ -284,9 +287,6 @@ export default function AudioBooksModal({
                             </h4>
                             <p className="text-sm text-slate-400 truncate">
                               {audiobook.authors?.join(', ')}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              {audiobook.totalChapters} chapters
                             </p>
                           </div>
                           <button
