@@ -14,6 +14,7 @@ export default function IsometricRoom({
   isLampOn,
   onPlantClick,
   onOrchidClick,
+  onHeadPhonesClick,
 }) {
   const bookcaseRef = useRef({ onBookcaseClick })
 
@@ -56,6 +57,7 @@ export default function IsometricRoom({
         isLampOn={isLampOn}
         onPlantClick={onPlantClick}
         onOrchidClick={onOrchidClick}
+        onHeadPhonesClick={onHeadPhonesClick}
       />
     </>
   )

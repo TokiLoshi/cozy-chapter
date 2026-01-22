@@ -16,6 +16,7 @@ export default function CozyRoom({
   isLampOn,
   onPlantClick,
   onOrchidClick,
+  onHeadPhonesClick,
   ...props
 }) {
   const { nodes, materials } = useGLTF('models/cozyroom.glb')
@@ -441,6 +442,7 @@ export default function CozyRoom({
         <group
           onPointerOver={() => setIsHeadphonesHovered(true)}
           onPointerOut={() => setIsHeadphonesHovered(false)}
+          onClick={() => onHeadPhonesClick()}
         >
           <mesh
             castShadow
