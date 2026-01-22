@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import EditAudioBookModal from './EditAudioBookModal'
 import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   addAudioBook,
   deleteUserAudiobookServer,
@@ -14,6 +15,68 @@ import {
 type AudioBooksModalProps = {
   isOpen: boolean
   onClose: () => void
+}
+
+function AudioBookCard({
+  item,
+  onEdit,
+  onDelete,
+}: {
+  item: { audioBook: AudioBooks; userAudioBook: UserAudioBooks }
+  onEdit: () => void
+  onDelete: () => void
+}) {
+  console.log(
+    'lastChapter value:',
+    item.userAudioBook.lastChapter,
+    typeof item.userAudioBook.lastChapter,
+  )
+  return (
+    <>
+      <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
+        {item.audioBook.coverImageUrl && (
+          <img
+            src={item.audioBook.coverImageUrl}
+            alt={item.audioBook.title}
+            className="w-16 h-16 object-cover rounded"
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-slate-100 truncate">
+            {item.audioBook.title}
+          </h4>
+          <p className="text-sm text-slate-400 truncate">
+            {item.audioBook.authors?.join(',')}
+          </p>
+
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-slate-300">
+              Chapter {item.userAudioBook.lastChapter} /{' '}
+              {item.audioBook.totalChapters}
+            </span>
+          </div>
+        </div>
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={onEdit}
+            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={onDelete}
+            className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+          >
+            <Trash className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </>
+  )
+}
+
+function EmptyTabContent({ message }: { message: string }) {
+  return <p className="text-slate-400 text-sm py-4 text-center">{message}</p>
 }
 
 export default function AudioBooksModal({
@@ -122,6 +185,19 @@ export default function AudioBooksModal({
     onClose()
   }
 
+  const audioToListen =
+    userAudiobooks?.filter(
+      (book) => book.userAudioBook.status === 'toListen',
+    ) ?? []
+  const audioListening =
+    userAudiobooks?.filter(
+      (book) => book.userAudioBook.status === 'listening',
+    ) ?? []
+  const audioListened =
+    userAudiobooks?.filter(
+      (book) => book.userAudioBook.status === 'listened',
+    ) ?? []
+
   if (!isOpen) return null
 
   return (
@@ -212,9 +288,6 @@ export default function AudioBooksModal({
                             <p className="text-sm text-slate-400 truncate">
                               {audiobook.authors?.join(', ')}
                             </p>
-                            <p className="text-xs text-slate-500">
-                              {audiobook.totalChapters} chapters
-                            </p>
                           </div>
                           <button
                             onClick={() => handleAdd(audiobook)}
@@ -240,76 +313,91 @@ export default function AudioBooksModal({
                 </div>
               )}
             </div>
+
             {/** User's Library */}
-            <div>
+            <div className="pt-4">
               <h3 className="text-sm font-medium text-slate-400 mb-3">
                 Your Library
               </h3>
+
               {userAudiobooks?.length === 0 ? (
                 <p className="text-slate-400 text-sm">
                   No audiobooks yet. Search above to add some!
                 </p>
               ) : (
-                <div className="space-y-3">
-                  {userAudiobooks?.map((item) => (
-                    <div
-                      key={item.audioBook.id}
-                      className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg"
+                <Tabs defaultValue="listening" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+                    <TabsTrigger
+                      value="toListen"
+                      className="data-[state=active]:bg-amber-600 text-slate-200"
                     >
-                      {item.audioBook.coverImageUrl && (
-                        <img
-                          src={item.audioBook.coverImageUrl}
-                          alt={item.audioBook.title}
-                          className="w-16 h-16 object-cover rounded"
-                        />
+                      To Listen to ({audioToListen.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="listening"
+                      className="data-[state=active]:bg-amber-600 text-slate-200"
+                    >
+                      Listening To ({audioListening.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="listened"
+                      className="data-[state=active]:bg-amber-600 text-slate-200"
+                    >
+                      Finished ({audioListened.length})
+                    </TabsTrigger>
+                  </TabsList>
+                  {/** To Listen to  */}
+                  <TabsContent value="toListen" className="mt-4">
+                    <div className="space-y-3">
+                      {audioToListen.length === 0 ? (
+                        <EmptyTabContent message="No audiobooks in your queue yet" />
+                      ) : (
+                        audioToListen.map((item) => (
+                          <AudioBookCard
+                            key={item.audioBook.id}
+                            item={item}
+                            onEdit={() => handleEdit(item)}
+                            onDelete={() => handleDelete(item.userAudioBook.id)}
+                          />
+                        ))
                       )}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-slate-100 truncate">
-                          {item.audioBook.title}
-                        </h4>
-                        <p className="text-sm text-slate-400 truncate">
-                          {item.audioBook.authors?.join(', ')}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs px-2 py-0.5 rounded bg-slate-600 text-slate-300">
-                            {item.userAudioBook.status}
-                          </span>
-                          <span className="text-slate-300">
-                            last chapter:{' '}
-                            {item.userAudioBook.lastChapter &&
-                              item.userAudioBook.lastChapter > 0 && (
-                                <span className="text-xs text-slate-300">
-                                  Chapter {item.userAudioBook.lastChapter}/{' '}
-                                  {item.audioBook.totalChapters}
-                                </span>
-                              )}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-300">
-                          Current position:{' '}
-                          {item.userAudioBook.lastPositionMs
-                            ? item.userAudioBook.lastPositionMs / 60000
-                            : 0}
-                          minutes{' '}
-                        </p>
-                      </div>
-                      <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
-                        <button
-                          onClick={() => handleEdit(item)}
-                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item.userAudioBook.id)}
-                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                        >
-                          <Trash className="w-4 h-4" />
-                        </button>
-                      </div>
                     </div>
-                  ))}
-                </div>
+                  </TabsContent>
+                  {/** Listening to  */}
+                  <TabsContent value="listening" className="mt-4">
+                    <div className="space-y-3">
+                      {audioListening.length === 0 ? (
+                        <EmptyTabContent message="No audiobooks in your queue yet" />
+                      ) : (
+                        audioListening.map((item) => (
+                          <AudioBookCard
+                            key={item.audioBook.id}
+                            item={item}
+                            onEdit={() => handleEdit(item)}
+                            onDelete={() => handleDelete(item.userAudioBook.id)}
+                          />
+                        ))
+                      )}
+                    </div>
+                  </TabsContent>
+                  {/** Listening to  */}
+                  <TabsContent value="listened" className="mt-4">
+                    <div className="space-y-3">
+                      {audioListened.length === 0 ? (
+                        <EmptyTabContent message="No audiobooks in your queue yet" />
+                      ) : (
+                        audioListened.map((item) => (
+                          <AudioBookCard
+                            key={item.audioBook.id}
+                            item={item}
+                            onEdit={() => handleEdit(item)}
+                            onDelete={() => handleDelete(item.userAudioBook.id)}
+                          />
+                        ))
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
               )}
             </div>
           </div>
