@@ -137,7 +137,6 @@ export default function AudioBooksModal({
           <EditAudioBookModal
             audioBook={audioBookToEdit.audioBook}
             userAudioBook={audioBookToEdit.userAudioBook}
-            refreshPath={'/readingroom'}
             onClose={() => {
               setIsEditOpen(false)
               setAudioBookToEdit(null)
@@ -231,7 +230,7 @@ export default function AudioBooksModal({
                                 Added
                               </span>
                             ) : (
-                              <Plus className="w-4 h-4 text-white" />
+                              <Plus className="w-4 h-4 text-white cursor-pointer" />
                             )}
                           </button>
                         </div>
@@ -286,6 +285,13 @@ export default function AudioBooksModal({
                               )}
                           </span>
                         </div>
+                        <p className="text-xs text-slate-300">
+                          Current position:{' '}
+                          {item.userAudioBook.lastPositionMs
+                            ? item.userAudioBook.lastPositionMs / 60000
+                            : 0}
+                          minutes{' '}
+                        </p>
                       </div>
                       <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
                         <button

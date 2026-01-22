@@ -74,7 +74,6 @@ export const searchAudiobooks = createServerFn({ method: 'GET' })
     }
 
     const data = await response.json()
-    console.log('Json data from spotify: ', data)
 
     return data.audiobooks.items.map((item: any) => ({
       id: item.id,
