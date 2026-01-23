@@ -2,13 +2,13 @@ import { Edit, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { userBooks, type Books, type UserBooks } from '@/db/book-schema'
+import type { Books, UserBooks } from '@/db/book-schema'
 import {
   addBook,
   deleteUserBookServer,
   getUserBookServer,
   searchBooks,
-  updateUserBookServer,
+  // updateUserBookServer,
 } from '@/lib/server/books'
 
 type BookModalProps = {
@@ -22,6 +22,8 @@ function BookCard({
   onDelete,
 }: {
   item: { books: Books; userBook: UserBooks }
+  onEdit: () => void
+  onDelete: () => void
 }) {
   console.log('Item')
   return (
@@ -95,7 +97,7 @@ export default function BooksModal({ isOpen, onClose }: BookModalProps) {
     queryFn: () => searchBooks({ data: debouncedQuery }),
     enabled: debouncedQuery.length > 2,
   })
-  const { data: Books } = useQuery({
+  const { data: userBooks } = useQuery({
     queryKey: ['user-books'],
     queryFn: () => getUserBookServer(),
   })
@@ -188,6 +190,7 @@ export default function BooksModal({ isOpen, onClose }: BookModalProps) {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   placeholder="Search for books..."
                   value={searchQuery}
                   onChange={(e) => handleSearchChange(e.target.value)}
@@ -222,6 +225,7 @@ export default function BooksModal({ isOpen, onClose }: BookModalProps) {
                         >
                           {book.coverImageUrl && (
                             <img
+                              src={book.coverImageUrl}
                               alt={book.title}
                               className="w-16 h-16 object-cover rounded"
                             />
@@ -260,6 +264,7 @@ export default function BooksModal({ isOpen, onClose }: BookModalProps) {
             </div>
 
             {/** User's Library  */}
+            <div className="pt-4">Library to go here</div>
           </div>
         )}
       </div>
