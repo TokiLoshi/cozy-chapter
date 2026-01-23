@@ -267,7 +267,10 @@ export default function ReadingModal({
             <TabsContent value="books">
               {/** Add / Search Toggle */}
               {!showBookSearch ? (
-                <button onClick={() => setShowBookSearch(true)}>
+                <button
+                  onClick={() => setShowBookSearch(true)}
+                  className="bg-amber-600 hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
+                >
                   + Add Book
                 </button>
               ) : (
