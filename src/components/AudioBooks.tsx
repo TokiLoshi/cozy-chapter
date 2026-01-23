@@ -26,11 +26,6 @@ function AudioBookCard({
   onEdit: () => void
   onDelete: () => void
 }) {
-  console.log(
-    'lastChapter value:',
-    item.userAudioBook.lastChapter,
-    typeof item.userAudioBook.lastChapter,
-  )
   return (
     <>
       <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
@@ -181,7 +176,6 @@ export default function AudioBooksModal({
   }
 
   const closeModal = () => {
-    console.log('Close auidobooks modal ')
     onClose()
   }
 
