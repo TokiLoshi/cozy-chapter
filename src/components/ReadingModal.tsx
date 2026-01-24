@@ -166,13 +166,13 @@ export default function ReadingModal({
             <TabsList className="grid w-full grid-cols-2 mb-4 bg-slate-800">
               <TabsTrigger
                 value="articles"
-                className="cursor-pointer text-white data-[state=active]:text-slate-600"
+                className="curor-pointer data-[state=active]:bg-amber-600 text-slate-200"
               >
                 Articles ({filteredBlogs.length})
               </TabsTrigger>
               <TabsTrigger
                 value="books"
-                className="cursor-pointer text-white data-[state=active]:text-slate-600"
+                className="curor-pointer data-[state=active]:bg-amber-600 text-slate-200"
               >
                 Books ({filteredBooks ? filteredBooks.length : 0})
               </TabsTrigger>
