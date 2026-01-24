@@ -34,6 +34,7 @@ export async function upsertBook(data: Omit<Books, 'createdAt' | 'updatedAt'>) {
 export async function createUserBook(
   data: Pick<UserBooks, 'userId' | 'bookId'> & {
     status: 'toRead' | 'reading' | 'read'
+    pageCount?: number | null
   },
 ) {
   try {
@@ -49,12 +50,16 @@ export async function createUserBook(
     if (existing.length > 0) {
       return { success: true, data: existing[0] }
     }
+
+    const currentPage =
+      data.status === 'read' && data.pageCount ? data.pageCount : 0
     const result = await db
       .insert(userBooks)
       .values({
         userId: data.userId,
         bookId: data.bookId,
         status: data.status,
+        currentPage,
       })
       .returning()
     return { success: true, data: result }

@@ -75,6 +75,7 @@ export const addBook = createServerFn({ method: 'POST' })
       userId: session.user.id,
       bookId: data.book.id,
       status: data.status ?? 'toRead',
+      pageCount: data.book.pageCount,
     })
     if (!userBookResult.success) {
       throw new Error(`Faailed to save user book`)
