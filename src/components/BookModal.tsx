@@ -1,11 +1,23 @@
-import { Edit, Trash } from 'lucide-react'
-// import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-// import { toast } from 'sonner'
-// import { useState } from 'react'
-// import EditBookModal from './EditBookModal'
+import { Edit, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { useState } from 'react'
+import EditBookModal from './EditBookModal'
 import type { Books, UserBooks } from '@/db/book-schema'
+import {
+  addBook,
+  deleteUserBookServer,
+  getUserBookServer,
+  searchBooks,
+  updateUserBookServer,
+} from '@/lib/server/books'
 
-export default function BookCard({
+type BookModalProps = {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export function BookCard({
   item,
   onEdit,
   onDelete,
@@ -54,4 +66,28 @@ export default function BookCard({
       </div>
     </>
   )
+}
+
+function EmptyTabContent({ message }: { message: string }) {
+  return <p className="text-slate-400 text-sm py-4 text-center">{message}</p>
+}
+
+export default function BooksModal({ isOpen, onClose }: BookModalProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [bookToEdit, setBookToEdit] = useState<{
+    book: Books
+    userBook: UserBooks
+  } | null>(null)
+
+  const queryClient = useQueryClient()
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value)
+    const timeoutId = setTimeout(() => {
+      setDebouncedQuery(value)
+    }, 500)
+    return () => clearTimeout(timeoutId)
+  }
 }

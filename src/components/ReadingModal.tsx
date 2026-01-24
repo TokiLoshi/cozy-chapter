@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 // import EditModal from './EditModal'
 import ArticleCard from './BlogsModal'
-import BookCard from './BookModal'
+import { BookCard } from './BookModal'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import type { Books } from '@/db/book-schema'
 import { deleteBlogs } from '@/lib/server/articles'
@@ -38,7 +38,6 @@ export default function ReadingModal({
 
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
-
   const [showBookSearch, setShowBookSearch] = useState(false)
 
   // Reading Material
