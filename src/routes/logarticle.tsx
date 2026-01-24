@@ -92,7 +92,7 @@ function ArticleForm() {
         await submitArticle({ data: value })
         navigate({ to: '/readingroom' })
       } catch (error) {
-        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+        console.error('Something went wrong updating article: ', error)
       }
     },
   })

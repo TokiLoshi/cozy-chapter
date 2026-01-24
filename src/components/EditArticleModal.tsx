@@ -93,7 +93,7 @@ export default function EditArticleModal({
             description: 'text-slate-400',
           },
         })
-        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+        console.error('Error editing article', error)
       }
     },
   })

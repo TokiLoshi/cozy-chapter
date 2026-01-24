@@ -78,7 +78,7 @@ function DemoArticle() {
         await submitArticle({ data: value })
         navigate({ to: '/readingroomdemo' })
       } catch (error) {
-        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+        console.error('Something went wrong updating article')
       }
     },
   })
@@ -99,7 +99,6 @@ function DemoArticle() {
 
         <form
           onSubmit={(e) => {
-            console.log('Clicked!')
             e.preventDefault()
             e.stopPropagation()
             form.handleSubmit()

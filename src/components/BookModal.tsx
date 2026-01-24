@@ -10,7 +10,6 @@ export default function BookCard({
   onEdit: () => void
   onDelete: () => void
 }) {
-  console.log('Item')
   return (
     <>
       <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">

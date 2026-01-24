@@ -34,10 +34,8 @@ export const searchBooks = createServerFn({ method: 'GET' })
     const data = await response.json()
 
     if (!data.items) {
-      console.log('No data items')
       return []
     }
-    console.log('data: ', data)
     return data.items.map((item: any) => ({
       id: item.id,
       title: item.volumeInfo?.title ?? 'Unknown title',

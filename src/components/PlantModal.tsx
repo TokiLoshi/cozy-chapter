@@ -27,14 +27,12 @@ export default function PlantModal({
   if (!isOpen) return null
 
   const closeModal = () => {
-    console.log('Close modal')
     onClose()
   }
 
   const navigate = useNavigate()
 
   const handleDelete = (id: string) => {
-    console.log('User wants to delete plant: ', id)
     toast('Are you sure you want to delete this plant?', {
       description: 'This action cannot be undone',
       classNames: {
