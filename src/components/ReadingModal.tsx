@@ -1,11 +1,13 @@
-import { Edit, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
+import { Loader2, Plus, Search, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import EditModal from './EditModal'
+// import EditModal from './EditModal'
+import ArticleCard from './BlogsModal'
+import BookCard from './BookModal'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
-import type { Books, UserBooks } from '@/db/book-schema'
+import type { Books } from '@/db/book-schema'
 import { deleteBlogs } from '@/lib/server/articles'
 import {
   addBook,
@@ -22,58 +24,6 @@ type ReadingModalProps = {
   selectedStatus: ReadStatus
   blogs: Array<Blog>
   onAddArticleClick: () => void
-}
-
-function BookCard({
-  item,
-  onEdit,
-  onDelete,
-}: {
-  item: { book: Books; userBook: UserBooks }
-  onEdit: () => void
-  onDelete: () => void
-}) {
-  console.log('Item')
-  return (
-    <>
-      <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
-        {item.book.coverImageUrl && (
-          <img
-            src={item.book.coverImageUrl}
-            alt={item.book.title}
-            className="w-16 h-16 object-cover rounded"
-          />
-        )}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-slate-100 truncate">
-            {item.book.title}
-          </h4>
-          <p className="text-sm text-slate-400 truncate">
-            {item.book.authors?.join(',')}
-          </p>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-slate-300">
-              Page {item.userBook.currentPage} / {item.book.pageCount}
-            </span>
-          </div>
-        </div>
-        <div className="flex gap-2 items-center">
-          <button
-            onClick={onEdit}
-            className="cursor-pointer bg-amber-500/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={onDelete}
-            className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
-          >
-            <Trash className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-    </>
-  )
 }
 
 export default function ReadingModal({
@@ -238,25 +188,11 @@ export default function ReadingModal({
                 <ScrollArea className="h-[400px]">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredBlogs.map((blog: Blog) => (
-                      <div
+                      <ArticleCard
                         key={blog.id}
-                        className="bg-white/10 border-white/20 rounded-lg p-4"
-                      >
-                        <h3 className="text-lg font-semibold text-white mb-2">
-                          {blog.title}
-                        </h3>
-                        {blog.author && <p>by {blog.author}</p>}
-                        <div className="flex gap-3 mt-4 pt-4 border-t border-white/10">
-                          <EditModal blog={blog} refreshPath="/readingroom" />
-                          <div className="flex-1" />
-                          <button
-                            onClick={() => deleteArticleMutation(blog.id)}
-                            className="bg-red-600/80 hover:bg-red-500 text-white p-2 rounded-lg"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
+                        item={blog}
+                        onDelete={() => deleteArticleMutation}
+                      />
                     ))}
                   </div>
                 </ScrollArea>

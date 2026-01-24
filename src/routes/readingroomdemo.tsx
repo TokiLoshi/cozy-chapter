@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import ArticleModal from '../components/ArticleModal'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
-import EditModal from '../components/EditModal'
+import EditModal from '../components/EditArticleModal'
 import {
   bushSound,
   closeBookSound,
