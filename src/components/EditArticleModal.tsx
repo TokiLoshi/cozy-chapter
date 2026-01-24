@@ -19,7 +19,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
     throw new Error('Something bad happened')
   })
 
-export default function EditModal({
+export default function EditArticleModal({
   blog,
   refreshPath,
 }: {
@@ -62,7 +62,7 @@ export default function EditModal({
       },
     },
     onSubmit: async ({ value }) => {
-      const loadingToast = toast.loading('Updating plant...', {
+      const loadingToast = toast.loading('Updating article...', {
         classNames: {
           toast: 'bg-slate-800 border-slate-700',
           title: 'text-slate-100',
@@ -93,7 +93,7 @@ export default function EditModal({
             description: 'text-slate-400',
           },
         })
-        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+        console.error('Error editing article', error)
       }
     },
   })
@@ -102,10 +102,9 @@ export default function EditModal({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="cursor-pointer px-8 py-3 bg-indigo-800/90 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        className="cursor-pointer px-3 py-3 bg-amber-500/80 hover:bg-amber-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
       >
         <Edit className="w-4 h-4" />
-        <span className="text-sm">Edit</span>
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">

@@ -25,8 +25,6 @@ export default function EditAudioBookModal({
   userAudioBook,
   onClose,
 }: EditAudioBookModalProps) {
-  console.log('Audio book to edit: ', audioBook)
-
   const queryClient = useQueryClient()
 
   const currentPositionMinutes = Math.floor(

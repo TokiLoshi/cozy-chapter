@@ -40,7 +40,7 @@ export const getBlogToEdit = createServerFn({ method: 'GET' })
       const singleBlog = getSingleBlog(blogId)
       return singleBlog
     } catch (error) {
-      console.log('Something went wrong getting blog: ', data.id)
+      console.error('Something went wrong getting blog: ', data.id)
       throw new Error('Issue getting single blog')
     }
   })
@@ -157,7 +157,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
         navigate({ to: '/blogs' })
         setOpen(false)
       } catch (error) {
-        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+        console.error('Error updating blogs: ', error)
       }
     },
   })

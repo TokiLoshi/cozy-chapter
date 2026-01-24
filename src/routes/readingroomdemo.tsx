@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import ArticleModal from '../components/ArticleModal'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/Experience'
-import EditModal from '../components/EditModal'
+import EditModal from '../components/EditArticleModal'
 import {
   bushSound,
   closeBookSound,
@@ -38,7 +38,6 @@ export const getBlogToEdit = createServerFn({ method: 'GET' })
       const singleBlog = getSingleBlog(blogId)
       return singleBlog
     } catch (error) {
-      console.log('Something went wrong getting blog: ', data.id)
       throw new Error('Issue getting single blog')
     }
   })

@@ -67,7 +67,7 @@ export default function ArticleForm({
         onClose()
         navigate({ to: refreshPath })
       } catch (error) {
-        console.log('Uh Oh spaghetti os, soemthing went wrong ', error)
+        console.error(`Error submitting article: ${error}`)
       }
     },
   })

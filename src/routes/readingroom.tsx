@@ -90,7 +90,6 @@ function ReadingRoomComponent() {
   }
 
   const handleHeadPhonesClick = () => {
-    console.log('Headphones clicked')
     setIsAudioBookModalOpen(!isAudiobookModalOpen)
   }
 

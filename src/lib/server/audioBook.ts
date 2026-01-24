@@ -67,7 +67,6 @@ export const searchAudiobooks = createServerFn({ method: 'GET' })
         },
       },
     )
-    console.log('Response from spotify: ', response)
 
     if (!response.ok) {
       throw new Error('Failed to search spotify')

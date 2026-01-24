@@ -62,7 +62,7 @@ export default function EditPlantModal({
         navigate({ to: refreshPath })
         onClose()
       } catch (error) {
-        console.log('Uh oh spaghetti os, something went wrong', error)
+        console.error('Error editing plant modal', error)
         toast.error('Failed to update plant', {
           description: 'Please try again',
           classNames: {
