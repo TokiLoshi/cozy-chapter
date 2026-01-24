@@ -57,12 +57,17 @@ export const searchBooks = createServerFn({ method: 'GET' })
   })
 
 export const addBook = createServerFn({ method: 'POST' })
-  .inputValidator((data: Omit<Books, 'createdAt' | 'updatedAt'>) => data)
+  .inputValidator(
+    (data: {
+      book: Omit<Books, 'createdAt' | 'updatedAt'>
+      status?: 'toRead' | 'reading' | 'read'
+    }) => data,
+  )
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
 
-    const bookResult = await upsertBook(data)
+    const bookResult = await upsertBook(data.book)
 
     if (!bookResult.success) {
       throw new Error(`Failed to save book`)
@@ -70,7 +75,8 @@ export const addBook = createServerFn({ method: 'POST' })
 
     const userBookResult = await createUserBook({
       userId: session.user.id,
-      bookId: data.id,
+      bookId: data.book.id,
+      status: data.status ?? 'toRead',
     })
     if (!userBookResult.success) {
       throw new Error(`Faailed to save user book`)

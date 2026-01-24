@@ -15,7 +15,7 @@ export default function ArticleCard({
     <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
       <div className="w-16 h-16 bg-slate-600 rounded flex items-center justify-center flex-shrink-0">
         {item.url ? (
-          <a href={item.url} target="_blank" rel="noopener noreferer">
+          <a href={item.url} target="_blank" rel="noopener noreferrer">
             <Link className="w-6 h-6 text-amber-500/80 hover:text-amber-400 transition-colors cursor-pointer" />
           </a>
         ) : (

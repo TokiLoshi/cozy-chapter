@@ -32,7 +32,9 @@ export async function upsertBook(data: Omit<Books, 'createdAt' | 'updatedAt'>) {
 }
 
 export async function createUserBook(
-  data: Pick<UserBooks, 'userId' | 'bookId'>,
+  data: Pick<UserBooks, 'userId' | 'bookId'> & {
+    status: 'toRead' | 'reading' | 'read'
+  },
 ) {
   try {
     const existing = await db
@@ -47,7 +49,14 @@ export async function createUserBook(
     if (existing.length > 0) {
       return { success: true, data: existing[0] }
     }
-    const result = await db.insert(userBooks).values(data).returning()
+    const result = await db
+      .insert(userBooks)
+      .values({
+        userId: data.userId,
+        bookId: data.bookId,
+        status: data.status,
+      })
+      .returning()
     return { success: true, data: result }
   } catch (error) {
     console.error(`Error creating user book: ${(error as Error).message}`)

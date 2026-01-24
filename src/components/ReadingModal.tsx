@@ -71,9 +71,9 @@ export default function ReadingModal({
 
   const addBookMutation = useMutation({
     mutationFn: (book: Omit<Books, 'createdAt' | 'updatedAt'>) =>
-      addBook({ data: book }),
+      addBook({ data: { book, status: selectedStatus } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-books '] })
+      queryClient.invalidateQueries({ queryKey: ['user-books'] })
       setSearchQuery('')
       setDebouncedQuery('')
       setShowBookSearch(false)
@@ -164,10 +164,16 @@ export default function ReadingModal({
           {/** Tabs */}
           <Tabs defaultValue="articles" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4 bg-slate-800">
-              <TabsTrigger value="articles">
+              <TabsTrigger
+                value="articles"
+                className="cursor-pointer text-white data-[state=active]:text-slate-600"
+              >
                 Articles ({filteredBlogs.length})
               </TabsTrigger>
-              <TabsTrigger value="books">
+              <TabsTrigger
+                value="books"
+                className="cursor-pointer text-white data-[state=active]:text-slate-600"
+              >
                 Books ({filteredBooks ? filteredBooks.length : 0})
               </TabsTrigger>
             </TabsList>
@@ -205,7 +211,7 @@ export default function ReadingModal({
               {!showBookSearch ? (
                 <button
                   onClick={() => setShowBookSearch(true)}
-                  className="bg-amber-600 hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
+                  className="cursor-pointer bg-amber-600 hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
                 >
                   + Add Book
                 </button>
@@ -224,14 +230,16 @@ export default function ReadingModal({
                       <XIcon className="w-4 h-4" />
                     </button>
                   </div>
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="Search Google Books..."
-                    value={searchQuery}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                  />
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search Google Books..."
+                      value={searchQuery}
+                      onChange={(e) => handleSearchChange(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
                   {debouncedQuery.length > 2 && (
                     <div className="mt-3 max-h-60 overflow-y-auto">
                       {isSearching ? (
@@ -274,7 +282,7 @@ export default function ReadingModal({
                                     Added
                                   </span>
                                 ) : (
-                                  <Plus className="w-4 h-4 text-white" />
+                                  <Plus className="w-4 h-4 text-white cursor-pointer" />
                                 )}
                               </button>
                             </div>
