@@ -113,7 +113,13 @@ export const searchBooks = createServerFn({ method: 'GET' })
   })
 
 export const updateUserBookServer = createServerFn({ method: 'POST' })
-  .inputValidator((data: { id: string; updates: Partial<UserBooks> }) => data)
+  .inputValidator(
+    (data: {
+      id: string
+      updates: Partial<UserBooks>
+      bookPageCount?: number | null
+    }) => data,
+  )
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
@@ -122,6 +128,7 @@ export const updateUserBookServer = createServerFn({ method: 'POST' })
       data.id,
       session.user.id,
       data.updates,
+      data.bookPageCount,
     )
     if (!updatedBook.success) {
       throw new Error(`Error updating users books`)

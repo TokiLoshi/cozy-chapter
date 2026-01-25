@@ -1,9 +1,9 @@
 import { Sparkles, useGLTF } from '@react-three/drei'
 import { useControls } from 'leva'
 import { useRef } from 'react'
-import CozyRoom from '../components/modelcomponents/wholeroom'
-import Husky from '../components/modelcomponents/husky'
-import Laptop from '../components/modelcomponents/laptop'
+import CozyRoom from '../modelcomponents/wholeroom'
+import Husky from '../modelcomponents/husky'
+import Laptop from '../modelcomponents/laptop'
 
 export default function IsometricRoom({
   onBookcaseClick,

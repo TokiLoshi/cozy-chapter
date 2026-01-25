@@ -3,10 +3,10 @@ import { createServerFn } from '@tanstack/react-start'
 import { Link, Trash, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import ArticleModal from '../components/ArticleModal'
+import ArticleModal from '../components/articles/ArticleModal'
 import CreditsModal from '../components/Credits'
-import Experience from '../components/Experience'
-import EditModal from '../components/EditArticleModal'
+import Experience from '../components/room/Experience'
+import EditModal from '../components/articles/EditArticleModal'
 import {
   bushSound,
   closeBookSound,
@@ -182,6 +182,12 @@ function ReadingRoomDemoComponent() {
     setIsPlantModalOpen(!isPlantModalOpen)
   }
 
+  const handleHeadPhonesClick = () => {
+    setIsAudioBookModalOpen(!isAudiobookModalOpen)
+  }
+
+  const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
+
   return (
     <>
       <div className="relative w-full h-screen">
@@ -244,6 +250,7 @@ function ReadingRoomDemoComponent() {
           isLampOn={isLampOn}
           onPlantClick={bushSound}
           onOrchidClick={handleOrchidClick}
+          onHeadPhonesClick={handleHeadPhonesClick}
         />
 
         {/** Credits Overlay */}

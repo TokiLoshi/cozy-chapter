@@ -59,6 +59,8 @@ export async function createUserBook(
         userId: data.userId,
         bookId: data.bookId,
         status: data.status,
+        startedAt: data.status === 'reading' ? new Date() : null,
+        finishedAt: data.status === 'read' ? new Date() : null,
         currentPage,
       })
       .returning()
@@ -90,11 +92,55 @@ export async function updateUserBook(
   id: string,
   userId: string,
   updates: Partial<UserBooks>,
+  bookPageCount?: number | null,
 ) {
   try {
+    // Get current book for comparison
+    const current = await db
+      .select()
+      .from(userBooks)
+      .where(and(eq(userBooks.id, id), eq(userBooks.userId, userId)))
+      .limit(1)
+    if (!current[0]) return { success: false, error: 'Book not found ' }
+
+    const currentBook = current[0]
+    const finalUpdates: Partial<UserBooks> & { updatedAt: Date } = {
+      ...updates,
+      updatedAt: new Date(),
+    }
+
+    const isStatusUpdated =
+      updates.status && updates.status !== currentBook.status
+    if (isStatusUpdated) {
+      // Set and reset start time
+      if (updates.status === 'reading') {
+        if (!currentBook.startedAt) {
+          finalUpdates.startedAt = new Date()
+        }
+        finalUpdates.finishedAt = null
+      }
+
+      // Set page count for read books
+      if (updates.status === 'read') {
+        finalUpdates.finishedAt = new Date()
+        if (bookPageCount) {
+          finalUpdates.currentPage = bookPageCount
+        }
+      }
+
+      // reset everything for books that have been read
+      if (updates.status === 'toRead') {
+        finalUpdates.startedAt = null
+        finalUpdates.finishedAt = null
+        finalUpdates.currentPage = 0
+        finalUpdates.lastChapter = 0
+        finalUpdates.rating = null
+      }
+    }
+
     const result = await db
       .update(userBooks)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(finalUpdates)
       .where(and(eq(userBooks.id, id), eq(userBooks.userId, userId)))
       .returning()
     return { success: true, data: result }
