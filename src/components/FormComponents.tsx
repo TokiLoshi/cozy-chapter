@@ -140,7 +140,7 @@ export function NumberField({
   min?: number
   max?: number
 }) {
-  const field = useFieldContext<number>()
+  const field = useFieldContext<number | null>()
   const errors = useStore(field.store, (state) => state.meta.errors)
 
   return (
@@ -151,16 +151,27 @@ export function NumberField({
       <Input
         id={label}
         type="number"
-        value={field.state.value}
+        value={field.state.value ?? ''}
         placeholder={placeholder}
         min={min}
         max={max}
         step="1"
-        onBlur={field.handleBlur}
+        onBlur={(e) => {
+          field.handleBlur()
+          if (e.target.value === '') {
+            field.handleChange(min ?? 0)
+          }
+        }}
         onChange={(e) => {
           const value = e.target.value
-          const parsedValue = value == '' ? (min ?? 0) : parseInt(value, 10)
-          field.handleChange(parsedValue)
+          if (value === '') {
+            field.handleChange(null)
+          } else {
+            const parsedValue = value === '' ? 0 : parseInt(value, 10)
+            if (!isNaN(parsedValue)) {
+              field.handleChange(parsedValue)
+            }
+          }
         }}
       />
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}

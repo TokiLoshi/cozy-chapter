@@ -1,5 +1,5 @@
 import { toast } from 'sonner'
-import { XIcon } from 'lucide-react'
+import { Star, XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
 import type { Books, UserBooks } from '@/db/book-schema'
@@ -14,10 +14,49 @@ type EditBookModalProps = {
 
 const editBookSchema = z.object({
   status: z.enum(['toRead', 'reading', 'read']),
-  currentPage: z.number().min(0),
+  currentPage: z.number().min(0).nullable(),
+  lastChapter: z.number().min(0).nullable(),
+  rating: z.number().min(1).max(5).nullable(),
+  notes: z.string().nullable(),
 })
 
 type EditBookFormValues = z.infer<typeof editBookSchema>
+
+function StarRating({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: number | null
+  onChange: (rating: number | null) => void
+  disabled?: boolean
+}) {
+  return (
+    <>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            disabled={disabled}
+            onClick={() => {
+              if (value === star) {
+                onChange(null)
+              } else {
+                onChange(star)
+              }
+            }}
+            className={`p-1 transition-all ${disabled ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-100'}`}
+          >
+            <Star
+              className={`w-6 h-6 ${value && star <= value ? 'fill-amber-500 text-amber-500' : 'text-slate-500'} `}
+            />
+          </button>
+        ))}
+      </div>
+    </>
+  )
+}
 
 export default function EditBookModal({
   book,
@@ -29,7 +68,10 @@ export default function EditBookModal({
   const form = useAppForm({
     defaultValues: {
       status: userBook.status ?? 'toRead',
-      currentPage: userBook.currentPage,
+      currentPage: userBook.currentPage ?? 0,
+      lastChapter: userBook.lastChapter ?? 0,
+      rating: userBook.rating ?? null,
+      notes: userBook.notes ?? '',
     } as EditBookFormValues,
     validators: {
       onBlur: ({ value }) => {
@@ -38,7 +80,11 @@ export default function EditBookModal({
         } as {
           fields: Record<string, string>
         }
-        if (book.pageCount && value.currentPage > book.pageCount) {
+        if (
+          book.pageCount &&
+          value.currentPage &&
+          value.currentPage > book.pageCount
+        ) {
           errors.fields.pageCount = `PageCount cannot exceed ${book.pageCount}`
         }
         return errors
@@ -58,7 +104,11 @@ export default function EditBookModal({
             updates: {
               status: value.status,
               currentPage: value.currentPage,
+              lastChapter: value.lastChapter,
+              rating: value.rating,
+              notes: value.notes,
             },
+            bookPageCount: book.pageCount,
           },
         })
         toast.dismiss(loadingToast)
@@ -150,12 +200,13 @@ export default function EditBookModal({
               )}
             </form.AppField>
 
+            {/** Current Page */}
             <form.AppField
               name="currentPage"
               validators={{
                 onChange: ({ value }) => {
-                  if (value < 0) return 'Chapters cannot be negative'
-                  if (book.pageCount && value > book.pageCount) {
+                  if (value && value < 0) return 'Chapters cannot be negative'
+                  if (book.pageCount && value && value > book.pageCount) {
                     return `Page count cannot exceed ${book.pageCount}`
                   }
                   return undefined
@@ -166,12 +217,46 @@ export default function EditBookModal({
                 <div>
                   <field.NumberField
                     label="Current Page"
+                    placeholder={book.pageCount ? String(book.pageCount) : '?'}
                     min={0}
                     max={book.pageCount ?? undefined}
                   />
                 </div>
               )}
             </form.AppField>
+
+            {/** Last Chapter */}
+            <form.AppField name="lastChapter">
+              {(field) => (
+                <field.NumberField
+                  label="Last Chapter Read"
+                  placeholder="0"
+                  min={0}
+                />
+              )}
+            </form.AppField>
+
+            {/** Rating */}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Rating
+              </label>
+              <form.AppField name="rating">
+                {(field) => (
+                  <StarRating
+                    value={field.state.value}
+                    onChange={(rating) => field.handleChange(rating)}
+                    disabled={false}
+                  />
+                )}
+              </form.AppField>
+            </div>
+
+            {/** Notes field */}
+            <form.AppField name="notes">
+              {(field) => <field.TextArea label="Notes" />}
+            </form.AppField>
+
             <div className="flex jusity-end">
               <form.AppForm>
                 <form.SubmitButton
