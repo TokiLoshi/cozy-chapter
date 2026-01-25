@@ -93,6 +93,11 @@ const credits = [
     by: 'Kenney via polypizza',
     link: 'https://poly.pizza/m/41R2HTYj1O',
   },
+  {
+    name: 'Laptop',
+    by: 'J-Toastie',
+    link: 'https://poly.pizza/m/WMW4C2J021',
+  },
 ]
 
 export default function CreditsModal({ isOpen, onClose }) {
