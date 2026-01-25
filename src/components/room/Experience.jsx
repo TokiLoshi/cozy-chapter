@@ -25,6 +25,7 @@ export default function Experience({
   onPlantClick,
   onOrchidClick,
   onHeadPhonesClick,
+  handleLaptopClick,
 }) {
   const {
     ambientIntensity,
@@ -92,6 +93,7 @@ export default function Experience({
               onPlantClick={onPlantClick}
               onOrchidClick={onOrchidClick}
               onHeadPhonesClick={onHeadPhonesClick}
+              handleLaptopClick={handleLaptopClick}
             />
           </Suspense>
           {/* <EffectComposer> */}

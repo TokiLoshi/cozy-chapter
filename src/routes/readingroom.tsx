@@ -1,13 +1,12 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
-// import { Link, Trash, XIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/room/Experience'
-// import EditModal from '../components/EditModal'
 import ArticleModal from '../components/articles/ArticleModal'
 import AudioBooksModal from '../components/audiobooks/AudioBooks'
+import LaptopModal from '../components/laptop/laptopModal'
 import PlantModal from '../components/plants/PlantModal'
 import ReadingModal from '../components/ReadingModal'
 import {
@@ -91,6 +90,12 @@ function ReadingRoomComponent() {
     setIsAudioBookModalOpen(!isAudiobookModalOpen)
   }
 
+  const [isLaptopOpen, setIsLaptopOpen] = useState(false)
+  const handleLaptopClick = () => {
+    setIsLaptopOpen(!isLaptopOpen)
+    console.log('Laptop clicked')
+  }
+
   const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
 
   return (
@@ -158,6 +163,7 @@ function ReadingRoomComponent() {
           onPlantClick={bushSound}
           onOrchidClick={handleOrchidClick}
           onHeadPhonesClick={handleHeadPhonesClick}
+          handleLaptopClick={handleLaptopClick}
         />
 
         {/** Plant Modal */}
@@ -205,6 +211,13 @@ function ReadingRoomComponent() {
           />
         )}
       </div>
+      {/** Laptop Overlay */}
+      <LaptopModal
+        isOpen={isLaptopOpen}
+        onClose={() => {
+          setIsLaptopOpen(false)
+        }}
+      />
     </>
   )
 }

@@ -16,6 +16,7 @@ export default function IsometricRoom({
   onPlantClick,
   onOrchidClick,
   onHeadPhonesClick,
+  handleLaptopClick,
 }) {
   const bookcaseRef = useRef({ onBookcaseClick })
 
@@ -74,6 +75,7 @@ export default function IsometricRoom({
         position={[laptopPosX, laptopPosY, laptopPosZ]}
         rotation={[laptopRotX, laptopRotY, laptopRotZ]}
         scale={laptopScale}
+        onClick={handleLaptopClick}
       />
       <Sparkles count={10} scale={10 * 2} size={6} speed={0.4} />
       <CozyRoom
