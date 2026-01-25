@@ -84,7 +84,7 @@ function LoginRoute() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="cursor-pointer w-full bg-cyan-700 hover:bg-cyan-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Logging in... ' : 'Login'}
             </button>
@@ -92,7 +92,7 @@ function LoginRoute() {
               Don't have an account?{' '}
               <a
                 href="/signup"
-                className="text-cyan-500 hover:bg-cyan-600 font-medium"
+                className="cursor-pointer text-cyan-500 hover:bg-cyan-600 font-medium"
               >
                 Sign Up
               </a>

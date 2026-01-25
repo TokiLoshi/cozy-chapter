@@ -129,11 +129,11 @@ function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="cursor-pointer w-full bg-cyan-700 hover:bg-cyan-600 text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account... ' : 'Sign Up'}
             </button>
-            <p className="mt-6 text-center text-sm text-gray-400">
+            <p className="cursor-pointer mt-6 text-center text-sm text-gray-400">
               Already have an account?{' '}
               <a
                 href="/login"
