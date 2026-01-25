@@ -22,8 +22,8 @@ A cozy 3D reading room where you can track your reading journey through blogs an
 ## 🙌 Attributions:
 
 1. Bookcase with Books by Quaternius via [polypizza](https://poly.pizza/m/tACDGJ4CGW)
-2. Wall Corner by Kenney (https://poly.pizza/m/Rad76BJn2L)
-3. Wall by Kenney (https://poly.pizza/m/N8d0nkQGOn)
+2. Wall Corner by Kenney via [polypizza](https://poly.pizza/m/Rad76BJn2L)
+3. Wall by Kenney via [polypizza](https://poly.pizza/m/N8d0nkQGOn)
 4. Book by Quaternius (https://poly.pizza/m/LC0w7VI75u)
 5. L Couch by Quaternius (https://poly.pizza/m/1kwsjhpY84)
 6. Planks by Kay Lousberg (https://poly.pizza/m/5m4LLpNl2M)
@@ -45,6 +45,7 @@ A cozy 3D reading room where you can track your reading journey through blogs an
 22. Vines by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/2jffIS8PMjZ)
 23. Orchid by Poly by Google [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/0gEtIcRV4do)
 24. Acoustic Guitar by Dave Edwards [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/bf6_h_1wp2D)
+25. Laptop by J-Toastie [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/WMW4C2J021)
 
 ### Sound effect attributions
 

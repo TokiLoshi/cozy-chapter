@@ -323,19 +323,19 @@ export default function AudioBooksModal({
                   <TabsList className="grid w-full grid-cols-3 bg-slate-800">
                     <TabsTrigger
                       value="toListen"
-                      className="data-[state=active]:bg-amber-600 text-slate-200"
+                      className="curor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
                       To Listen to ({audioToListen.length})
                     </TabsTrigger>
                     <TabsTrigger
                       value="listening"
-                      className="data-[state=active]:bg-amber-600 text-slate-200"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
                       Listening To ({audioListening.length})
                     </TabsTrigger>
                     <TabsTrigger
                       value="listened"
-                      className="data-[state=active]:bg-amber-600 text-slate-200"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
                       Finished ({audioListened.length})
                     </TabsTrigger>

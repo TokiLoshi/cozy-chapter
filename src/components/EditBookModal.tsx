@@ -2,41 +2,35 @@ import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
-import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
+import type { Books, UserBooks } from '@/db/book-schema'
 import { useAppForm } from '@/hooks/form'
-import { updateUserAudiobookServer } from '@/lib/server/audioBook'
+import { updateUserBookServer } from '@/lib/server/books'
 
-type EditAudioBookModalProps = {
-  audioBook: AudioBooks
-  userAudioBook: UserAudioBooks
+type EditBookModalProps = {
+  book: Books
+  userBook: UserBooks
   onClose: () => void
 }
 
-const editAudioBookSchema = z.object({
-  status: z.enum(['toListen', 'listening', 'listened']),
-  lastChapter: z.number().min(0),
-  positionMinutes: z.number().min(0),
+const editBookSchema = z.object({
+  status: z.enum(['toRead', 'reading', 'read']),
+  currentPage: z.number().min(0),
 })
 
-type EditAudioBookFormValues = z.infer<typeof editAudioBookSchema>
+type EditBookFormValues = z.infer<typeof editBookSchema>
 
-export default function EditAudioBookModal({
-  audioBook,
-  userAudioBook,
+export default function EditBookModal({
+  book,
+  userBook,
   onClose,
-}: EditAudioBookModalProps) {
+}: EditBookModalProps) {
   const queryClient = useQueryClient()
-
-  const currentPositionMinutes = Math.floor(
-    (userAudioBook.lastPositionMs ?? 0) / 60000,
-  )
 
   const form = useAppForm({
     defaultValues: {
-      status: userAudioBook.status ?? 'toListen',
-      lastChapter: userAudioBook.lastChapter ?? 0,
-      positionMinutes: currentPositionMinutes,
-    } as EditAudioBookFormValues,
+      status: userBook.status ?? 'toRead',
+      currentPage: userBook.currentPage,
+    } as EditBookFormValues,
     validators: {
       onBlur: ({ value }) => {
         const errors = {
@@ -44,52 +38,43 @@ export default function EditAudioBookModal({
         } as {
           fields: Record<string, string>
         }
-        if (
-          audioBook.totalChapters &&
-          value.lastChapter > audioBook.totalChapters
-        ) {
-          errors.fields.lastChapter = `Chapter cannot exceed ${audioBook.totalChapters}`
-        }
-        if (value.positionMinutes < 0) {
-          errors.fields.positionMinutes = 'Position cannot be negative'
+        if (book.pageCount && value.currentPage > book.pageCount) {
+          errors.fields.pageCount = `PageCount cannot exceed ${book.pageCount}`
         }
         return errors
       },
     },
     onSubmit: async ({ value }) => {
-      const loadingToast = toast.loading('Updating audibook...', {
+      const loadingToast = toast.loading('Updating book...', {
         classNames: {
           toast: 'bg-slate-800 border-slate-700',
           title: 'text-slate-100',
         },
       })
       try {
-        const lastPositionMs = Math.round(value.positionMinutes * 60000)
-        await updateUserAudiobookServer({
+        await updateUserBookServer({
           data: {
-            id: userAudioBook.id!,
+            id: userBook.id!,
             updates: {
               status: value.status,
-              lastChapter: value.lastChapter,
-              lastPositionMs,
+              currentPage: value.currentPage,
             },
           },
         })
         toast.dismiss(loadingToast)
-        toast.success('Audiobook progress updated!', {
+        toast.success('Book progress updated!', {
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
             title: 'text-slate-100',
           },
         })
-
-        queryClient.invalidateQueries({ queryKey: ['user-audiobooks'] })
+        queryClient.invalidateQueries({ queryKey: ['user-books'] })
         onClose()
       } catch (error) {
-        console.error(`Error updating audiobook: ${(error as Error).message}`)
+        console.error(`Error updating book: ${(error as Error).message}`)
         toast.dismiss(loadingToast)
         toast.error('Please try again', {
-          description: 'Failed to update audiobook',
+          description: 'Failed to update book',
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
             title: 'text-slate-100',
@@ -105,32 +90,32 @@ export default function EditAudioBookModal({
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-black//60 backdrop-blur-sm"
           onClick={onClose}
         />
 
         {/** Modal */}
         <div className="relative w-full max-w-2xl max-h-[90h] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          {/** Header with audiobook info */}
-          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-10">
+          {/** Header with Book info */}
+          <div className="stick top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-10">
             <div className="flex items-center justify-between gap-4">
               <div className="flex gap-4">
-                {audioBook.coverImageUrl && (
+                {book.coverImageUrl && (
                   <img
-                    src={audioBook.coverImageUrl}
-                    alt={audioBook.title}
+                    src={book.coverImageUrl}
+                    alt={book.title}
                     className="w-16 h-16 object-cover rounded-lg shadow-md"
                   />
                 )}
                 <div>
                   <h2 className="text-2xl font-bold text-white">
-                    {audioBook.title}
+                    {book.title}
                   </h2>
                   <p className="text-sm text-slate-400">
-                    by {audioBook.authors?.join(', ') ?? 'Unknown'}
+                    by {book.authors?.join(', ') ?? 'Unknown'}
                   </p>
                   <p className="text-xs text-slate-500 mt-1">
-                    {audioBook.totalChapters} chapters
+                    {book.pageCount} pages
                   </p>
                 </div>
               </div>
@@ -142,7 +127,7 @@ export default function EditAudioBookModal({
               </button>
             </div>
           </div>
-          {/** Form  */}
+          {/** Form */}
           <form
             onSubmit={(e) => {
               e.preventDefault()
@@ -151,31 +136,27 @@ export default function EditAudioBookModal({
             }}
             className="p-6 space-y-6 text-gray-100"
           >
-            {/**  Status Edit */}
+            {/** Status Edit */}
             <form.AppField name="status">
               {(field) => (
                 <field.Select
-                  label="Listening Status"
+                  label="Reading Status"
                   values={[
-                    { label: 'Want to Listen to', value: 'toListen' },
-                    { label: 'Listening to', value: 'listening' },
-                    { label: 'Finished listening to', value: 'listened' },
+                    { label: 'Want to Read', value: 'toRead' },
+                    { label: 'Reading', value: 'reading' },
+                    { label: 'Read', value: 'read' },
                   ]}
                 />
               )}
             </form.AppField>
 
-            {/** Current Chapter Edit */}
             <form.AppField
-              name="lastChapter"
+              name="currentPage"
               validators={{
                 onChange: ({ value }) => {
                   if (value < 0) return 'Chapters cannot be negative'
-                  if (
-                    audioBook.totalChapters &&
-                    value > audioBook.totalChapters
-                  ) {
-                    return `Chapters cannot exceed total chapters: ${audioBook.totalChapters}`
+                  if (book.pageCount && value > book.pageCount) {
+                    return `Page count cannot exceed ${book.pageCount}`
                   }
                   return undefined
                 },
@@ -184,32 +165,13 @@ export default function EditAudioBookModal({
               {(field) => (
                 <div>
                   <field.NumberField
-                    label="Current Chapter"
+                    label="Current Page"
                     min={0}
-                    max={audioBook.totalChapters ?? undefined}
+                    max={book.pageCount ?? undefined}
                   />
                 </div>
               )}
             </form.AppField>
-
-            {/** Position in Chapter  */}
-            <form.AppField
-              name="positionMinutes"
-              validators={{
-                onChange: ({ value }) => {
-                  if (value < 0) return 'Position cannot be negative'
-                  return undefined
-                },
-              }}
-            >
-              {(field) => (
-                <field.NumberField
-                  label="Current Position (in minutes)"
-                  min={0}
-                />
-              )}
-            </form.AppField>
-
             <div className="flex jusity-end">
               <form.AppForm>
                 <form.SubmitButton
