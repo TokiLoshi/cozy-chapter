@@ -103,13 +103,13 @@ export default function ReadingModal({
             <TabsList className="grid w-full grid-cols-2 mb-4 bg-slate-800">
               <TabsTrigger
                 value="articles"
-                className="curor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
               >
                 Articles ({filteredBlogs.length})
               </TabsTrigger>
               <TabsTrigger
                 value="books"
-                className="curor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
               >
                 Books ({filteredBooks ? filteredBooks.length : 0})
               </TabsTrigger>
@@ -144,11 +144,7 @@ export default function ReadingModal({
 
             {/** Books Tab */}
             <TabsContent value="books">
-              <BooksModal
-                isOpen={isOpen}
-                onClose={onClose}
-                selectedStatus={selectedStatus}
-              />
+              <BooksModal isOpen={isOpen} selectedStatus={selectedStatus} />
             </TabsContent>
           </Tabs>
         </div>
