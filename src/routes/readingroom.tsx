@@ -93,7 +93,6 @@ function ReadingRoomComponent() {
   const [isLaptopOpen, setIsLaptopOpen] = useState(false)
   const handleLaptopClick = () => {
     setIsLaptopOpen(!isLaptopOpen)
-    console.log('Laptop clicked')
   }
 
   const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)

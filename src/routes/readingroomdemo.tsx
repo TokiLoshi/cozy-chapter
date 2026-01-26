@@ -188,6 +188,10 @@ function ReadingRoomDemoComponent() {
 
   const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
 
+  const [isLaptopOpen, setIsLaptopOpen] = useState(false)
+  const handleLaptopClick = () => {
+    setIsLaptopOpen(!isLaptopOpen)
+  }
   return (
     <>
       <div className="relative w-full h-screen">
@@ -251,6 +255,7 @@ function ReadingRoomDemoComponent() {
           onPlantClick={bushSound}
           onOrchidClick={handleOrchidClick}
           onHeadPhonesClick={handleHeadPhonesClick}
+          handleLaptopClick={handleLaptopClick}
         />
 
         {/** Credits Overlay */}
