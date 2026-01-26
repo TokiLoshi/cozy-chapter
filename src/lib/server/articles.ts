@@ -12,7 +12,7 @@ import {
   getSingleBlog,
   updateArticle,
 } from '@/db/queries/articles'
-import { userBlogs } from '@/db/article-schema'
+import { userBlogs } from '@/db/schemas/article-schema'
 
 const insertArticlesSchema = createInsertSchema(userBlogs, {
   title: z.string().min(1, 'title is required'),

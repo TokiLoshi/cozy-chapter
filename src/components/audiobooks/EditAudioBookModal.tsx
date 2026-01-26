@@ -2,7 +2,7 @@ import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
-import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
+import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { useAppForm } from '@/hooks/form'
 import { updateUserAudiobookServer } from '@/lib/server/audioBook'
 

@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
-import { books, userBooks } from '../book-schema'
-import type { Books, UserBooks } from '../book-schema'
+import { books, userBooks } from '../schemas/book-schema'
+import type { Books, UserBooks } from '../schemas/book-schema'
 import { db } from '@/db'
 
 export async function upsertBook(data: Omit<Books, 'createdAt' | 'updatedAt'>) {

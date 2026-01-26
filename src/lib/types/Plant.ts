@@ -1,4 +1,4 @@
-import type { userPlants } from '@/db/plant-schema'
+import type { userPlants } from '@/db/schemas/plant-schema'
 
 export type PlantType = {
   id: string

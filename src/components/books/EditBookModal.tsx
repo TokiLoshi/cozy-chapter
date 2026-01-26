@@ -2,7 +2,7 @@ import { toast } from 'sonner'
 import { Star, XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
-import type { Books, UserBooks } from '@/db/book-schema'
+import type { Books, UserBooks } from '@/db/schemas/book-schema'
 import { useAppForm } from '@/hooks/form'
 import { updateUserBookServer } from '@/lib/server/books'
 

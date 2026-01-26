@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../auth'
-import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
+import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import {
   createUserAudiobook,
   deleteUserAudiobook,

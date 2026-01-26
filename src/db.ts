@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/neon-http'
 import { neon } from '@neondatabase/serverless'
-import * as authSchema from './db/auth-schema'
+import * as authSchema from './db/schemas/auth-schema'
 // TODO: import the rest of the schemas and add them to the combined schema
 
 export const schema = {

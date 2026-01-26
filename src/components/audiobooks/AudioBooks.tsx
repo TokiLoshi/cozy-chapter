@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import EditAudioBookModal from './EditAudioBookModal'
-import type { AudioBooks, UserAudioBooks } from '@/db/audiobook-schema'
+import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   addAudioBook,

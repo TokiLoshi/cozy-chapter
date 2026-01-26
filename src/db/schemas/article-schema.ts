@@ -6,7 +6,7 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core'
-import { user } from './auth-schema'
+import { user } from '../schemas/auth-schema'
 
 export const articleStatusEnum = pgEnum('article_status', [
   'toRead',

@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import EditBookModal from './EditBookModal'
-import type { Books, UserBooks } from '@/db/book-schema'
+import type { Books, UserBooks } from '@/db/schemas/book-schema'
 import {
   addBook,
   deleteUserBookServer,

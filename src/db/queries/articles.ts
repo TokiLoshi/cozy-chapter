@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 // eslint-disable-next-line
-import { UserBlogs, userBlogs } from '../article-schema'
+import { UserBlogs, userBlogs } from '../schemas/article-schema'
 import type { ReadStatus } from '@/lib/types/Blog'
 import { db } from '@/db'
 

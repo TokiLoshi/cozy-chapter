@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
-import { audioBooks, userAudioBooks } from '../audiobook-schema'
-import type { AudioBooks, UserAudioBooks } from '../audiobook-schema'
+import { audioBooks, userAudioBooks } from '../schemas/audiobook-schema'
+import type { AudioBooks, UserAudioBooks } from '../schemas/audiobook-schema'
 import { db } from '@/db'
 
 export async function upsertAudiobook(

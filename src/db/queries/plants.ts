@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 // eslint-disable-next-line
-import { UserPlants, userPlants } from '../plant-schema'
+import { UserPlants, userPlants } from '../schemas/plant-schema'
 import { db } from '@/db'
 
 // Create new plant

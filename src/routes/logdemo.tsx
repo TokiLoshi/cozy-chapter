@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { createInsertSchema } from 'drizzle-zod'
 import { z } from 'zod'
 import { useAppForm } from '@/hooks/form'
-import { userBlogs } from '@/db/article-schema'
+import { userBlogs } from '@/db/schemas/article-schema'
 import { createArticle } from '@/db/queries/articles'
 
 const insertArticlesSchema = createInsertSchema(userBlogs, {

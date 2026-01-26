@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../auth'
-import type { Books, UserBooks } from '@/db/book-schema'
+import type { Books, UserBooks } from '@/db/schemas/book-schema'
 import {
   createUserBook,
   deleteUserBook,

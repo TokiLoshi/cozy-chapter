@@ -7,7 +7,7 @@ import { getRequest } from '@tanstack/react-start/server'
 import { useState } from 'react'
 import { auth } from '../lib/auth'
 import { useAppForm } from '@/hooks/form'
-import { userBlogs } from '@/db/article-schema'
+import { userBlogs } from '@/db/schemas/article-schema'
 import { createArticle } from '@/db/queries/articles'
 import { getSessionServer } from '@/lib/utils'
 

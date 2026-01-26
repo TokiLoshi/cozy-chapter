@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
-import type { UserPlants } from '@/db/plant-schema'
+import type { UserPlants } from '@/db/schemas/plant-schema'
 import { auth } from '@/lib/auth'
 import {
   createPlant,
