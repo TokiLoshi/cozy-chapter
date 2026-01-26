@@ -372,7 +372,7 @@ export default function AudioBooksModal({
                   </TabsList>
                   {/** To Listen to  */}
                   <TabsContent value="toListen" className="mt-4">
-                    <div className="p-4 border-b border-slate-700">
+                    <div className="mb-2 p-4 border-b border-slate-700">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
@@ -382,6 +382,14 @@ export default function AudioBooksModal({
                           onChange={(e) => setLibrarySearch(e.target.value)}
                           className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                         />
+                        {librarySearch.length >= 1 && (
+                          <button
+                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                            onClick={() => setLibrarySearch('')}
+                          >
+                            <XIcon className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="space-y-3">
@@ -401,7 +409,7 @@ export default function AudioBooksModal({
                   </TabsContent>
                   {/** Listening to  */}
                   <TabsContent value="listening" className="mt-4">
-                    <div className="p-4 border-b border-slate-700">
+                    <div className="mb-2 p-4 border-b border-slate-700 ">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
@@ -411,6 +419,14 @@ export default function AudioBooksModal({
                           onChange={(e) => setLibrarySearch(e.target.value)}
                           className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                         />
+                        {librarySearch.length >= 1 && (
+                          <button
+                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                            onClick={() => setLibrarySearch('')}
+                          >
+                            <XIcon className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="space-y-3">
@@ -430,7 +446,7 @@ export default function AudioBooksModal({
                   </TabsContent>
                   {/** Listening to  */}
                   <TabsContent value="listened" className="mt-4">
-                    <div className="p-4 border-b border-slate-700">
+                    <div className="mb-2 p-4 border-b border-slate-700">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                         <input
@@ -440,6 +456,14 @@ export default function AudioBooksModal({
                           onChange={(e) => setLibrarySearch(e.target.value)}
                           className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                         />
+                        {librarySearch.length >= 1 && (
+                          <button
+                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                            onClick={() => setLibrarySearch('')}
+                          >
+                            <XIcon className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="space-y-3">
