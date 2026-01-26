@@ -1,7 +1,7 @@
 import { Edit, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import EditAudioBookModal from './EditAudioBookModal'
 import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -78,7 +78,6 @@ export default function AudioBooksModal({
   isOpen,
   onClose,
 }: AudioBooksModalProps) {
-  // const [isAddFormOpen, setisAddFormOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -87,6 +86,11 @@ export default function AudioBooksModal({
     userAudioBook: UserAudioBooks
   } | null>(null)
   const queryClient = useQueryClient()
+
+  // Filter options
+  const [librarySearch, setLibrarySearch] = useState('')
+
+  // const [ sortOrder, setSortOrder ] = useState<'newest' | 'oldest'>('newest')
 
   // Debounced search
   const handleSearchChange = (value: string) => {
@@ -179,18 +183,44 @@ export default function AudioBooksModal({
     onClose()
   }
 
-  const audioToListen =
-    userAudiobooks?.filter(
+  // Searchable audio books
+  const audioToListen = useMemo(() => {
+    if (!userAudiobooks) return []
+
+    const filtered = userAudiobooks.filter(
       (book) => book.userAudioBook.status === 'toListen',
-    ) ?? []
-  const audioListening =
-    userAudiobooks?.filter(
+    )
+
+    if (!librarySearch.trim()) return filtered
+
+    return filtered.filter((book) =>
+      book.audioBook.title.toLowerCase().includes(librarySearch),
+    )
+  }, [userAudiobooks, librarySearch])
+
+  const audioListening = useMemo(() => {
+    if (!userAudiobooks) return []
+    const filtered = userAudiobooks.filter(
       (book) => book.userAudioBook.status === 'listening',
-    ) ?? []
-  const audioListened =
-    userAudiobooks?.filter(
+    )
+    if (!librarySearch.trim()) return filtered
+    return filtered.filter((book) =>
+      book.audioBook.title.toLowerCase().includes(librarySearch),
+    )
+  }, [userAudiobooks, librarySearch])
+
+  const audioListened = useMemo(() => {
+    if (!userAudiobooks) return []
+
+    const filtered = userAudiobooks.filter(
       (book) => book.userAudioBook.status === 'listened',
-    ) ?? []
+    )
+
+    if (!librarySearch.trim()) return filtered
+    return filtered.filter((book) =>
+      book.audioBook.title.toLowerCase().includes(librarySearch),
+    )
+  }, [userAudiobooks, librarySearch])
 
   if (!isOpen) return null
 
@@ -342,6 +372,18 @@ export default function AudioBooksModal({
                   </TabsList>
                   {/** To Listen to  */}
                   <TabsContent value="toListen" className="mt-4">
+                    <div className="p-4 border-b border-slate-700">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search your library"
+                          value={librarySearch}
+                          onChange={(e) => setLibrarySearch(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-3">
                       {audioToListen.length === 0 ? (
                         <EmptyTabContent message="No audiobooks in your queue yet" />
@@ -359,6 +401,18 @@ export default function AudioBooksModal({
                   </TabsContent>
                   {/** Listening to  */}
                   <TabsContent value="listening" className="mt-4">
+                    <div className="p-4 border-b border-slate-700">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search your library"
+                          value={librarySearch}
+                          onChange={(e) => setLibrarySearch(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-3">
                       {audioListening.length === 0 ? (
                         <EmptyTabContent message="No audiobooks in your queue yet" />
@@ -376,6 +430,18 @@ export default function AudioBooksModal({
                   </TabsContent>
                   {/** Listening to  */}
                   <TabsContent value="listened" className="mt-4">
+                    <div className="p-4 border-b border-slate-700">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search your library"
+                          value={librarySearch}
+                          onChange={(e) => setLibrarySearch(e.target.value)}
+                          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-3">
                       {audioListened.length === 0 ? (
                         <EmptyTabContent message="No audiobooks in your queue yet" />
