@@ -220,7 +220,9 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.Lamp_mesh.geometry}
             material={materials['LightMetal.001']}
-          />
+          >
+            {isLampHovered && <Outlines thickness={2} color="#d1ccad" />}
+          </mesh>
           {/* <mesh
             castShadow
             receiveShadow
@@ -233,6 +235,7 @@ export default function CozyRoom({
               emissive="orange"
               emissiveIntensity={isLampOn ? 4 : 0} // Push it out of range when on
             />
+            {isLampHovered && <Outlines thickness={2} color="#d1ccad" />}
           </mesh>
         </group>
 
@@ -405,13 +408,17 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.Orchid_mesh.geometry}
             material={materials['lambert23SG.001']}
-          />
+          >
+            {isOrchidHovered && <Outlines thickness={2} color="#d1ccad" />}
+          </mesh>
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.Orchid_mesh_1.geometry}
             material={materials['lambert20SG.001']}
-          />
+          >
+            {isOrchidHovered && <Outlines thickness={2} color="#d1ccad" />}
+          </mesh>
           <mesh
             castShadow
             receiveShadow
@@ -449,7 +456,9 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.headphones_mesh.geometry}
             material={materials['lambert7SG.003']}
-          />
+          >
+            {isHeadphonesHovered && <Outlines thickness={2} color="#d1ccad" />}
+          </mesh>
           <mesh
             castShadow
             receiveShadow
