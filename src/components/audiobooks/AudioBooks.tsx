@@ -48,7 +48,7 @@ function ExpandedAudioCard({
       <div className="fixed inset-0 z-[70]  flex items-center justify-center">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={onClose}
         />
         <div className="relative mb-2 z-10 w-full max-w-md max-h-[150] overflow-y-auto bg-slate-800 rounded-xl shadow-2xl border border-slate-600 m-4 p-6">
@@ -78,7 +78,7 @@ function ExpandedAudioCard({
               {item.audioBook.narrators &&
                 item.audioBook.narrators.length > 0 && (
                   <p className="text-sm text-slate-400">
-                    Narrated by: {item.audioBook.narrators.join(',')}
+                    Narrated by: {item.audioBook.narrators.join(', ')}
                   </p>
                 )}
             </div>
@@ -208,7 +208,7 @@ function AudioBookCard({
             {item.audioBook.title}
           </h4>
           <p className="text-sm text-slate-400 truncate">
-            {item.audioBook.authors?.join(',')}
+            {item.audioBook.authors?.join(', ')}
           </p>
 
           <div className="flex items-center gap-2 mt-1">
@@ -580,12 +580,16 @@ export default function AudioBooksModal({
                         <EmptyTabContent message="No audiobooks in your queue yet" />
                       ) : (
                         audioToListen.map((item) => (
-                          <AudioBookCard
-                            key={item.audioBook.id}
-                            item={item}
-                            onEdit={() => handleEdit(item)}
-                            onDelete={() => handleDelete(item.userAudioBook.id)}
-                          />
+                          <div onClick={() => handleCardClick(item)}>
+                            <AudioBookCard
+                              key={item.audioBook.id}
+                              item={item}
+                              onEdit={() => handleEdit(item)}
+                              onDelete={() =>
+                                handleDelete(item.userAudioBook.id)
+                              }
+                            />
+                          </div>
                         ))
                       )}
                     </div>
@@ -660,12 +664,16 @@ export default function AudioBooksModal({
                         <EmptyTabContent message="No audiobooks in your queue yet" />
                       ) : (
                         audioListened.map((item) => (
-                          <AudioBookCard
-                            key={item.audioBook.id}
-                            item={item}
-                            onEdit={() => handleEdit(item)}
-                            onDelete={() => handleDelete(item.userAudioBook.id)}
-                          />
+                          <div onClick={() => handleCardClick(item)}>
+                            <AudioBookCard
+                              key={item.audioBook.id}
+                              item={item}
+                              onEdit={() => handleEdit(item)}
+                              onDelete={() =>
+                                handleDelete(item.userAudioBook.id)
+                              }
+                            />
+                          </div>
                         ))
                       )}
                     </div>
