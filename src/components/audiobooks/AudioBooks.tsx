@@ -1,4 +1,13 @@
-import { Edit, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
+import {
+  Edit,
+  Link,
+  Loader2,
+  Plus,
+  Search,
+  Star,
+  Trash,
+  XIcon,
+} from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
@@ -17,12 +26,158 @@ type AudioBooksModalProps = {
   onClose: () => void
 }
 
+type AudioBookItem = {
+  audioBook: AudioBooks
+  userAudioBook: UserAudioBooks
+}
+
+function ExpandedAudioCard({
+  item,
+  onEdit,
+  onDelete,
+  onClose,
+}: {
+  item: AudioBookItem
+  onEdit: () => void
+  onDelete: () => void
+  onClose: () => void
+}) {
+  return (
+    <>
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        <div className="relative z-10 w-full max-w-md bg-slate-800 rounded-xl shadow-2xl border border-slate-600 m-4 p-6">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-slate-400 hover:text-white"
+          >
+            <XIcon className="w-4 h-4" />
+          </button>
+          <div className="flex gap-4 mb-4">
+            {item.audioBook.coverImageUrl && (
+              <img
+                src={item.audioBook.coverImageUrl}
+                alt={item.audioBook.title}
+                className="w-16 h-16 object-cover rounded"
+              />
+            )}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-xl font-bold text-slate-100 mb-1">
+                {item.audioBook.title}
+              </h3>
+              <p className="text-sm text-slate-400">
+                {item.audioBook.authors?.join(', ')}
+              </p>
+              {item.audioBook.narrators &&
+                item.audioBook.narrators.length > 0 && (
+                  <p className="text-sm text-slate-400">
+                    Narrated by: {item.audioBook.narrators.join(',')}
+                  </p>
+                )}
+            </div>
+          </div>
+          {/** Details Grid */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-slate-700/50 rounded-lg p-3">
+              <p className="text-xs text-slate-400 mb-1">
+                Status: {item.userAudioBook.status}
+              </p>
+            </div>
+
+            <div className="bg-slate-700/50 rounded-lg p-3">
+              <p className="text-xs text-slate-400 mb-1">Progress</p>
+              <p className="text-sm font-medium text-slate-200">
+                Chapter {item.userAudioBook.lastChapter || 0} /{' '}
+                {item.audioBook.totalChapters ?? 'chapters'}
+              </p>
+            </div>
+
+            {item.userAudioBook.rating && (
+              <div className="bg-slate-700/50 rounded-lg p-3">
+                <p className="text-xs text-slate-400 mb-1">Rating</p>
+                <p className="text-sm font medium text-amber-400">
+                  {<Star />}.repeat(item.userAudioBook.rating) stars
+                </p>
+              </div>
+            )}
+
+            {item.userAudioBook.startedAt && (
+              <div className="bg-slate-700/50 rounded-lg p-3">
+                <p className="text-xs text-slate-400">Started</p>
+                <p className="text-sm font-medium text-slate-200">
+                  {new Date(item.userAudioBook.startedAt).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+
+            {item.userAudioBook.finishedAt && (
+              <div className="bg-slate-700/50 rounded-lg p-3">
+                <p className="text-xs text-slate-400">Finished</p>
+                <p className="text-sm font-medium text-slate-200">
+                  {new Date(item.userAudioBook.finishedAt).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+
+            {/** Description */}
+            {item.audioBook.description && (
+              <div className="mb-4">
+                <p className="text-xs text-slate-400 mb-1">Description</p>
+                <p className="text-sm font-medium text-slate-200">
+                  {item.audioBook.description}
+                </p>
+              </div>
+            )}
+
+            {item.audioBook.externalUrl && (
+              <div className="mb-4">
+                <a
+                  href={item.audioBook.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-amber-500 hover:text-amber-400 underline mb-4 block"
+                >
+                  <Link />
+                  View on Spotify
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-2 pt-4 border-t border-slate-700">
+          <button
+            onClick={() => {
+              onEdit()
+              onClose()
+            }}
+            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => {
+              onDelete()
+              onClose()
+            }}
+            className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+          >
+            <Trash className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </>
+  )
+}
+
 function AudioBookCard({
   item,
   onEdit,
   onDelete,
 }: {
-  item: { audioBook: AudioBooks; userAudioBook: UserAudioBooks }
+  item: AudioBookItem
   onEdit: () => void
   onDelete: () => void
 }) {
@@ -86,7 +241,7 @@ export default function AudioBooksModal({
     userAudioBook: UserAudioBooks
   } | null>(null)
   const queryClient = useQueryClient()
-
+  const [isExpandedModalOpen, setIsExpandedModalOpen] = useState(false)
   // Filter options
   const [librarySearch, setLibrarySearch] = useState('')
 
@@ -181,6 +336,14 @@ export default function AudioBooksModal({
 
   const closeModal = () => {
     onClose()
+  }
+
+  const handExpandedModal = (item: {
+    audioBook: AudioBooks
+    userAudioBook: UserAudioBooks
+  }) => {
+    console.log('Clicked on: ', item.audioBook)
+    setIsExpandedModalOpen(true)
   }
 
   // Searchable audio books
@@ -434,12 +597,18 @@ export default function AudioBooksModal({
                         <EmptyTabContent message="No audiobooks in your queue yet" />
                       ) : (
                         audioListening.map((item) => (
-                          <AudioBookCard
-                            key={item.audioBook.id}
-                            item={item}
-                            onEdit={() => handleEdit(item)}
-                            onDelete={() => handleDelete(item.userAudioBook.id)}
-                          />
+                          <>
+                            <div onClick={() => handExpandedModal(item)}>
+                              <AudioBookCard
+                                key={item.audioBook.id}
+                                item={item}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() =>
+                                  handleDelete(item.userAudioBook.id)
+                                }
+                              />
+                            </div>
+                          </>
                         ))
                       )}
                     </div>

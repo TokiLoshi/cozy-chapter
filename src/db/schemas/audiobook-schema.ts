@@ -44,6 +44,9 @@ export const userAudioBooks = pgTable('userAudiobooks', {
   lastPositionMs: integer('lastPositionMs').default(0),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+  startedAt: timestamp('startedAt'),
+  finishedAt: timestamp('finishedAt'),
+  rating: integer('rating'),
 })
 
 export type AudioBooks = typeof audioBooks.$inferInsert
