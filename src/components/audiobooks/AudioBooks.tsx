@@ -172,9 +172,10 @@ function ExpandedAudioCard({
             <div className="mb-2 ">
               <p className="text-xs text-slate-400 mb-1">Description</p>
               <ScrollArea className="max-h-[120px] mb-2">
-                <p className="text-sm m-3 font-medium text-slate-300 pr-3">
+                <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
                   {item.audioBook.description}
                 </p>
+                <div className="p-2" />
               </ScrollArea>
             </div>
           )}
@@ -294,8 +295,8 @@ export default function AudioBooksModal({
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-audiobooks'] })
-      setSearchQuery('')
-      setDebouncedQuery('')
+      // setSearchQuery('')
+      // setDebouncedQuery('')
       toast.success('Audiobook added to your library')
     },
     onError: () => {
@@ -459,9 +460,20 @@ export default function AudioBooksModal({
               {/** Search Results */}
               {debouncedQuery.length > 2 && (
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-slate-400 mb-3">
-                    Search Results
-                  </h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-slate-400 mb-3">
+                      Search Results
+                    </h3>
+                    <button
+                      className="cursor-pointer right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                      onClick={() => {
+                        setSearchQuery('')
+                        setDebouncedQuery('')
+                      }}
+                    >
+                      <XIcon />
+                    </button>
+                  </div>
                   {isSearching ? (
                     <div className="flex items-center justify-center py-8">
                       <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
