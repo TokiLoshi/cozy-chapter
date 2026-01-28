@@ -106,9 +106,14 @@ function ExpandedAudioCard({
             {item.userAudioBook.rating && (
               <div className="bg-slate-700/50 rounded-lg p-3">
                 <p className="text-xs text-slate-400 mb-1">Rating</p>
-                <p className="text-sm font medium text-amber-400">
-                  {<Star />}.repeat(item.userAudioBook.rating) stars
-                </p>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${i < item.userAudioBook.rating! ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'}`}
+                    />
+                  ))}
+                </div>
               </div>
             )}
 
@@ -221,13 +226,19 @@ function AudioBookCard({
         </div>
         <div className="flex gap-2 items-center">
           <button
-            onClick={onEdit}
+            onClick={(e) => {
+              e.stopPropagation()
+              onEdit()
+            }}
             className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Edit className="w-4 h-4" />
           </button>
           <button
-            onClick={onDelete}
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete()
+            }}
             className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Trash className="w-4 h-4" />
@@ -344,6 +355,7 @@ export default function AudioBooksModal({
     audioBook: AudioBooks
     userAudioBook: UserAudioBooks
   }) => {
+    setExpandedAudioBook(null)
     setAudioBookToEdit(item)
     setIsEditOpen(true)
   }
