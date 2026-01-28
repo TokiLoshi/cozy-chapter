@@ -144,7 +144,11 @@ export default function EditPlantModal({
               {(field) => (
                 <field.DateField
                   label="date last watered"
-                  placeholder="last week"
+                  placeholder={
+                    plant.lastWatered
+                      ? plant.lastWatered.toLocaleDateString()
+                      : new Date().toLocaleDateString()
+                  }
                 />
               )}
             </form.AppField>

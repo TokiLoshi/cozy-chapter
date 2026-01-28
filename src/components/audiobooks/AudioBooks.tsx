@@ -421,9 +421,7 @@ export default function AudioBooksModal({
           <ExpandedAudioCard
             item={expandedAudioBook}
             onEdit={() => handleEdit(expandedAudioBook)}
-            onDelete={() =>
-              handleDelete(expandedAudioBook.userAudioBook.audioBookId)
-            }
+            onDelete={() => handleDelete(expandedAudioBook.userAudioBook.id!)}
             onClose={() => setExpandedAudioBook(null)}
           />
         )}

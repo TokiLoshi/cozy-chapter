@@ -2,6 +2,7 @@ import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
+import StarRating from '../StarRating'
 import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { useAppForm } from '@/hooks/form'
 import { updateUserAudiobookServer } from '@/lib/server/audioBook'
@@ -14,8 +15,12 @@ type EditAudioBookModalProps = {
 
 const editAudioBookSchema = z.object({
   status: z.enum(['toListen', 'listening', 'listened']),
-  lastChapter: z.number().min(0),
-  positionMinutes: z.number().min(0),
+  lastChapter: z.number().min(0).nullable(),
+  positionMinutes: z.number().min(0).nullable(),
+  startedAt: z.date().nullable(),
+  finishedAt: z.date().nullable(),
+  rating: z.number().min(0).max(5).nullable(),
+  notes: z.string().nullable(),
 })
 
 type EditAudioBookFormValues = z.infer<typeof editAudioBookSchema>
@@ -36,6 +41,10 @@ export default function EditAudioBookModal({
       status: userAudioBook.status ?? 'toListen',
       lastChapter: userAudioBook.lastChapter ?? 0,
       positionMinutes: currentPositionMinutes,
+      startedAt: userAudioBook.startedAt,
+      finishedAt: userAudioBook.finishedAt,
+      rating: userAudioBook.rating,
+      notes: userAudioBook.notes,
     } as EditAudioBookFormValues,
     validators: {
       onBlur: ({ value }) => {
@@ -46,11 +55,12 @@ export default function EditAudioBookModal({
         }
         if (
           audioBook.totalChapters &&
+          value.lastChapter &&
           value.lastChapter > audioBook.totalChapters
         ) {
           errors.fields.lastChapter = `Chapter cannot exceed ${audioBook.totalChapters}`
         }
-        if (value.positionMinutes < 0) {
+        if (value.positionMinutes && value.positionMinutes < 0) {
           errors.fields.positionMinutes = 'Position cannot be negative'
         }
         return errors
@@ -64,7 +74,9 @@ export default function EditAudioBookModal({
         },
       })
       try {
-        const lastPositionMs = Math.round(value.positionMinutes * 60000)
+        const lastPositionMs = value.positionMinutes
+          ? Math.round(value.positionMinutes * 60000)
+          : 0
         await updateUserAudiobookServer({
           data: {
             id: userAudioBook.id!,
@@ -72,6 +84,10 @@ export default function EditAudioBookModal({
               status: value.status,
               lastChapter: value.lastChapter,
               lastPositionMs,
+              startedAt: value.startedAt,
+              finishedAt: value.finishedAt,
+              rating: value.rating,
+              notes: value.notes,
             },
           },
         })
@@ -170,9 +186,10 @@ export default function EditAudioBookModal({
               name="lastChapter"
               validators={{
                 onChange: ({ value }) => {
-                  if (value < 0) return 'Chapters cannot be negative'
+                  if (value && value < 0) return 'Chapters cannot be negative'
                   if (
                     audioBook.totalChapters &&
+                    value &&
                     value > audioBook.totalChapters
                   ) {
                     return `Chapters cannot exceed total chapters: ${audioBook.totalChapters}`
@@ -187,6 +204,11 @@ export default function EditAudioBookModal({
                     label="Current Chapter"
                     min={0}
                     max={audioBook.totalChapters ?? undefined}
+                    placeholder={
+                      userAudioBook.lastChapter
+                        ? userAudioBook.toString()
+                        : 'last chapter'
+                    }
                   />
                 </div>
               )}
@@ -197,7 +219,7 @@ export default function EditAudioBookModal({
               name="positionMinutes"
               validators={{
                 onChange: ({ value }) => {
-                  if (value < 0) return 'Position cannot be negative'
+                  if (value && value < 0) return 'Position cannot be negative'
                   return undefined
                 },
               }}
@@ -206,6 +228,66 @@ export default function EditAudioBookModal({
                 <field.NumberField
                   label="Current Position (in minutes)"
                   min={0}
+                  placeholder={
+                    userAudioBook.lastChapter
+                      ? userAudioBook.lastChapter.toString()
+                      : '0'
+                  }
+                />
+              )}
+            </form.AppField>
+
+            {/** Started At */}
+            <form.AppField name="startedAt">
+              {(field) => (
+                <field.DateField
+                  label="date started"
+                  placeholder={
+                    userAudioBook.startedAt
+                      ? userAudioBook.startedAt.toLocaleDateString()
+                      : new Date().toLocaleDateString()
+                  }
+                />
+              )}
+            </form.AppField>
+
+            {/** Finished At */}
+            <form.AppField name="finishedAt">
+              {(field) => (
+                <field.DateField
+                  label="date finished"
+                  placeholder={
+                    userAudioBook.finishedAt
+                      ? userAudioBook.finishedAt.toLocaleDateString()
+                      : new Date().toLocaleDateString()
+                  }
+                />
+              )}
+            </form.AppField>
+
+            {/** Rating */}
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Rating
+              </label>
+              <form.AppField name="rating">
+                {(field) => (
+                  <StarRating
+                    value={field.state.value}
+                    onChange={(rating) => field.handleChange(rating)}
+                    disabled={false}
+                  />
+                )}
+              </form.AppField>
+            </div>
+
+            {/** Notes  */}
+            <form.AppField name="notes">
+              {(field) => (
+                <field.TextField
+                  label="notes"
+                  placeholder={userAudioBook.notes ?? 'notes'}
                 />
               )}
             </form.AppField>

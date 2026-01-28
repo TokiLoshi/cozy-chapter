@@ -47,6 +47,7 @@ export const userAudioBooks = pgTable('userAudiobooks', {
   startedAt: timestamp('startedAt'),
   finishedAt: timestamp('finishedAt'),
   rating: integer('rating'),
+  notes: text('notes'),
 })
 
 export type AudioBooks = typeof audioBooks.$inferInsert

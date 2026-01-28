@@ -2,7 +2,6 @@ import { ChevronDownIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { Label } from '@/components/ui/label'
 import {
   Popover,
   PopoverContent,
@@ -16,9 +15,6 @@ export function DatePicker() {
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Label htmlFor="date" className="px-1">
-          Last Watered
-        </Label>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -35,7 +31,7 @@ export function DatePicker() {
               mode="single"
               selected={date}
               captionLayout="dropdown"
-              onSelect={(date) => {
+              onSelect={() => {
                 setDate(date)
                 setOpen(false)
               }}
