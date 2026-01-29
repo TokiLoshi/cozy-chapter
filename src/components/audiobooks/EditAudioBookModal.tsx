@@ -181,118 +181,140 @@ export default function EditAudioBookModal({
               )}
             </form.AppField>
 
-            {/** Current Chapter Edit */}
-            <form.AppField
-              name="lastChapter"
-              validators={{
-                onChange: ({ value }) => {
-                  if (value && value < 0) return 'Chapters cannot be negative'
-                  if (
-                    audioBook.totalChapters &&
-                    value &&
-                    value > audioBook.totalChapters
-                  ) {
-                    return `Chapters cannot exceed total chapters: ${audioBook.totalChapters}`
-                  }
-                  return undefined
-                },
+            <form.Subscribe
+              selector={(state) => state.values.status}
+              children={(status) => {
+                const isListeningOrFinished =
+                  status === 'listening' || status === 'listened'
+                const isFinished = status === 'listened'
+                return (
+                  <>
+                    {isListeningOrFinished && (
+                      <>
+                        {/** Current Chapter Edit */}
+                        <form.AppField
+                          name="lastChapter"
+                          validators={{
+                            onChange: ({ value }) => {
+                              if (value && value < 0)
+                                return 'Chapters cannot be negative'
+                              if (
+                                audioBook.totalChapters &&
+                                value &&
+                                value > audioBook.totalChapters
+                              ) {
+                                return `Chapters cannot exceed total chapters: ${audioBook.totalChapters}`
+                              }
+                              return undefined
+                            },
+                          }}
+                        >
+                          {(field) => (
+                            <div>
+                              <field.NumberField
+                                label="Current Chapter"
+                                min={0}
+                                max={audioBook.totalChapters ?? undefined}
+                                placeholder={
+                                  userAudioBook.lastChapter
+                                    ? userAudioBook.toString()
+                                    : 'last chapter'
+                                }
+                              />
+                            </div>
+                          )}
+                        </form.AppField>
+
+                        {/** Position in Chapter  */}
+                        <form.AppField
+                          name="positionMinutes"
+                          validators={{
+                            onChange: ({ value }) => {
+                              if (value && value < 0)
+                                return 'Position cannot be negative'
+                              return undefined
+                            },
+                          }}
+                        >
+                          {(field) => (
+                            <field.NumberField
+                              label="Current Position (in minutes)"
+                              min={0}
+                              placeholder={
+                                userAudioBook.lastChapter
+                                  ? userAudioBook.lastChapter.toString()
+                                  : '0'
+                              }
+                            />
+                          )}
+                        </form.AppField>
+
+                        {/** Started At */}
+                        <form.AppField name="startedAt">
+                          {(field) => (
+                            <field.DateField
+                              label="date started"
+                              placeholder={
+                                userAudioBook.startedAt
+                                  ? userAudioBook.startedAt.toLocaleDateString()
+                                  : new Date().toLocaleDateString()
+                              }
+                            />
+                          )}
+                        </form.AppField>
+                      </>
+                    )}
+                    {isFinished && (
+                      <>
+                        {/** Finished At */}
+                        <form.AppField name="finishedAt">
+                          {(field) => (
+                            <field.DateField
+                              label="date finished"
+                              placeholder={
+                                userAudioBook.finishedAt
+                                  ? userAudioBook.finishedAt.toLocaleDateString()
+                                  : new Date().toLocaleDateString()
+                              }
+                            />
+                          )}
+                        </form.AppField>
+
+                        {/** Rating */}
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-300 mb-2">
+                            Rating
+                          </label>
+                          <form.AppField name="rating">
+                            {(field) => (
+                              <StarRating
+                                value={field.state.value}
+                                onChange={(rating) =>
+                                  field.handleChange(rating)
+                                }
+                                disabled={false}
+                              />
+                            )}
+                          </form.AppField>
+                        </div>
+                      </>
+                    )}
+                    {/** Notes  */}
+                    <form.AppField name="notes">
+                      {(field) => (
+                        <field.TextField
+                          label="notes"
+                          placeholder={userAudioBook.notes ?? 'notes'}
+                        />
+                      )}
+                    </form.AppField>
+                  </>
+                )
               }}
-            >
-              {(field) => (
-                <div>
-                  <field.NumberField
-                    label="Current Chapter"
-                    min={0}
-                    max={audioBook.totalChapters ?? undefined}
-                    placeholder={
-                      userAudioBook.lastChapter
-                        ? userAudioBook.toString()
-                        : 'last chapter'
-                    }
-                  />
-                </div>
-              )}
-            </form.AppField>
+            />
 
-            {/** Position in Chapter  */}
-            <form.AppField
-              name="positionMinutes"
-              validators={{
-                onChange: ({ value }) => {
-                  if (value && value < 0) return 'Position cannot be negative'
-                  return undefined
-                },
-              }}
-            >
-              {(field) => (
-                <field.NumberField
-                  label="Current Position (in minutes)"
-                  min={0}
-                  placeholder={
-                    userAudioBook.lastChapter
-                      ? userAudioBook.lastChapter.toString()
-                      : '0'
-                  }
-                />
-              )}
-            </form.AppField>
-
-            {/** Started At */}
-            <form.AppField name="startedAt">
-              {(field) => (
-                <field.DateField
-                  label="date started"
-                  placeholder={
-                    userAudioBook.startedAt
-                      ? userAudioBook.startedAt.toLocaleDateString()
-                      : new Date().toLocaleDateString()
-                  }
-                />
-              )}
-            </form.AppField>
-
-            {/** Finished At */}
-            <form.AppField name="finishedAt">
-              {(field) => (
-                <field.DateField
-                  label="date finished"
-                  placeholder={
-                    userAudioBook.finishedAt
-                      ? userAudioBook.finishedAt.toLocaleDateString()
-                      : new Date().toLocaleDateString()
-                  }
-                />
-              )}
-            </form.AppField>
-
-            {/** Rating */}
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Rating
-              </label>
-              <form.AppField name="rating">
-                {(field) => (
-                  <StarRating
-                    value={field.state.value}
-                    onChange={(rating) => field.handleChange(rating)}
-                    disabled={false}
-                  />
-                )}
-              </form.AppField>
-            </div>
-
-            {/** Notes  */}
-            <form.AppField name="notes">
-              {(field) => (
-                <field.TextField
-                  label="notes"
-                  placeholder={userAudioBook.notes ?? 'notes'}
-                />
-              )}
-            </form.AppField>
-
-            <div className="flex jusity-end">
+            <div className="flex justify-end">
               <form.AppForm>
                 <form.SubmitButton
                   label="Submit Edit"
