@@ -9,6 +9,7 @@ import {
   DisplayDescription,
   DisplayStarRating,
 } from '../ExpandedCard'
+import SearchArea from '../SearchArea'
 import EditAudioBookModal from './EditAudioBookModal'
 import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -524,26 +525,10 @@ export default function AudioBooksModal({
                   </TabsList>
                   {/** To Listen to  */}
                   <TabsContent value="toListen" className="mt-4">
-                    <div className="mb-2 p-4 border-b border-slate-700">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input
-                          type="text"
-                          placeholder="Search your library"
-                          value={librarySearch}
-                          onChange={(e) => setLibrarySearch(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                        />
-                        {librarySearch.length >= 1 && (
-                          <button
-                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
-                            onClick={() => setLibrarySearch('')}
-                          >
-                            <XIcon className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <SearchArea
+                      value={librarySearch}
+                      onChange={setLibrarySearch}
+                    />
                     <div className="space-y-3">
                       {audioToListen.length === 0 ? (
                         <EmptyTabContent message="No audiobooks in your queue yet" />
@@ -565,26 +550,10 @@ export default function AudioBooksModal({
                   </TabsContent>
                   {/** Listening to  */}
                   <TabsContent value="listening" className="mt-4">
-                    <div className="mb-2 p-4 border-b border-slate-700 ">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input
-                          type="text"
-                          placeholder="Search your library"
-                          value={librarySearch}
-                          onChange={(e) => setLibrarySearch(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                        />
-                        {librarySearch.length >= 1 && (
-                          <button
-                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
-                            onClick={() => setLibrarySearch('')}
-                          >
-                            <XIcon className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <SearchArea
+                      value={librarySearch}
+                      onChange={setLibrarySearch}
+                    />
                     <div className="space-y-3">
                       {audioListening.length === 0 ? (
                         <EmptyTabContent message="No audiobooks in your queue yet" />
@@ -606,28 +575,12 @@ export default function AudioBooksModal({
                       )}
                     </div>
                   </TabsContent>
-                  {/** Listening to  */}
+                  {/** Listened to  */}
                   <TabsContent value="listened" className="mt-4">
-                    <div className="mb-2 p-4 border-b border-slate-700">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <input
-                          type="text"
-                          placeholder="Search your library"
-                          value={librarySearch}
-                          onChange={(e) => setLibrarySearch(e.target.value)}
-                          className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                        />
-                        {librarySearch.length >= 1 && (
-                          <button
-                            className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
-                            onClick={() => setLibrarySearch('')}
-                          >
-                            <XIcon className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <SearchArea
+                      value={librarySearch}
+                      onChange={setLibrarySearch}
+                    />
                     <div className="space-y-3">
                       {audioListened.length === 0 ? (
                         <EmptyTabContent message="No audiobooks in your queue yet" />

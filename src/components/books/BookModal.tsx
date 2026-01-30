@@ -42,15 +42,6 @@ function ExpandedBookCard({
   onDelete,
   onClose,
 }: ExpandedBookProps) {
-  // Page Count
-  // Categories
-  // status
-  // Last Chapter
-  // Current Page
-  // Rating
-  // Notes
-  // Started At
-  // Finished at
   return (
     <BaseModal onClose={onClose}>
       {/** Header */}
