@@ -12,6 +12,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
+import { BaseModal, DetailItem } from '../ExpandedCard'
 import EditAudioBookModal from './EditAudioBookModal'
 import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -30,6 +31,150 @@ type AudioBooksModalProps = {
 type AudioBookItem = {
   audioBook: AudioBooks
   userAudioBook: UserAudioBooks
+}
+
+type ExpandedAudioCardProps = {
+  item: AudioBookItem
+  onEdit: () => void
+  onDelete: () => void
+  onClose: () => void
+}
+
+function ExpandedAudio({
+  item,
+  onEdit,
+  onDelete,
+  onClose,
+}: ExpandedAudioCardProps) {
+  return (
+    <BaseModal onClose={onClose}>
+      {/** Header */}
+      <div className="flex gap-4 mb-4">
+        {/** Cover image  */}
+        {item.audioBook.coverImageUrl && (
+          <img
+            src={item.audioBook.coverImageUrl}
+            alt={item.audioBook.title}
+            className="w-16 h-16 object-cover rounded"
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-slate-100 mb-1">
+            {item.audioBook.title}
+          </h3>
+          <p className="text-sm text-slate-400">
+            Authors: {item.audioBook.authors?.join(', ')}
+          </p>
+          {item.audioBook.narrators && item.audioBook.narrators.length > 0 && (
+            <p className="text-sm text-slate-400">
+              Narrated by: {item.audioBook.narrators.join(', ')}
+            </p>
+          )}
+        </div>
+      </div>
+      {/** Details Grid  */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <DetailItem label="Status">
+          <p className="text-sm font-medium text-slate-200">
+            {item.userAudioBook.status}
+          </p>
+        </DetailItem>
+
+        {/** Last Chapter */}
+        <DetailItem label="Progress">
+          <p className="text-sm font-medium text-slate-200">
+            Chapter {item.userAudioBook.lastChapter || 0} /{''}
+            {item.audioBook.totalChapters ?? 'chapters'}
+          </p>
+        </DetailItem>
+
+        {/** Rating */}
+        {item.userAudioBook.rating && (
+          <DetailItem label="Progress">
+            <div className="flex items-center gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i < item.userAudioBook.rating!
+                      ? 'fill-amber-400 text-amber-400'
+                      : 'fill-slate-200 text-slate-200'
+                  }`}
+                />
+              ))}
+            </div>
+          </DetailItem>
+        )}
+
+        {/** Started At */}
+        {item.userAudioBook.startedAt && (
+          <DetailItem label="Started">
+            <p className="text-sm font-medium text-slate-200">
+              {new Date(item.userAudioBook.startedAt).toLocaleDateString()}
+            </p>
+          </DetailItem>
+        )}
+
+        {/** Finished at */}
+        {item.userAudioBook.finishedAt && (
+          <DetailItem label="Finished">
+            <p className="text-sm font-medium text-slate-200">
+              {new Date(item.userAudioBook.finishedAt).toLocaleDateString()}
+            </p>
+          </DetailItem>
+        )}
+      </div>
+      {/** External URL  */}
+      {item.audioBook.externalUrl && (
+        <div className="mb-4">
+          <a
+            href={item.audioBook.externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-amber-500 hover:text-amber-400 underline mb-4 block"
+          >
+            <Link />
+            View on Spotify
+          </a>
+        </div>
+      )}
+
+      {/** Actions */}
+      <div className="flex gap-3 pt-4 m-2 border-t border-slate-700">
+        <button
+          onClick={() => {
+            onEdit()
+            onClose()
+          }}
+          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => {
+            onDelete()
+            onClose()
+          }}
+          className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+        >
+          <Trash className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/** Description */}
+      {item.audioBook.description && (
+        <div className="mb-2 ">
+          <p className="text-xs text-slate-400 mb-1">Description</p>
+          <ScrollArea className="max-h-[120px] mb-2">
+            <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
+              {item.audioBook.description}
+            </p>
+            <div className="p-2" />
+          </ScrollArea>
+        </div>
+      )}
+    </BaseModal>
+  )
 }
 
 function ExpandedAudioCard({
@@ -151,6 +296,7 @@ function ExpandedAudioCard({
               </a>
             </div>
           )}
+          {/** Actions */}
           <div className="flex gap-3 pt-4 m-2 border-t border-slate-700">
             <button
               onClick={() => {
@@ -430,7 +576,7 @@ export default function AudioBooksModal({
           />
         )}
         {expandedAudioBook && (
-          <ExpandedAudioCard
+          <ExpandedAudio
             item={expandedAudioBook}
             onEdit={() => handleEdit(expandedAudioBook)}
             onDelete={() => handleDelete(expandedAudioBook.userAudioBook.id!)}
