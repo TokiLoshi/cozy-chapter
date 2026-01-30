@@ -1,5 +1,6 @@
 // TODO: this probably needs to be abstracted so podcasts, books, and audiobooks can use it
-import { Star, XIcon } from 'lucide-react'
+import { ScrollArea } from '@radix-ui/react-scroll-area'
+import { Edit, Star, Trash, XIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 type BaseModalProps = {
@@ -17,7 +18,54 @@ type StarRatingProps = {
   maxStars?: number
 }
 
-export function StarRating({ rating, maxStars = 5 }: StarRatingProps) {
+type ActionsProps = {
+  onClose: () => void
+  onEdit: () => void
+  onDelete: () => void
+}
+
+export function DisplayDescription({ description }: { description: string }) {
+  return (
+    <div className="mb-2">
+      <p className="text-xs text-slate-400 mb-1">Description</p>
+      <ScrollArea className="max-h-[120px] mb-2">
+        <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
+          {description}
+        </p>
+        <div className="p-2" />
+      </ScrollArea>
+    </div>
+  )
+}
+
+export function DisplayActions({ onClose, onEdit, onDelete }: ActionsProps) {
+  return (
+    <>
+      <div className="flex gap-3 pt-4 m-2 border-t border-slate-700">
+        <button
+          onClick={() => {
+            onEdit()
+            onClose()
+          }}
+          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+        >
+          <Edit className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => {
+            onDelete()
+            onClose()
+          }}
+          className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+        >
+          <Trash className="w-4 h-4" />
+        </button>
+      </div>
+    </>
+  )
+}
+
+export function DisplayStarRating({ rating, maxStars = 5 }: StarRatingProps) {
   return (
     <div className="flex items-center gap-1">
       {Array.from({ length: maxStars }).map((_, i) => (

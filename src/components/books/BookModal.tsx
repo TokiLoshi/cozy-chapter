@@ -1,8 +1,15 @@
-import { Edit, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
+import { Edit, Link, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
+import {
+  BaseModal,
+  DetailItem,
+  DisplayActions,
+  DisplayDescription,
+  DisplayStarRating,
+} from '../ExpandedCard'
 import EditBookModal from './EditBookModal'
 import type { Books, UserBooks } from '@/db/schemas/book-schema'
 import {
@@ -15,6 +22,141 @@ import {
 type BookModalProps = {
   isOpen: boolean
   selectedStatus: 'toRead' | 'reading' | 'read'
+}
+
+type BookItem = {
+  book: Books
+  userBook: UserBooks
+}
+
+type ExpandedBookProps = {
+  item: BookItem
+  onEdit: () => void
+  onDelete: () => void
+  onClose: () => void
+}
+
+function ExpandedBookCard({
+  item,
+  onEdit,
+  onDelete,
+  onClose,
+}: ExpandedBookProps) {
+  // Page Count
+  // Categories
+  // status
+  // Last Chapter
+  // Current Page
+  // Rating
+  // Notes
+  // Started At
+  // Finished at
+  return (
+    <BaseModal onClose={onClose}>
+      {/** Header */}
+      <div className="flex gap-4 mb-4">
+        {/** Cover Image */}
+        {item.book.coverImageUrl && (
+          <img
+            src={item.book.coverImageUrl}
+            alt={item.book.title}
+            className="w-16 h-16 object-cover rounded"
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-slate-100 mb-1">
+            {item.book.title}
+          </h3>
+          {item.book.subtitle && (
+            <p className="text-sm text-slate-300">{item.book.subtitle}</p>
+          )}
+          <p className="text-sm text-slate-300">
+            Authors: {item.book.authors?.join(', ')}
+          </p>
+          {item.book.publisher && (
+            <p className="text-sm text-slate-300">
+              Published {item.book.publishedDate ?? 'uknown date'} by{' '}
+              {item.book.publisher}
+            </p>
+          )}
+          {item.book.pageCount && (
+            <p className="text-sm text-slate-400">
+              {item.book.pageCount} pages{' '}
+            </p>
+          )}
+          {item.book.categories && (
+            <p className="text-sm text-slate-300">
+              Category: {item.book.categories.join(', ')}
+            </p>
+          )}
+        </div>
+      </div>
+      {/** Details Grid */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        {/** Status */}
+        <DetailItem label="Status">
+          <p className="text-sm font-medium text-slate-200">
+            {item.userBook.status}
+          </p>
+        </DetailItem>
+
+        {/** Last Chapter */}
+        <DetailItem label="Progress">
+          <p className="text-sm font-medium text-slate-200">
+            Chapter {item.userBook.lastChapter || 0}
+          </p>
+        </DetailItem>
+
+        {/** Rating */}
+        {item.userBook.rating && (
+          <DetailItem label="Rating">
+            <DisplayStarRating rating={item.userBook.rating} maxStars={5} />
+          </DetailItem>
+        )}
+
+        {/** Started At */}
+        {item.userBook.startedAt && (
+          <DetailItem label="Started">
+            <p className="text-sm font-medium text-slate-200">
+              {new Date(item.userBook.startedAt).toLocaleDateString()}
+            </p>
+          </DetailItem>
+        )}
+
+        {/** Finished at */}
+        {item.userBook.finishedAt && (
+          <DetailItem label="Finished">
+            <p className="text-sm font-medium text-slate-200">
+              {new Date(item.userBook.finishedAt).toLocaleDateString()}
+            </p>
+          </DetailItem>
+        )}
+      </div>
+
+      {/** External URL */}
+      {item.book.previewLink && (
+        <div className="mb-4">
+          <a
+            href={item.book.previewLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-amber-500 hover:text-amber-400 underline mb-4 block"
+          >
+            <Link />
+            View
+          </a>
+        </div>
+      )}
+
+      {/** Actions */}
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
+
+      {/** Description */}
+      {item.book.description && (
+        <DisplayDescription description={item.book.description} />
+      )}
+    </BaseModal>
+  )
 }
 
 export function BookCard({
@@ -77,8 +219,9 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     book: Books
     userBook: UserBooks
   } | null>(null)
-
   const queryClient = useQueryClient()
+  const [expandedBook, setExpandedBook] = useState<BookItem | null>(null)
+  // const [librarySearch, setLibrarySearch] = useState('')
 
   const { data: userBooks } = useQuery({
     queryKey: ['user-books'],
@@ -161,6 +304,11 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     setIsEditOpen(true)
   }
 
+  const handleCardClick = (item: BookItem) => {
+    console.log('Clicked on ', item)
+    setExpandedBook(item)
+  }
+
   if (!isOpen) return null
 
   return (
@@ -176,6 +324,14 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
             setIsEditOpen(false)
             setBookToEdit(null)
           }}
+        />
+      )}
+      {expandedBook && (
+        <ExpandedBookCard
+          item={expandedBook}
+          onEdit={() => handleEdit(expandedBook)}
+          onDelete={() => handleDelete(expandedBook.userBook.id!)}
+          onClose={() => setExpandedBook(null)}
         />
       )}
 
@@ -283,12 +439,14 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredBooks &&
                   filteredBooks.map((item) => (
-                    <BookCard
-                      key={item.book.id}
-                      item={item}
-                      onEdit={() => handleEdit(item)}
-                      onDelete={() => handleDelete(item.userBook.id)}
-                    />
+                    <div onClick={() => handleCardClick(item)}>
+                      <BookCard
+                        key={item.book.id}
+                        item={item}
+                        onEdit={() => handleEdit(item)}
+                        onDelete={() => handleDelete(item.userBook.id)}
+                      />
+                    </div>
                   ))}
               </div>
             </ScrollArea>

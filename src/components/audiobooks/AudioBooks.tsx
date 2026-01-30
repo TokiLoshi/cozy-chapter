@@ -2,8 +2,13 @@ import { Edit, Link, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
-import { BaseModal, DetailItem, StarRating } from '../ExpandedCard'
+import {
+  BaseModal,
+  DetailItem,
+  DisplayActions,
+  DisplayDescription,
+  DisplayStarRating,
+} from '../ExpandedCard'
 import EditAudioBookModal from './EditAudioBookModal'
 import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -81,8 +86,11 @@ function ExpandedAudioCard({
 
         {/** Rating */}
         {item.userAudioBook.rating && (
-          <DetailItem label="Progress">
-            <StarRating rating={item.userAudioBook.rating} maxStars={5} />
+          <DetailItem label="Rating">
+            <DisplayStarRating
+              rating={item.userAudioBook.rating}
+              maxStars={5}
+            />
           </DetailItem>
         )}
 
@@ -120,38 +128,11 @@ function ExpandedAudioCard({
       )}
 
       {/** Actions */}
-      <div className="flex gap-3 pt-4 m-2 border-t border-slate-700">
-        <button
-          onClick={() => {
-            onEdit()
-            onClose()
-          }}
-          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
-        >
-          <Edit className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => {
-            onDelete()
-            onClose()
-          }}
-          className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
-        >
-          <Trash className="w-4 h-4" />
-        </button>
-      </div>
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
 
       {/** Description */}
       {item.audioBook.description && (
-        <div className="mb-2 ">
-          <p className="text-xs text-slate-400 mb-1">Description</p>
-          <ScrollArea className="max-h-[120px] mb-2">
-            <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
-              {item.audioBook.description}
-            </p>
-            <div className="p-2" />
-          </ScrollArea>
-        </div>
+        <DisplayDescription description={item.audioBook.description} />
       )}
     </BaseModal>
   )
@@ -332,7 +313,6 @@ export default function AudioBooksModal({
   }
 
   const handleCardClick = (item: AudioBookItem) => {
-    console.log('Clicked on: ', item)
     setExpandedAudioBook(item)
   }
 
