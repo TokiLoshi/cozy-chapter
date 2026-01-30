@@ -1,5 +1,5 @@
 // TODO: this probably needs to be abstracted so podcasts, books, and audiobooks can use it
-import { XIcon } from 'lucide-react'
+import { Star, XIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 type BaseModalProps = {
@@ -10,6 +10,28 @@ type BaseModalProps = {
 type DetailItemProps = {
   label: string
   children: ReactNode
+}
+
+type StarRatingProps = {
+  rating: number
+  maxStars?: number
+}
+
+export function StarRating({ rating, maxStars = 5 }: StarRatingProps) {
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: maxStars }).map((_, i) => (
+        <Star
+          key={i}
+          className={`w-4 h-4 ${
+            i < rating
+              ? 'fill-amber-400 text-amber-400'
+              : 'fill-slate-200 text-slate-200'
+          }`}
+        />
+      ))}
+    </div>
+  )
 }
 
 export function DetailItem({ label, children }: DetailItemProps) {
