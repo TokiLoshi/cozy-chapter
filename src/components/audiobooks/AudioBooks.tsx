@@ -176,6 +176,7 @@ function AudioBookCard({
         <div className="flex gap-2 items-center">
           <button
             onClick={(e) => {
+              // Prevents the expanded modal from opening
               e.stopPropagation()
               onEdit()
             }}
@@ -313,11 +314,12 @@ export default function AudioBooksModal({
     onClose()
   }
 
+  // Launch Expandable Modal
   const handleCardClick = (item: AudioBookItem) => {
     setExpandedAudioBook(item)
   }
 
-  // Searchable audio books
+  // To Listen List Search Filter
   const audioToListen = useMemo(() => {
     if (!userAudiobooks) return []
 
@@ -338,6 +340,7 @@ export default function AudioBooksModal({
     })
   }, [userAudiobooks, librarySearch])
 
+  // Listening Search Filter
   const audioListening = useMemo(() => {
     if (!userAudiobooks) return []
     const filtered = userAudiobooks.filter(
@@ -357,6 +360,7 @@ export default function AudioBooksModal({
     })
   }, [userAudiobooks, librarySearch])
 
+  // Listened to Search Filter
   const audioListened = useMemo(() => {
     if (!userAudiobooks) return []
 
@@ -550,7 +554,7 @@ export default function AudioBooksModal({
                       value={librarySearch}
                       onChange={setLibrarySearch}
                     />
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {audioToListen.length === 0 ? (
                         <EmptyTabContent
                           message={
@@ -584,7 +588,7 @@ export default function AudioBooksModal({
                       value={librarySearch}
                       onChange={setLibrarySearch}
                     />
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {audioListening.length === 0 ? (
                         <EmptyTabContent
                           message={
@@ -620,7 +624,7 @@ export default function AudioBooksModal({
                       value={librarySearch}
                       onChange={setLibrarySearch}
                     />
-                    <div className="space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {audioListened.length === 0 ? (
                         <EmptyTabContent
                           message={

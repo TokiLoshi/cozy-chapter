@@ -300,19 +300,19 @@ export default function EditAudioBookModal({
                         </div>
                       </>
                     )}
-                    {/** Notes  */}
-                    <form.AppField name="notes">
-                      {(field) => (
-                        <field.TextField
-                          label="notes"
-                          placeholder={userAudioBook.notes ?? 'notes'}
-                        />
-                      )}
-                    </form.AppField>
                   </>
                 )
               }}
             />
+            {/** Notes  */}
+            <form.AppField name="notes">
+              {(field) => (
+                <field.TextField
+                  label="notes"
+                  placeholder={userAudioBook.notes ?? 'notes'}
+                />
+              )}
+            </form.AppField>
 
             <div className="flex justify-end">
               <form.AppForm>

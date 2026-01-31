@@ -17,6 +17,8 @@ const editBookSchema = z.object({
   status: z.enum(['toRead', 'reading', 'read']),
   currentPage: z.number().min(0).nullable(),
   lastChapter: z.number().min(0).nullable(),
+  startedAt: z.date().nullable(),
+  finishedAt: z.date().nullable(),
   rating: z.number().min(1).max(5).nullable(),
   notes: z.string().nullable(),
 })
@@ -35,6 +37,8 @@ export default function EditBookModal({
       status: userBook.status ?? 'toRead',
       currentPage: userBook.currentPage ?? 0,
       lastChapter: userBook.lastChapter ?? 0,
+      startedAt: userBook.startedAt,
+      finishedAt: userBook.finishedAt,
       rating: userBook.rating ?? null,
       notes: userBook.notes ?? '',
     } as EditBookFormValues,
@@ -70,6 +74,8 @@ export default function EditBookModal({
               status: value.status,
               currentPage: value.currentPage,
               lastChapter: value.lastChapter,
+              startedAt: value.startedAt,
+              finishedAt: value.finishedAt,
               rating: value.rating,
               notes: value.notes,
             },
@@ -165,57 +171,85 @@ export default function EditBookModal({
               )}
             </form.AppField>
 
-            {/** Current Page */}
-            <form.AppField
-              name="currentPage"
-              validators={{
-                onChange: ({ value }) => {
-                  if (value && value < 0) return 'Chapters cannot be negative'
-                  if (book.pageCount && value && value > book.pageCount) {
-                    return `Page count cannot exceed ${book.pageCount}`
-                  }
-                  return undefined
-                },
+            <form.Subscribe
+              selector={(state) => state.values.status}
+              children={(status) => {
+                const isReadingOrFinished =
+                  status === 'reading' || status === 'read'
+                const isFinished = status === 'read'
+                return (
+                  <>
+                    {isReadingOrFinished && (
+                      <>
+                        {/** Current Page */}
+                        <form.AppField
+                          name="currentPage"
+                          validators={{
+                            onChange: ({ value }) => {
+                              if (value && value < 0)
+                                return 'Chapters cannot be negative'
+                              if (
+                                book.pageCount &&
+                                value &&
+                                value > book.pageCount
+                              ) {
+                                return `Page count cannot exceed ${book.pageCount}`
+                              }
+                              return undefined
+                            },
+                          }}
+                        >
+                          {(field) => (
+                            <div>
+                              <field.NumberField
+                                label="Current Page"
+                                placeholder={
+                                  book.pageCount ? String(book.pageCount) : '?'
+                                }
+                                min={0}
+                                max={book.pageCount ?? undefined}
+                              />
+                            </div>
+                          )}
+                        </form.AppField>
+
+                        {/** Last Chapter */}
+                        <form.AppField name="lastChapter">
+                          {(field) => (
+                            <field.NumberField
+                              label="Last Chapter Read"
+                              placeholder="0"
+                              min={0}
+                            />
+                          )}
+                        </form.AppField>
+                      </>
+                    )}
+                    {isFinished && (
+                      <>
+                        {/** Rating */}
+                        <div>
+                          <label className="block text-sm font-medium text-slate-300 mb-2">
+                            Rating
+                          </label>
+                          <form.AppField name="rating">
+                            {(field) => (
+                              <StarRating
+                                value={field.state.value}
+                                onChange={(rating) =>
+                                  field.handleChange(rating)
+                                }
+                                disabled={false}
+                              />
+                            )}
+                          </form.AppField>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )
               }}
-            >
-              {(field) => (
-                <div>
-                  <field.NumberField
-                    label="Current Page"
-                    placeholder={book.pageCount ? String(book.pageCount) : '?'}
-                    min={0}
-                    max={book.pageCount ?? undefined}
-                  />
-                </div>
-              )}
-            </form.AppField>
-
-            {/** Last Chapter */}
-            <form.AppField name="lastChapter">
-              {(field) => (
-                <field.NumberField
-                  label="Last Chapter Read"
-                  placeholder="0"
-                  min={0}
-                />
-              )}
-            </form.AppField>
-
-            {/** Rating */}
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
-                Rating
-              </label>
-              <form.AppField name="rating">
-                {(field) => (
-                  <StarRating
-                    value={field.state.value}
-                    onChange={(rating) => field.handleChange(rating)}
-                    disabled={false}
-                  />
-                )}
-              </form.AppField>
-            </div>
+            />
 
             {/** Notes field */}
             <form.AppField name="notes">

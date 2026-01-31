@@ -185,7 +185,11 @@ export function BookCard({
         </div>
         <div className="flex gap-2 items-center">
           <button
-            onClick={onEdit}
+            onClick={(e) => {
+              // Prevents the expanded modal from opening
+              e.stopPropagation()
+              onEdit()
+            }}
             className="cursor-pointer bg-amber-500/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Edit className="w-4 h-4" />
