@@ -1,7 +1,7 @@
 import { Edit, Link, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import {
   BaseModal,
@@ -18,6 +18,7 @@ import {
   getUserBookServer,
   searchBooks,
 } from '@/lib/server/books'
+import SearchArea from '../SearchArea'
 
 type BookModalProps = {
   isOpen: boolean
@@ -212,7 +213,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
   } | null>(null)
   const queryClient = useQueryClient()
   const [expandedBook, setExpandedBook] = useState<BookItem | null>(null)
-  // const [librarySearch, setLibrarySearch] = useState('')
+  const [librarySearch, setLibrarySearch] = useState('')
 
   const { data: userBooks } = useQuery({
     queryKey: ['user-books'],
@@ -225,9 +226,20 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     read: 'read',
   }
 
-  const filteredBooks = userBooks?.filter(
-    (item) => item.userBook.status === statusMap[selectedStatus],
-  )
+  // const filteredBooks = userBooks?.filter(
+  //   (item) => item.userBook.status === statusMap[selectedStatus],
+  // )
+  // TODO should we add by author for search
+  const filteredBooks = useMemo(() => {
+    if (!userBooks) return []
+    const filtered = userBooks.filter(
+      (item) => item.userBook.status === statusMap[selectedStatus],
+    )
+    if (!librarySearch.trim()) return filtered
+    return filtered.filter((book) =>
+      book.book.title.toLowerCase().includes(librarySearch),
+    )
+  }, [userBooks, librarySearch])
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
@@ -346,7 +358,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
                     setSearchQuery('')
                     setDebouncedQuery('')
                   }}
-                  className="text-gray-400 hover:text-white"
+                  className="cursor-pointer text-gray-400 hover:text-white"
                 >
                   <XIcon className="w-4 h-4" />
                 </button>
@@ -427,10 +439,14 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
             </p>
           ) : (
             <ScrollArea className="h-[400px]">
+              <SearchArea value={librarySearch} onChange={setLibrarySearch} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredBooks &&
                   filteredBooks.map((item) => (
-                    <div onClick={() => handleCardClick(item)}>
+                    <div
+                      onClick={() => handleCardClick(item)}
+                      className="cursor-pointer"
+                    >
                       <BookCard
                         key={item.book.id}
                         item={item}

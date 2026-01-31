@@ -534,7 +534,10 @@ export default function AudioBooksModal({
                         <EmptyTabContent message="No audiobooks in your queue yet" />
                       ) : (
                         audioToListen.map((item) => (
-                          <div onClick={() => handleCardClick(item)}>
+                          <div
+                            onClick={() => handleCardClick(item)}
+                            className="cursor-pointer"
+                          >
                             <AudioBookCard
                               key={item.audioBook.id}
                               item={item}
@@ -560,7 +563,10 @@ export default function AudioBooksModal({
                       ) : (
                         audioListening.map((item) => (
                           <>
-                            <div onClick={() => handleCardClick(item)}>
+                            <div
+                              onClick={() => handleCardClick(item)}
+                              className="cursor-pointer"
+                            >
                               <AudioBookCard
                                 key={item.audioBook.id}
                                 item={item}
@@ -586,7 +592,10 @@ export default function AudioBooksModal({
                         <EmptyTabContent message="No audiobooks in your queue yet" />
                       ) : (
                         audioListened.map((item) => (
-                          <div onClick={() => handleCardClick(item)}>
+                          <div
+                            onClick={() => handleCardClick(item)}
+                            className="cursor-pointer"
+                          >
                             <AudioBookCard
                               key={item.audioBook.id}
                               item={item}
