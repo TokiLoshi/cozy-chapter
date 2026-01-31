@@ -10,6 +10,7 @@ import {
   DisplayDescription,
   DisplayStarRating,
 } from '../ExpandedCard'
+import SearchArea from '../SearchArea'
 import EditBookModal from './EditBookModal'
 import type { Books, UserBooks } from '@/db/schemas/book-schema'
 import {
@@ -18,7 +19,6 @@ import {
   getUserBookServer,
   searchBooks,
 } from '@/lib/server/books'
-import SearchArea from '../SearchArea'
 
 type BookModalProps = {
   isOpen: boolean
@@ -226,20 +226,21 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     read: 'read',
   }
 
-  // const filteredBooks = userBooks?.filter(
-  //   (item) => item.userBook.status === statusMap[selectedStatus],
-  // )
-  // TODO should we add by author for search
   const filteredBooks = useMemo(() => {
     if (!userBooks) return []
     const filtered = userBooks.filter(
       (item) => item.userBook.status === statusMap[selectedStatus],
     )
     if (!librarySearch.trim()) return filtered
-    return filtered.filter((book) =>
-      book.book.title.toLowerCase().includes(librarySearch),
-    )
-  }, [userBooks, librarySearch])
+    const searchTerm = librarySearch.toLowerCase()
+    return filtered.filter((book) => {
+      const titleMatch = book.book.title.toLowerCase().includes(searchTerm)
+      const authorMatch = book.book.authors?.some((author) =>
+        author.toLowerCase().includes(searchTerm),
+      )
+      return titleMatch || authorMatch
+    })
+  }, [userBooks, selectedStatus, librarySearch])
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value)
@@ -432,32 +433,33 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
           )}
 
           {/** Users books */}
-          {filteredBooks && filteredBooks.length === 0 ? (
-            <p className="text-center text-gray-400 py-8">
-              {' '}
-              No books in this category yet
-            </p>
-          ) : (
-            <ScrollArea className="h-[400px]">
-              <SearchArea value={librarySearch} onChange={setLibrarySearch} />
+          <ScrollArea className="h-[400px]">
+            <SearchArea value={librarySearch} onChange={setLibrarySearch} />
+            {filteredBooks.length === 0 ? (
+              <p className="text-center text-gray-400 py-8">
+                {' '}
+                {librarySearch
+                  ? 'No books match your search'
+                  : 'No books in this category yet'}
+              </p>
+            ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredBooks &&
-                  filteredBooks.map((item) => (
-                    <div
-                      onClick={() => handleCardClick(item)}
-                      className="cursor-pointer"
-                    >
-                      <BookCard
-                        key={item.book.id}
-                        item={item}
-                        onEdit={() => handleEdit(item)}
-                        onDelete={() => handleDelete(item.userBook.id)}
-                      />
-                    </div>
-                  ))}
+                {filteredBooks.map((item) => (
+                  <div
+                    onClick={() => handleCardClick(item)}
+                    className="cursor-pointer"
+                  >
+                    <BookCard
+                      key={item.book.id}
+                      item={item}
+                      onEdit={() => handleEdit(item)}
+                      onDelete={() => handleDelete(item.userBook.id)}
+                    />
+                  </div>
+                ))}
               </div>
-            </ScrollArea>
-          )}
+            )}
+          </ScrollArea>
         </>
       )}
     </>

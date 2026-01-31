@@ -327,9 +327,15 @@ export default function AudioBooksModal({
 
     if (!librarySearch.trim()) return filtered
 
-    return filtered.filter((book) =>
-      book.audioBook.title.toLowerCase().includes(librarySearch),
-    )
+    const searchTerm = librarySearch.toLowerCase()
+
+    return filtered.filter((book) => {
+      const titleMatch = book.audioBook.title.toLowerCase().includes(searchTerm)
+      const authorMatch = book.audioBook.authors?.some((author) =>
+        author.toLowerCase().includes(searchTerm),
+      )
+      return titleMatch || authorMatch
+    })
   }, [userAudiobooks, librarySearch])
 
   const audioListening = useMemo(() => {
@@ -337,10 +343,18 @@ export default function AudioBooksModal({
     const filtered = userAudiobooks.filter(
       (book) => book.userAudioBook.status === 'listening',
     )
+
     if (!librarySearch.trim()) return filtered
-    return filtered.filter((book) =>
-      book.audioBook.title.toLowerCase().includes(librarySearch),
-    )
+    const searchTerm = librarySearch.toLowerCase()
+    return filtered.filter((book) => {
+      const titleMatch = book.audioBook.title
+        .toLowerCase()
+        .includes(librarySearch)
+      const authorMatch = book.audioBook.authors?.some((author) =>
+        author.toLowerCase().includes(searchTerm),
+      )
+      return titleMatch || authorMatch
+    })
   }, [userAudiobooks, librarySearch])
 
   const audioListened = useMemo(() => {
@@ -351,9 +365,16 @@ export default function AudioBooksModal({
     )
 
     if (!librarySearch.trim()) return filtered
-    return filtered.filter((book) =>
-      book.audioBook.title.toLowerCase().includes(librarySearch),
-    )
+    const searchTerm = librarySearch.toLowerCase()
+    return filtered.filter((book) => {
+      const titleMatch = book.audioBook.title
+        .toLowerCase()
+        .includes(librarySearch)
+      const authorMatch = book.audioBook.authors?.some((author) =>
+        author.toLowerCase().includes(searchTerm),
+      )
+      return titleMatch || authorMatch
+    })
   }, [userAudiobooks, librarySearch])
 
   if (!isOpen) return null
@@ -531,7 +552,13 @@ export default function AudioBooksModal({
                     />
                     <div className="space-y-3">
                       {audioToListen.length === 0 ? (
-                        <EmptyTabContent message="No audiobooks in your queue yet" />
+                        <EmptyTabContent
+                          message={
+                            librarySearch
+                              ? 'No audiobooks match your search'
+                              : 'No books in your to listen list yet'
+                          }
+                        />
                       ) : (
                         audioToListen.map((item) => (
                           <div
@@ -559,7 +586,13 @@ export default function AudioBooksModal({
                     />
                     <div className="space-y-3">
                       {audioListening.length === 0 ? (
-                        <EmptyTabContent message="No audiobooks in your queue yet" />
+                        <EmptyTabContent
+                          message={
+                            librarySearch
+                              ? 'No books match your search'
+                              : 'No audiobooks in this category yet'
+                          }
+                        />
                       ) : (
                         audioListening.map((item) => (
                           <>
@@ -589,7 +622,13 @@ export default function AudioBooksModal({
                     />
                     <div className="space-y-3">
                       {audioListened.length === 0 ? (
-                        <EmptyTabContent message="No audiobooks in your queue yet" />
+                        <EmptyTabContent
+                          message={
+                            librarySearch
+                              ? 'No books match your search'
+                              : 'No audiobooks in this category yet'
+                          }
+                        />
                       ) : (
                         audioListened.map((item) => (
                           <div
