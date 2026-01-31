@@ -11,6 +11,7 @@ export default function ArticleCard({
 
   onDelete: () => void
 }) {
+  //
   return (
     <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
       <div className="w-16 h-16 bg-slate-600 rounded flex items-center justify-center flex-shrink-0">
@@ -37,6 +38,11 @@ export default function ArticleCard({
           {item.estimatedReadingTime && (
             <p className="text-sm text-slate-400">
               Estimated Reading Time: {item.estimatedReadingTime}
+            </p>
+          )}
+          {item.wordCount && (
+            <p className="text-sm text-slaate-400">
+              Word Count: {item.wordCount}
             </p>
           )}
           {item.notes && (

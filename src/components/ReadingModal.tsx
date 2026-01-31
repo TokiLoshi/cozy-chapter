@@ -2,8 +2,10 @@ import { XIcon } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
+import { useMemo, useState } from 'react'
 import BooksModal from './books/BookModal'
 import ArticleCard from './articles/BlogsModal'
+import SearchArea from './SearchArea'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { deleteBlogs } from '@/lib/server/articles'
 import { getUserBookServer } from '@/lib/server/books'
@@ -26,9 +28,21 @@ export default function ReadingModal({
   onAddArticleClick,
 }: ReadingModalProps) {
   const navigate = useNavigate()
+  const [librarySearch, setLibrarySearch] = useState('')
 
-  // Reading Material
-  const filteredBlogs = blogs.filter((blog) => blog.status === selectedStatus)
+  // Searchable blogs
+  const filteredBlogs = useMemo(() => {
+    const filtered = blogs.filter((item) => item.status === selectedStatus)
+    if (!librarySearch.trim()) return filtered
+    const searchTerm = librarySearch.toLowerCase()
+    return filtered.filter((blog) => {
+      const titleMatch = blog.title.toLowerCase().includes(searchTerm)
+      const authorMatch = blog.author?.toLowerCase().includes(searchTerm)
+      return titleMatch || authorMatch
+    })
+  }, [blogs, librarySearch, selectedStatus])
+  // const filteredBlogs = blogs.filter((blog) => blog.status === selectedStatus)
+
   const { data: userBooks } = useQuery({
     queryKey: ['user-books'],
     queryFn: () => getUserBookServer(),
@@ -123,9 +137,12 @@ export default function ReadingModal({
               >
                 + Add Article{' '}
               </button>
+              <SearchArea value={librarySearch} onChange={setLibrarySearch} />
               {filteredBlogs.length === 0 ? (
                 <p className="text-center text-gray-400 py-8">
-                  No articles in this category yet
+                  {librarySearch
+                    ? 'No articles match your search'
+                    : 'No articles in this category yet'}
                 </p>
               ) : (
                 <ScrollArea className="h-[400px]">

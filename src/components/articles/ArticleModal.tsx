@@ -64,6 +64,7 @@ export default function ArticleForm({
     onSubmit: async ({ value }) => {
       try {
         await submitArticle({ data: value })
+        form.reset()
         onClose()
         navigate({ to: refreshPath })
       } catch (error) {
