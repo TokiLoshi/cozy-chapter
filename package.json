@@ -48,6 +48,7 @@
     "@tanstack/react-start": "^1.132.0",
     "@tanstack/router-plugin": "^1.132.0",
     "@types/gapi": "^0.0.47",
+    "@uploadthing/react": "^7.3.3",
     "better-auth": "^1.3.27",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -68,6 +69,7 @@
     "tailwindcss": "^4.0.6",
     "three": "^0.180.0",
     "tw-animate-css": "^1.3.6",
+    "uploadthing": "^7.7.4",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^4.1.11"
   },
