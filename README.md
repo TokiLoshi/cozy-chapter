@@ -16,6 +16,7 @@ A cozy 3D reading room where you can track your reading journey through blogs an
 - **Backend**: Drizzle ORM, Neon (PostgreSQL)
 - **Deployment**: Netlify
 - **Validation**: Zod
+- **Image uploads**: upload thing
 
 ![demo](https://github.com/TokiLoshi/cozy-chapter/blob/main/public/homedemo.png)
 
