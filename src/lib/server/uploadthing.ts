@@ -1,44 +1,47 @@
 import { UploadThingError, createUploadthing } from 'uploadthing/server'
-import { getSessionServer } from '../utils'
 import type { FileRouter } from 'uploadthing/server'
 
 const f = createUploadthing()
 
-const auth = (req: Request) => ({ id: 'fakeId' })
+// TODO wire up correct authentication
+const auth = (req: Request) => ({ id: 'fakeId' }) // Fake auth function
+console.log('Ran auth with: ', auth)
 
-// FileRouter for app
+// FileRouter for your app, can contain multiple FileRoutes
 export const uploadRouter = {
+  // Define as many FileRoutes as you like, each with a unique routeSlug
   imageUploader: f({
     image: {
+      /**
+       * For full list of options and defaults, see the File Route API reference
+       * @see https://docs.uploadthing.com/file-routes#route-config
+       */
       maxFileSize: '4MB',
       maxFileCount: 1,
     },
   })
-    // permissions fand file types for this FileRoute
+    // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
-      console.log('REQ: ', req)
-      console.log('==== MIDDLEWARE STARTED ++++')
-      try {
-        const session = auth(req)
-        console.log('Session from middleware: ', session)
+      console.log('Hit middleware')
+      // This code runs on your server before upload
+      const user = await auth(req)
+      console.log('User: ', user)
 
-        // Throwing an error means user cannot upload
-        if (!session) throw new UploadThingError('Unauthorized')
-        console.log('User stuff: ', session)
-        return { userId: session }
-      } catch (error) {
-        console.warn('WE GOT AN ERROR: ', error)
-        throw new Error('Error with session')
-      }
+      // If you throw, the user will not be able to upload
+      // eslint-disable-next-line
+      if (!user) throw new UploadThingError('Unauthorized')
+      console.log('User id: ', user.id)
+      // Whatever is returned here is accessible in onUploadComplete as `metadata`
+      return { userId: user.id }
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      // Runs on console after upload
-      console.log('Meta data: ', metadata)
-      console.log('Upload complete for userId: ', metadata.userId)
-      console.log('file url: ', file.ufsUrl)
-      // Whatever is returned is sent to clientSide `onClientUploadComplete`
+      // This code RUNS ON YOUR SERVER after upload
+      console.log('Upload complete for userId:', metadata.userId)
 
-      return { uploadedBy: metadata.userId, url: file.ufsUrl }
+      console.log('file url', file.ufsUrl)
+
+      // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
+      return { uploadedBy: metadata.userId }
     }),
 } satisfies FileRouter
 

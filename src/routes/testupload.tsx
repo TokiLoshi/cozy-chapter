@@ -6,8 +6,6 @@ export const Route = createFileRoute('/testupload')({
   component: RouteComponent,
 })
 
-// TODO: this is taking a long time to load. Need to investigate the 499 timeout.
-// Note to self: this never hits the middleware
 function RouteComponent() {
   return (
     <div>
@@ -22,7 +20,7 @@ function RouteComponent() {
           toast.error(`Upload failed: ${error.message}`)
         }}
       />
-      {/* <UploadDropzone
+      <UploadDropzone
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {
           console.log('Files: ', res)
@@ -31,7 +29,7 @@ function RouteComponent() {
         onUploadError={(error: Error) => {
           toast.error(`Upload failed: ${error.message}`)
         }}
-      /> */}
+      />
     </div>
   )
 }
