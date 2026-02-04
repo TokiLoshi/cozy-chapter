@@ -81,15 +81,20 @@ export const searchBooks = createServerFn({ method: 'GET' })
     if (!session) throw redirect({ to: '/login' })
 
     const apiKey = process.env.GOOGLE_BOOKS_API_KEY
+
     const response = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=10&key=${apiKey}`,
     )
+    console.log('Google reponse to search: ', response)
 
     if (!response.ok) {
       throw new Error('Failed to search google books')
     }
 
     const data = await response.json()
+    console.log('Response data:', JSON.stringify(data, null, 2))
+    console.log('totalItems:', data.totalItems)
+    console.log('items count:', data.items?.length)
 
     if (!data.items) {
       return []

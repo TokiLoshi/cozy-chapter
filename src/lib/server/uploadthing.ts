@@ -22,7 +22,6 @@ export const uploadRouter = {
   })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
-      console.log('Hit middleware')
       // This code runs on your server before upload
       const user = await auth(req)
       console.log('User: ', user)
