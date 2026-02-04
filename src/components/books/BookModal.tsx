@@ -263,6 +263,8 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     queryFn: () => searchBooks({ data: debouncedQuery }),
     enabled: debouncedQuery.length > 2,
   })
+  console.log('Searching: ', searchResults)
+  console.log(' error: ', searchError)
 
   const addBookMutation = useMutation({
     mutationFn: (book: Omit<Books, 'createdAt' | 'updatedAt'>) =>
