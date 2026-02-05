@@ -263,8 +263,6 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     queryFn: () => searchBooks({ data: debouncedQuery }),
     enabled: debouncedQuery.length > 2,
   })
-  console.log('Searching: ', searchResults)
-  console.log(' error: ', searchError)
 
   const addBookMutation = useMutation({
     mutationFn: (book: Omit<Books, 'createdAt' | 'updatedAt'>) =>
@@ -315,7 +313,6 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
   }
 
   const handleCardClick = (item: BookItem) => {
-    console.log('Clicked on ', item)
     setExpandedBook(item)
   }
 
@@ -454,6 +451,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
                   <div
                     onClick={() => handleCardClick(item)}
                     className="cursor-pointer"
+                    key={`book${item.book.id}`}
                   >
                     <BookCard
                       key={item.book.id}
