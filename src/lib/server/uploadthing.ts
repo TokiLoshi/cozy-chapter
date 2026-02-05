@@ -1,11 +1,8 @@
 import { UploadThingError, createUploadthing } from 'uploadthing/server'
+import { getSessionServer } from '../utils'
 import type { FileRouter } from 'uploadthing/server'
 
 const f = createUploadthing()
-
-// TODO wire up correct authentication
-const auth = (req: Request) => ({ id: 'fakeId' }) // Fake auth function
-console.log('Ran auth with: ', auth)
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const uploadRouter = {
@@ -23,15 +20,17 @@ export const uploadRouter = {
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
-      const user = await auth(req)
+      const user = await getSessionServer()
       console.log('User: ', user)
 
       // If you throw, the user will not be able to upload
-      // eslint-disable-next-line
-      if (!user) throw new UploadThingError('Unauthorized')
-      console.log('User id: ', user.id)
+      if (!user) {
+        throw new UploadThingError('Unauthorized')
+      }
+
+      console.log('User id: ', user.session.id)
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId: user.id }
+      return { userId: user.session.id }
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
