@@ -20,6 +20,7 @@ export const userPlants = pgTable('plants', {
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
   species: text('species').notNull(),
+  name: text('name'),
   recommendedWateringIntervalDays: integer('recommendedWateringIntervalDays'),
   group: text('group'),
   lastWatered: timestamp('lastWatered'),
@@ -27,6 +28,7 @@ export const userPlants = pgTable('plants', {
   notes: text('notes'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+  plantImageUrl: text('plantImageUrl'),
 })
 
 export type UserPlants = typeof userPlants.$inferInsert

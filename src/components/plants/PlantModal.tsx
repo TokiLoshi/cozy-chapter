@@ -1,86 +1,268 @@
-import { Edit, Trash, XIcon } from 'lucide-react'
+import { Edit, LeafIcon, Search, Trash, XIcon } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { BaseModal, DetailItem, DisplayDescription } from '../ExpandedCard'
+import SearchArea from '../SearchArea'
 import EditPlantModal from './EditPlantModal'
 import type { Plant } from '@/lib/types/Plant'
-import { createPlantServer, deletePlantServer } from '@/lib/server/plants'
+import {
+  createPlantServer,
+  deletePlantServer,
+  getUserPlants,
+} from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
+import { userPlants } from '@/db/schemas/plant-schema'
 
+// Types
 type PlantFormProps = {
   isOpen: boolean
   onClose: () => void
   refreshPath: string
-  // userId: string
-  plants?: Array<Plant>
+}
+
+type PlantModalProps = {
+  isOpen: boolean
+  onClose: () => void
+  refreshPath: string
+}
+
+type ExpandedPlantCardProps = {
+  item: Plant
+  onEdit: () => void
+  onDelete: () => void
+  onClose: () => void
+}
+
+function ExpandedPlantCard({
+  item,
+  onEdit,
+  onDelete,
+  onClose,
+}: ExpandedPlantCardProps) {
+  return (
+    <>
+      <BaseModal onClose={onClose}>
+        {/** Header */}
+        <div className="flex gap-4 mb-4">
+          {/** Cover image */}
+          {item.plantImageUrl ? (
+            <img
+              src={item.plantImageUrl}
+              alt={item.species}
+              className="w-16 h-16 object-cover rounded"
+            />
+          ) : (
+            <LeafIcon className="w-16 h-16 object-cover rounded" />
+          )}
+          {/** name */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl font-bold text-slate-100 mb-1">
+              {item.name ?? item.species}
+            </h3>
+
+            {/** group */}
+            {item.group && (
+              <p className="text-sm text-slate-400">{item.group}</p>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {/** last watered */}
+          <DetailItem label="Last Watered">
+            <p className="text-sm">
+              {item.lastWatered
+                ? item.lastWatered.toLocaleDateString()
+                : 'data not available'}
+            </p>
+          </DetailItem>
+          {/** recommendedWateringIntervalDays */}
+          <DetailItem label="Recommended Watering Interval">
+            <p className="text-sm">
+              {item.recommendedWateringIntervalDays
+                ? item.recommendedWateringIntervalDays
+                : 'data not available'}
+            </p>
+          </DetailItem>
+          {/** Plant health */}
+          <DetailItem label="Plant Healt">
+            <p className="text-sm font-medium text-slate-200">
+              {item.plantHealth}
+            </p>
+          </DetailItem>
+        </div>
+        {/** Notes */}
+        {item.notes && <DisplayDescription description={item.notes} />}
+      </BaseModal>
+    </>
+  )
+}
+
+function PlantCard({
+  item,
+  onEdit,
+  onDelete,
+}: {
+  item: Plant
+  onEdit: () => void
+  onDelete: () => void
+}) {
+  return (
+    <>
+      <div className="flex items-start gap-3 bg-slate-700/50 rounded-lg">
+        {item.plantImageUrl && (
+          <img
+            src={item.plantImageUrl}
+            alt={item.name ?? 'plant image name unkown'}
+            className="w-16 h-16 object-cover rounded"
+          />
+        )}
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-slate-100 truncate">
+            {item.name ?? item.species}
+          </h4>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-slate-300">
+              Last watered:{' '}
+              {item.lastWatered
+                ? new Date(item.lastWatered).toLocaleDateString()
+                : 'unknown'}
+            </span>
+            <span className="text-xs text-slate-300">{item.plantHealth}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 mt-1">
+          <button
+            onClick={(e) => {
+              // Prevents the expanded modal from opening
+              e.stopPropagation()
+              onEdit()
+            }}
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onDelete()
+            }}
+            className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+          >
+            <Trash className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </>
+  )
+}
+
+function EmptyTabContent({ message }: { message: string }) {
+  return <p className="text-slate-400 text-sm py-4 text-center">{message}</p>
 }
 
 export default function PlantModal({
   isOpen,
   onClose,
   refreshPath,
-  plants = [],
   // userId,
 }: PlantFormProps) {
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [plantToEdit, setPlantToEdit] = useState<Plant | null>(null)
+  const [plantSearch, setPlantSearch] = useState('')
+  const [expandedPlant, setExpandedPlant] = useState<Plant | null>(null)
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
-  if (!isOpen) return null
+  const { data: userPlants } = useQuery({
+    queryKey: ['user-plants'],
+    queryFn: async () => {
+      const result = await getUserPlants()
+      return result ?? []
+    },
+  })
 
   const closeModal = () => {
     onClose()
   }
 
-  const navigate = useNavigate()
+  // Plant mutation
+  const addMutation = useMutation({
+    mutationFn: (plant: Omit<Plant, 'createdAt' | 'updatedAt'>) =>
+      createPlantServer({
+        data: plant,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-plants'] })
+      toast.success('Plant added to your library')
+    },
+    onError: () => {
+      toast.error('Failed to add plant')
+    },
+  })
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      deletePlantServer({
+        data: id,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-plants'] })
+      toast.success('Plant removed from your library')
+    },
+    onError: () => {
+      toast.error('Failed to remove plant')
+    },
+  })
+
+  // Check for exiting plant
+  const isInLibrary = (plantId: string) => {
+    return userPlants?.some((item: Plant) => item.id === plantId)
+  }
+
+  const handleAdd = (plant: Omit<Plant, 'createdAt' | 'updatedAt'>) => {
+    addMutation.mutate(plant)
+  }
 
   const handleDelete = (id: string) => {
-    toast('Are you sure you want to delete this plant?', {
-      description: 'This action cannot be undone',
-      classNames: {
-        toast: 'bg-slate-800 border-slate-700',
-        title: 'text-slate-100',
-        description: 'text-slate-400',
-        actionButton: 'bg-amber-600 hover:bg-amber-500 text-white',
-        cancelButton: 'bg-slate-600 hover:bg-slate-500 text-slate-200',
-      },
+    toast('Are you sure you want to remove this plant', {
       action: {
-        label: 'Delete',
-        onClick: async () => {
-          const loadingToast = toast.loading('Removing plant...', {
-            classNames: {
-              toast: 'bg-slate-800 border-slate-700',
-              title: 'text-slate-100',
-            },
-          })
-          try {
-            await deletePlantServer({ data: id })
-            toast.dismiss(loadingToast)
-            toast.success('Plant removed successfully!', {
-              classNames: {
-                toast: 'bg-slate-800 border-slate-700',
-                title: 'text-slate-100',
-              },
-            })
-            navigate({ to: '/readingroom' })
-          } catch (error) {
-            toast.dismiss(loadingToast)
-            toast.error('Failed to remove plant', {
-              description: 'Please try again',
-              classNames: {
-                toast: 'bg-slate-800 border-slate-700',
-                title: 'text-slate-100',
-                description: 'text-slate-400',
-              },
-            })
-            console.error('Something went wrong removing the bug: ', error, id)
-          }
-        },
+        label: 'Remove',
+        onClick: () => deleteMutation.mutate(id),
       },
       cancel: {
-        label: 'Cancel',
+        label: 'cancel',
         onClick: () => {},
       },
     })
   }
+
+  const handleEdit = (item: Plant) => {
+    setExpandedPlant(null)
+    setPlantToEdit(item)
+    setIsEditOpen(true)
+  }
+
+  const handleCardClick = (item: Plant) => {
+    setExpandedPlant(item)
+  }
+
+  // Search filter
+  const filteredPlants = useMemo(() => {
+    if (!userPlants) return []
+
+    if (!plantSearch.trim()) return userPlants
+
+    const searchTerm = plantSearch.toLowerCase()
+
+    return userPlants.filter((item) => {
+      const nameMatch = item.name?.toLowerCase().includes(searchTerm)
+      const speciesMatch = item.species.toLowerCase().includes(searchTerm)
+      return nameMatch || speciesMatch
+    })
+  }, [userPlants, plantSearch])
 
   const getHealthColor = (health: Plant['plantHealth']) => {
     switch (health) {
@@ -107,13 +289,7 @@ export default function PlantModal({
     return daysSince > recommendedWatering
   }
 
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [plantToEdit, setPlantToEdit] = useState<Plant | null>(null)
-
-  const handleEdit = (plant: Plant) => {
-    setPlantToEdit(plant)
-    setIsEditOpen(true)
-  }
+  if (!isOpen) return null
 
   return (
     <>
@@ -123,21 +299,31 @@ export default function PlantModal({
           className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
           onClick={closeModal}
         />
-
         {/** Edit modal */}
         {isEditOpen && plantToEdit && (
           <EditPlantModal
             plant={plantToEdit}
             refreshPath="/readingroom"
-            onClose={() => setIsEditOpen(false)}
+            onClose={() => {
+              setIsEditOpen(false)
+              setPlantToEdit(null)
+            }}
           />
         )}
-
-        {/** Modal Content */}
+        {/** Expanded Card */}
+        {expandedPlant && (
+          <ExpandedPlantCard
+            item={expandedPlant}
+            onEdit={() => handleEdit(expandedPlant)}
+            onDelete={() => handleDelete(expandedPlant.id)}
+            onClose={() => setExpandedPlant(null)}
+          />
+        )}
+        {/** Modal */}
         {!isEditOpen && (
-          <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+          <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border-slate-700 m-4 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-white">Your plants 🌱</h2>
+              <h2>Plants</h2>
               <button
                 className="cursor-pointer text-gray-400 hover:text-white text-2xl"
                 onClick={closeModal}
@@ -153,86 +339,44 @@ export default function PlantModal({
             >
               + Add Plant
             </button>
+            {/** Plant Form */}
             <PlantForm
               isOpen={isAddFormOpen}
               onClose={() => setisAddFormOpen(false)}
               refreshPath={refreshPath}
             />
-
-            {/** Empty State */}
-            {plants.length === 0 && (
-              <div className="text-center text-gray-400 py-8">
-                No plants added to inventory yet
-              </div>
-            )}
-
-            {plants.length > 0 && (
-              <>
-                {plants.map((plant: Plant) => (
-                  <>
-                    <div
-                      key={plant.id}
-                      className="bg-white/10 border mt-2 border-white/20 rounded-lg p-4 hover:bg-white/15 transition-all"
-                    >
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        {plant.species}{' '}
-                        {plant.group ? `(in ${plant.group})` : ''}
-                      </h3>
-                      <p className="text-lg font-semibold text-white mb-2">
-                        <span className={getHealthColor(plant.plantHealth)}>
-                          {' '}
-                          {plant.plantHealth}
-                        </span>
-                      </p>
-                      <p className="text-lg font-semibold text-white mb-2">
-                        {plant.lastWatered ? (
-                          <span className="text-l font-semibold">
-                            Last watered:{' '}
-                            {plant.lastWatered.toLocaleDateString()}
-                          </span>
-                        ) : (
-                          'Plant has not yet been watered'
-                        )}
-                      </p>
-                      <p className="text-lg font-semibold text-white mb-2">
-                        <span className="text-l font-semibold">
-                          Recommended watering interval:{' '}
-                        </span>
-                        {plant.recommendedWateringIntervalDays} days
-                      </p>
-                      {checkWaterNeeds(
-                        plant.lastWatered,
-                        plant.recommendedWateringIntervalDays,
-                      ) && (
-                        <p className=" text-white mb-2">plant needs watering</p>
-                      )}
-                      {plant.notes && (
-                        <p className="text-lg  text-white mb-2">
-                          <span className="font-semibold">Notes: </span>
-                          {plant.notes}
-                        </p>
-                      )}
-                      <div className="flex gap-3 mt-4 pt-4 border-t border-white/10 items-center">
-                        <button
-                          onClick={() => handleEdit(plant)}
-                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                        >
-                          <Edit className="w-5 h-5" />
-                          Edit
-                        </button>
-                        <div className="flex-1"></div>
-                        <button
-                          onClick={() => handleDelete(plant.id)}
-                          className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white py-3 px-3 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
-                        >
-                          <Trash className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ))}
-              </>
-            )}
+            {/** Search */}
+            <div className="pt-4">
+              <h3 className="text-sm font-medium text-slate-400 mb-3">
+                Who needs watering today?
+              </h3>
+              {/** Empty State */}
+              {filteredPlants.length === 0 && (
+                <div className="text-center text-gray-400 py-8">
+                  No plants added to inventory yet
+                </div>
+              )}
+              <SearchArea value={plantSearch} onChange={setPlantSearch} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              {filteredPlants.length === 0 && plantSearch ? (
+                <EmptyTabContent message="No plants match your search" />
+              ) : (
+                filteredPlants.map((item: Plant) => (
+                  <div
+                    key={item.id}
+                    className="cursor-pointer"
+                    onClick={() => handleCardClick(item)}
+                  >
+                    <PlantCard
+                      item={item}
+                      onEdit={() => handleEdit(item)}
+                      onDelete={() => handleDelete(item.id)}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         )}
       </div>
