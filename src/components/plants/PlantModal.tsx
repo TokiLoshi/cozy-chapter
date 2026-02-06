@@ -1,9 +1,14 @@
-import { Edit, LeafIcon, Search, Trash, XIcon } from 'lucide-react'
+import { Edit, LeafIcon, Trash, XIcon } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { BaseModal, DetailItem, DisplayDescription } from '../ExpandedCard'
+import {
+  BaseModal,
+  DetailItem,
+  DisplayActions,
+  DisplayDescription,
+} from '../ExpandedCard'
 import SearchArea from '../SearchArea'
 import EditPlantModal from './EditPlantModal'
 import type { Plant } from '@/lib/types/Plant'
@@ -13,16 +18,9 @@ import {
   getUserPlants,
 } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
-import { userPlants } from '@/db/schemas/plant-schema'
 
 // Types
 type PlantFormProps = {
-  isOpen: boolean
-  onClose: () => void
-  refreshPath: string
-}
-
-type PlantModalProps = {
   isOpen: boolean
   onClose: () => void
   refreshPath: string
@@ -33,6 +31,31 @@ type ExpandedPlantCardProps = {
   onEdit: () => void
   onDelete: () => void
   onClose: () => void
+}
+
+const getHealthColor = (health: Plant['plantHealth']) => {
+  switch (health) {
+    case 'thriving':
+      return 'text-green-500'
+    case 'ok':
+      return 'text-yellow-500'
+    case 'needsAttention':
+      return 'text-rose-400'
+  }
+}
+
+const checkWaterNeeds = (
+  lastWatered: Date | null,
+  recommendedWatering: Plant['recommendedWateringIntervalDays'],
+) => {
+  if (!lastWatered || !recommendedWatering) return false
+
+  const today = new Date()
+  const lastDate = new Date(lastWatered)
+  const minutesSince = today.getTime() - lastDate.getTime()
+  const daysSince = Math.floor(minutesSince / (1000 * 60 * 60 * 24))
+
+  return daysSince > recommendedWatering
 }
 
 function ExpandedPlantCard({
@@ -54,24 +77,32 @@ function ExpandedPlantCard({
               className="w-16 h-16 object-cover rounded"
             />
           ) : (
-            <LeafIcon className="w-16 h-16 object-cover rounded" />
+            <LeafIcon className="w-16 h-16 object-cover rounded text-white" />
           )}
           {/** name */}
           <div className="flex-1 min-w-0">
             <h3 className="text-xl font-bold text-slate-100 mb-1">
               {item.name ?? item.species}
             </h3>
+            {checkWaterNeeds(
+              item.lastWatered,
+              item.recommendedWateringIntervalDays,
+            ) && (
+              <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full mt-1">
+                💧 Needs watering
+              </span>
+            )}
 
             {/** group */}
             {item.group && (
-              <p className="text-sm text-slate-400">{item.group}</p>
+              <p className="text-sm mt-2 text-slate-400">{item.group}</p>
             )}
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 mb-4">
           {/** last watered */}
           <DetailItem label="Last Watered">
-            <p className="text-sm">
+            <p className="text-sm font-medium text-slate-200">
               {item.lastWatered
                 ? item.lastWatered.toLocaleDateString()
                 : 'data not available'}
@@ -79,19 +110,24 @@ function ExpandedPlantCard({
           </DetailItem>
           {/** recommendedWateringIntervalDays */}
           <DetailItem label="Recommended Watering Interval">
-            <p className="text-sm">
+            <p className="text-sm font-medium text-slate-200">
               {item.recommendedWateringIntervalDays
                 ? item.recommendedWateringIntervalDays
                 : 'data not available'}
             </p>
           </DetailItem>
           {/** Plant health */}
-          <DetailItem label="Plant Healt">
-            <p className="text-sm font-medium text-slate-200">
+          <DetailItem label="Plant Health">
+            <p
+              className={`${getHealthColor(item.plantHealth)} text-sm font-medium`}
+            >
               {item.plantHealth}
             </p>
           </DetailItem>
         </div>
+        {/** Actions */}
+        <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
+
         {/** Notes */}
         {item.notes && <DisplayDescription description={item.notes} />}
       </BaseModal>
@@ -110,18 +146,33 @@ function PlantCard({
 }) {
   return (
     <>
-      <div className="flex items-start gap-3 bg-slate-700/50 rounded-lg">
-        {item.plantImageUrl && (
+      <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
+        {item.plantImageUrl ? (
           <img
             src={item.plantImageUrl}
             alt={item.name ?? 'plant image name unkown'}
             className="w-16 h-16 object-cover rounded"
           />
+        ) : (
+          <div className="w-16 h-16 flex items-center justify-center bg-slate-600/50 rounded">
+            <LeafIcon
+              className={`${getHealthColor(item.plantHealth)} text-xs`}
+            />
+          </div>
         )}
         <div className="flex-1 min-w-0">
           <h4 className="font-medium text-slate-100 truncate">
             {item.name ?? item.species}
           </h4>
+          {checkWaterNeeds(
+            item.lastWatered,
+            item.recommendedWateringIntervalDays,
+          ) && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full mt-1">
+              💧 Needs watering
+            </span>
+          )}
+
           <div className="flex items-center gap-2 mt-1">
             <span className="text-xs text-slate-300">
               Last watered:{' '}
@@ -129,7 +180,9 @@ function PlantCard({
                 ? new Date(item.lastWatered).toLocaleDateString()
                 : 'unknown'}
             </span>
-            <span className="text-xs text-slate-300">{item.plantHealth}</span>
+            <span className={`${getHealthColor(item.plantHealth)} text-xs`}>
+              {item.plantHealth}
+            </span>
           </div>
         </div>
         <div className="flex items-center gap-2 mt-1">
@@ -139,6 +192,7 @@ function PlantCard({
               e.stopPropagation()
               onEdit()
             }}
+            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transitioon-all duration-200"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -173,7 +227,6 @@ export default function PlantModal({
   const [plantSearch, setPlantSearch] = useState('')
   const [expandedPlant, setExpandedPlant] = useState<Plant | null>(null)
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
 
   const { data: userPlants } = useQuery({
     queryKey: ['user-plants'],
@@ -264,31 +317,6 @@ export default function PlantModal({
     })
   }, [userPlants, plantSearch])
 
-  const getHealthColor = (health: Plant['plantHealth']) => {
-    switch (health) {
-      case 'thriving':
-        return 'text-green-500'
-      case 'ok':
-        return 'text-yellow-500'
-      case 'needsAttention':
-        return 'text-rose-400'
-    }
-  }
-
-  const checkWaterNeeds = (
-    lastWatered: Date | null,
-    recommendedWatering: Plant['recommendedWateringIntervalDays'],
-  ) => {
-    if (!lastWatered || !recommendedWatering) return false
-
-    const today = new Date()
-    const lastDate = new Date(lastWatered)
-    const minutesSince = today.getTime() - lastDate.getTime()
-    const daysSince = Math.floor(minutesSince / (1000 * 60 * 60 * 24))
-
-    return daysSince > recommendedWatering
-  }
-
   if (!isOpen) return null
 
   return (
@@ -323,7 +351,7 @@ export default function PlantModal({
         {!isEditOpen && (
           <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border-slate-700 m-4 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2>Plants</h2>
+              <h2 className="text-3xl font-bold text-white">Plants</h2>
               <button
                 className="cursor-pointer text-gray-400 hover:text-white text-2xl"
                 onClick={closeModal}
