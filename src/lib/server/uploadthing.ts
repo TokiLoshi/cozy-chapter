@@ -1,8 +1,9 @@
-import { UploadThingError, createUploadthing } from 'uploadthing/server'
+import { UTApi, UploadThingError, createUploadthing } from 'uploadthing/server'
 import { getSessionServer } from '../utils'
 import type { FileRouter } from 'uploadthing/server'
 
 const f = createUploadthing()
+const utapi = new UTApi()
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const uploadRouter = {
@@ -39,8 +40,18 @@ export const uploadRouter = {
       console.log('file url', file.ufsUrl)
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.userId }
+      return { uploadedBy: metadata.userId, url: file.ufsUrl, key: file.key }
     }),
 } satisfies FileRouter
 
 export type UploadRouter = typeof uploadRouter
+
+export async function deleteUploadedImage(fileKey: string) {
+  try {
+    await utapi.deleteFiles(fileKey)
+    return { success: true }
+  } catch (error) {
+    console.error('Error deleting image: ', error)
+    return { success: false }
+  }
+}

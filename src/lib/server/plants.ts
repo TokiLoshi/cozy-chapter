@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
+import { UTApi } from 'uploadthing/server'
 import type { UserPlants } from '@/db/schemas/plant-schema'
 import { auth } from '@/lib/auth'
 import {
@@ -71,4 +72,18 @@ export const deletePlantServer = createServerFn({ method: 'POST' })
       throw new Error('Failed to delete plant')
     }
     return { success: true, id: data }
+  })
+
+const utapi = new UTApi()
+
+export const deleteUploadedImageServer = createServerFn({ method: 'POST' })
+  .inputValidator((data: string) => data)
+  .handler(async ({ data }) => {
+    try {
+      const result = await utapi.deleteFiles(data)
+      return { success: result.success, deletedCount: result.deletedCount }
+    } catch (error) {
+      throw new Error('Failed to delete image')
+      return { success: false, deletedCount: 0 }
+    }
   })

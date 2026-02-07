@@ -15,9 +15,11 @@ import type { Plant } from '@/lib/types/Plant'
 import {
   createPlantServer,
   deletePlantServer,
+  deleteUploadedImageServer,
   getUserPlants,
 } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
+import { UploadDropzone } from '@/lib/uploadthing'
 
 // Types
 type PlantFormProps = {
@@ -240,21 +242,6 @@ export default function PlantModal({
     onClose()
   }
 
-  // Plant mutation
-  const addMutation = useMutation({
-    mutationFn: (plant: Omit<Plant, 'createdAt' | 'updatedAt'>) =>
-      createPlantServer({
-        data: plant,
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-plants'] })
-      toast.success('Plant added to your library')
-    },
-    onError: () => {
-      toast.error('Failed to add plant')
-    },
-  })
-
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
@@ -269,15 +256,6 @@ export default function PlantModal({
       toast.error('Failed to remove plant')
     },
   })
-
-  // Check for exiting plant
-  const isInLibrary = (plantId: string) => {
-    return userPlants?.some((item: Plant) => item.id === plantId)
-  }
-
-  const handleAdd = (plant: Omit<Plant, 'createdAt' | 'updatedAt'>) => {
-    addMutation.mutate(plant)
-  }
 
   const handleDelete = (id: string) => {
     toast('Are you sure you want to remove this plant', {
@@ -413,6 +391,8 @@ export default function PlantModal({
 }
 
 function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   const form = useAppForm({
@@ -449,6 +429,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
       },
     },
     onSubmit: async ({ value }) => {
+      console.log('plantImageUrl: ', uploadedImageUrl)
       try {
         await createPlantServer({
           data: {
@@ -459,8 +440,10 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             lastWatered: value.lastWatered,
             plantHealth: value.plantHealth,
             notes: value.notes || null,
+            plantImageUrl: uploadedImageUrl,
           },
         })
+        queryClient.invalidateQueries({ queryKey: ['user-plants'] })
         toast.success('Plant added successfully! 🌱', {
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
@@ -470,7 +453,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
         onClose()
         navigate({ to: refreshPath })
       } catch (error) {
-        console.error('Uh oh spaghetti os, something went wrong ', error)
+        console.error('Something went wrong ', error)
         toast.error('Failed to add plant', {
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
@@ -581,6 +564,59 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                 />
               )}
             </form.AppField>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Plant Photo
+              </label>
+              {uploadedImageUrl ? (
+                <div className="relative w-24 h-24">
+                  <img
+                    src={uploadedImageUrl}
+                    alt="Plant preview"
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const fileKey = uploadedImageUrl.split('/').pop()
+                        if (fileKey) {
+                          const result = await deleteUploadedImageServer({
+                            data: fileKey,
+                          })
+                          console.log('Delete Result: ', result)
+                        }
+                        setUploadedImageUrl(null)
+                      } catch (error) {
+                        console.error('Delete failed: ', error)
+                      }
+
+                      console.log('Uploaded Image: ', uploadedImageUrl)
+                    }}
+                  >
+                    <XIcon className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+              ) : (
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    console.log('Files: ', res)
+                    if (res[0].ufsUrl) {
+                      setUploadedImageUrl(res[0].ufsUrl)
+                    }
+                    console.log('')
+                    toast.success('image added')
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(`Upload failed: ${error.message}`)
+                  }}
+                />
+              )}
+            </div>
+
             <div className="flex justify-end">
               <form.AppForm>
                 <form.SubmitButton
