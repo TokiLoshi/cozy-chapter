@@ -8,7 +8,6 @@ type LaptopModalProps = {
 export default function LaptopModal({ isOpen, onClose }: LaptopModalProps) {
   const closeModal = () => {
     {
-      console.log('Close modal')
       onClose()
     }
   }

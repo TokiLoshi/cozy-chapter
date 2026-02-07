@@ -1,9 +1,15 @@
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
+import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import type { Plant } from '@/lib/types/Plant'
 import { useAppForm } from '@/hooks/form'
-import { updatePlantServer } from '@/lib/server/plants'
+import {
+  deleteUploadedImageServer,
+  updatePlantServer,
+} from '@/lib/server/plants'
+import { UploadDropzone } from '@/lib/uploadthing'
 
 export default function EditPlantModal({
   plant,
@@ -15,6 +21,11 @@ export default function EditPlantModal({
   onClose: () => void
 }) {
   const navigate = useNavigate()
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
+    plant.plantImageUrl ?? null,
+  )
+  const queryClient = useQueryClient()
+
   const form = useAppForm({
     defaultValues: {
       species: plant.species,
@@ -49,9 +60,13 @@ export default function EditPlantModal({
         await updatePlantServer({
           data: {
             id: plant.id,
-            updates: value,
+            updates: {
+              ...value,
+              plantImageUrl: currentImageUrl,
+            },
           },
         })
+        queryClient.invalidateQueries({ queryKey: ['user-plants'] })
         toast.dismiss(loadingToast)
         toast.success('Plant updated successfully!', {
           classNames: {
@@ -180,10 +195,63 @@ export default function EditPlantModal({
               )}
             </form.AppField>
 
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Plant Photo
+              </label>
+              {currentImageUrl ? (
+                <div className="relative w-24 h-24">
+                  <img
+                    src={currentImageUrl}
+                    alt="Plant Image"
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const fileKey = currentImageUrl.split('/').pop()
+                        if (fileKey) {
+                          await deleteUploadedImageServer({ data: fileKey })
+                        }
+                        setCurrentImageUrl(null)
+                      } catch (error) {
+                        console.error('Error removing image: ', error)
+                        setCurrentImageUrl(null)
+                      }
+                    }}
+                    className="cursor-pointer absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
+                  >
+                    <XIcon className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+              ) : (
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    if (res[0].ufsUrl) {
+                      // delete old existing image
+                      if (plant.plantImageUrl) {
+                        const oldKey = plant.plantImageUrl.split('/').pop()
+                        if (oldKey) {
+                          deleteUploadedImageServer({ data: oldKey })
+                        }
+                      }
+                      setCurrentImageUrl(res[0].ufsUrl)
+                      toast.success('Image updated')
+                    }
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(`Upload failed: ${error.message}`)
+                  }}
+                />
+              )}
+            </div>
+
             <div className="flex justify-end">
               <form.AppForm>
                 <form.SubmitButton
-                  label="Edit Plant"
+                  label="Update Plant"
                   className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                 />
               </form.AppForm>

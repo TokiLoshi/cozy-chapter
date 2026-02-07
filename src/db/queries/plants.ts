@@ -1,9 +1,8 @@
 import { and, eq } from 'drizzle-orm'
+import { UTApi } from 'uploadthing/server'
 // eslint-disable-next-line
 import { UserPlants, userPlants } from '../schemas/plant-schema'
 import { db } from '@/db'
-import { deleteUploadedImageServer } from '@/lib/server/plants'
-import { UTApi } from 'uploadthing/server'
 
 // Create new plant
 export async function createPlant(plant: UserPlants) {
