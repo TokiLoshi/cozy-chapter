@@ -70,15 +70,19 @@ function ExpandedPlantCard({
     <>
       <BaseModal onClose={onClose}>
         {/** Header */}
-        <div className="flex gap-4 mb-4">
-          {/** Cover image */}
-          {item.plantImageUrl ? (
+        {/** Full image */}
+        {item.plantImageUrl && (
+          <div className="w-full h-48 mb-4 rounded-lg overflow-hidden">
             <img
               src={item.plantImageUrl}
               alt={item.species}
-              className="w-16 h-16 object-cover rounded"
+              className="w-full h-full object-cover rounded"
             />
-          ) : (
+          </div>
+        )}
+        <div className="flex gap-4 mb-4">
+          {/** Cover image */}
+          {!item.plantImageUrl && (
             <LeafIcon className="w-16 h-16 object-cover rounded text-white" />
           )}
           {/** name */}
@@ -429,7 +433,6 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
       },
     },
     onSubmit: async ({ value }) => {
-      console.log('plantImageUrl: ', uploadedImageUrl)
       try {
         await createPlantServer({
           data: {
@@ -583,17 +586,14 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                       try {
                         const fileKey = uploadedImageUrl.split('/').pop()
                         if (fileKey) {
-                          const result = await deleteUploadedImageServer({
+                          await deleteUploadedImageServer({
                             data: fileKey,
                           })
-                          console.log('Delete Result: ', result)
                         }
                         setUploadedImageUrl(null)
                       } catch (error) {
                         console.error('Delete failed: ', error)
                       }
-
-                      console.log('Uploaded Image: ', uploadedImageUrl)
                     }}
                   >
                     <XIcon className="w-3 h-3 text-white" />
@@ -603,11 +603,9 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                 <UploadDropzone
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
-                    console.log('Files: ', res)
                     if (res[0].ufsUrl) {
                       setUploadedImageUrl(res[0].ufsUrl)
                     }
-                    console.log('')
                     toast.success('image added')
                   }}
                   onUploadError={(error: Error) => {

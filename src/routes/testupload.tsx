@@ -13,7 +13,6 @@ function RouteComponent() {
       <UploadButton
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {
-          console.log('Files: ', res)
           toast.success('upload to uploadthing complete')
         }}
         onUploadError={(error: Error) => {
@@ -23,7 +22,6 @@ function RouteComponent() {
       <UploadDropzone
         endpoint="imageUploader"
         onClientUploadComplete={(res) => {
-          console.log('Files: ', res)
           toast.success('upload to uploadthing complete')
         }}
         onUploadError={(error: Error) => {
