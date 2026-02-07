@@ -1,8 +1,9 @@
-import { UploadThingError, createUploadthing } from 'uploadthing/server'
+import { UTApi, UploadThingError, createUploadthing } from 'uploadthing/server'
 import { getSessionServer } from '../utils'
 import type { FileRouter } from 'uploadthing/server'
 
 const f = createUploadthing()
+const utapi = new UTApi()
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const uploadRouter = {
@@ -21,26 +22,33 @@ export const uploadRouter = {
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
       const user = await getSessionServer()
-      console.log('User: ', user)
 
       // If you throw, the user will not be able to upload
       if (!user) {
         throw new UploadThingError('Unauthorized')
       }
-
-      console.log('User id: ', user.session.id)
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { userId: user.session.id }
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      console.log('Upload complete for userId:', metadata.userId)
+      // console.log('Upload complete for userId:', metadata.userId)
 
-      console.log('file url', file.ufsUrl)
+      // console.log('file url', file.ufsUrl)
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.userId }
+      return { uploadedBy: metadata.userId, url: file.ufsUrl, key: file.key }
     }),
 } satisfies FileRouter
 
 export type UploadRouter = typeof uploadRouter
+
+export async function deleteUploadedImage(fileKey: string) {
+  try {
+    await utapi.deleteFiles(fileKey)
+    return { success: true }
+  } catch (error) {
+    console.error('Error deleting image: ', error)
+    return { success: false }
+  }
+}
