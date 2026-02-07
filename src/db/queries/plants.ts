@@ -2,6 +2,8 @@ import { and, eq } from 'drizzle-orm'
 // eslint-disable-next-line
 import { UserPlants, userPlants } from '../schemas/plant-schema'
 import { db } from '@/db'
+import { deleteUploadedImageServer } from '@/lib/server/plants'
+import { UTApi } from 'uploadthing/server'
 
 // Create new plant
 export async function createPlant(plant: UserPlants) {
@@ -47,9 +49,23 @@ export async function updatePlant(
   }
 }
 
+const utapi = new UTApi()
+
 // Delete Plant
 export async function deletePlant(userId: string, id: string) {
   try {
+    const [plant] = await db
+      .select({ plantImageUrl: userPlants.plantImageUrl })
+      .from(userPlants)
+      .where(and(eq(userPlants.id, id), eq(userPlants.userId, userId)))
+
+    if (plant.plantImageUrl) {
+      const fileKey = plant.plantImageUrl.split('/').pop()
+      if (fileKey) {
+        await utapi.deleteFiles(fileKey)
+      }
+    }
+
     const result = await db
       .delete(userPlants)
       .where(and(eq(userPlants.id, id), eq(userPlants.userId, userId)))
