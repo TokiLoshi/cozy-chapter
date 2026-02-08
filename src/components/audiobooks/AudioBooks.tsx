@@ -222,7 +222,8 @@ export default function AudioBooksModal({
 
   // const [ sortOrder, setSortOrder ] = useState<'newest' | 'oldest'>('newest')
 
-  // Debounced seadd staleTime or equivalent to cache results
+  // Debounced search
+  // TODO: add staleTime or equivalent to cache results
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery)
