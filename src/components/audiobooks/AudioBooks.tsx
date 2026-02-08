@@ -1,7 +1,7 @@
 import { Edit, Link, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   BaseModal,
   DetailItem,
@@ -222,14 +222,13 @@ export default function AudioBooksModal({
 
   // const [ sortOrder, setSortOrder ] = useState<'newest' | 'oldest'>('newest')
 
-  // Debounced search
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value)
+  // Debounced seadd staleTime or equivalent to cache results
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setDebouncedQuery(value)
+      setDebouncedQuery(searchQuery)
     }, 500)
     return () => clearTimeout(timeoutId)
-  }
+  }, [searchQuery])
 
   // Search spotify
   const {
@@ -350,9 +349,7 @@ export default function AudioBooksModal({
     if (!librarySearch.trim()) return filtered
     const searchTerm = librarySearch.toLowerCase()
     return filtered.filter((book) => {
-      const titleMatch = book.audioBook.title
-        .toLowerCase()
-        .includes(librarySearch)
+      const titleMatch = book.audioBook.title.toLowerCase().includes(searchTerm)
       const authorMatch = book.audioBook.authors?.some((author) =>
         author.toLowerCase().includes(searchTerm),
       )
@@ -430,7 +427,7 @@ export default function AudioBooksModal({
                   type="text"
                   placeholder="Search for audiobooks..."
                   value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>

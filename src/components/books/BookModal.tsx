@@ -1,7 +1,7 @@
 import { Edit, Link, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import {
   BaseModal,
@@ -246,13 +246,14 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     })
   }, [userBooks, selectedStatus, librarySearch])
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value)
+  // Debounced search
+  // TODO: add staleTime or equivalent to cache results
+  useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setDebouncedQuery(value)
+      setDebouncedQuery(searchQuery)
     }, 500)
     return () => clearTimeout(timeoutId)
-  }
+  }, [searchQuery])
 
   const {
     data: searchResults,
@@ -373,7 +374,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
                   type="text"
                   placeholder="Search Google Books..."
                   value={searchQuery}
-                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
