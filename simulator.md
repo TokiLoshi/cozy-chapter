@@ -39,7 +39,7 @@
 - [ ] Watch for keyboard input and allow for tab autocomplete
 - [ ] Create output for help command
 - [ ] Add updown arrow tracking to cycle through command history (maybe using zustand here)
-- [ ] Add neofetc/status command (visually impressive and force thinking how apps expose data to terminal layer for architecture)
+- [ ] Add neofetch/status command (visually impressive and force thinking how apps expose data to terminal layer for architecture)
 
 #### Phase 2: Courses App
 
@@ -49,6 +49,7 @@
 - [ ] Generate crud for courses
 - [ ] Wire up modal for courses
 - [ ] Research making CRUD pattern reusable
+- [ ] Filter for books
 
 #### Phase 3: Movies and Series
 

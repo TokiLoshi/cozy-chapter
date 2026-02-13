@@ -171,7 +171,7 @@ function ReadingRoomComponent() {
             isOpen={isPlantModalOpen}
             onClose={() => setIsPlantModalOpen(false)}
             refreshPath="/readingroom"
-            plants={plants || []}
+            // plants={plants || []}
           />
         )}
 
@@ -213,8 +213,10 @@ function ReadingRoomComponent() {
       {/** Laptop Overlay */}
       <LaptopModal
         isOpen={isLaptopOpen}
+        username={session.user.name}
         onClose={() => {
           setIsLaptopOpen(false)
+          closeModal()
         }}
       />
     </>
