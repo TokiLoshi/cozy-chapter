@@ -158,7 +158,7 @@ export default function useTerminal(username: string) {
             setSandwichCount(0)
         }
         break
-      case 'rm -rf/':
+      case 'rm -rf /':
         addLine('error', 'Nice try! The cozy room remains intact.')
         break
       case '':
