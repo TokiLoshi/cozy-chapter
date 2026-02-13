@@ -215,7 +215,8 @@ function ReadingRoomComponent() {
         isOpen={isLaptopOpen}
         username={session.user.name}
         onClose={() => {
-          // setIsLaptopOpen(false)
+          setIsLaptopOpen(false)
+          closeModal()
         }}
       />
     </>
