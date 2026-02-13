@@ -20,8 +20,6 @@ export default function useTerminal(username: string) {
   const [commandHistory, setCommandHistory] = useState<Array<string>>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [currentDir, setCurrentDir] = useState(`~/${username}`)
-
-  // eslint-disable-
   const lineIdRef = useRef(2)
 
   const addLine = (
@@ -59,7 +57,7 @@ export default function useTerminal(username: string) {
         addLine('output', currentDir)
         break
       case 'sudo':
-        handleSudo([cmd])
+        handleSudo(args)
         break
       case 'movies':
         addLine('output', 'Movies coming soon')
@@ -128,12 +126,49 @@ export default function useTerminal(username: string) {
     )
   }
 
+  const [sandwichCount, setSandwichCount] = useState(0)
+
   const handleSudo = (args: Array<string>) => {
-    console.log('SUDO invoked, chaos will reign', args)
-    if (args.join(' ').toLowerCase() === 'make me a sandwich') {
-      addLine('output', '🥙 how about a salad instead?')
-    } else {
-      addLine('error', `Password: nice try, ${username}`)
+    console.log('SUDO invoked, chaos will reign')
+    const userInput = args.join(' ').toLowerCase()
+    switch (userInput) {
+      case 'make me a sandwich':
+        setSandwichCount((prev) => prev + 1)
+        switch (sandwichCount) {
+          case 0:
+            addLine('output', '🥙 how about a salad instead?')
+            break
+          case 1:
+            addLine(
+              'output',
+              "🥗 are you sure you don't want a nice crunchy salad?",
+            )
+            break
+          case 2:
+            addLine('output', 'Fine, you win. Here is your sanwich 🥪')
+            break
+          case 3:
+            addLine(
+              'output',
+              'You already got your sandwich, what more do you want?',
+            )
+            break
+          case 4:
+            addLine('output', 'KABOOM 💥')
+            setSandwichCount(0)
+        }
+        break
+      case 'rm -rf/':
+        addLine('error', 'Nice try! The cozy room remains intact.')
+        break
+      case '':
+        addLine('error', 'sudo: a command is required')
+        break
+      default:
+        addLine(
+          'error',
+          `Password required. Nice try, ${username}. You don't have root access.`,
+        )
     }
   }
 
