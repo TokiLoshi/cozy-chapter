@@ -23,6 +23,7 @@ import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
 import { getUserPlants } from '@/lib/server/plants'
 import { getUserBlogs } from '@/lib/server/articles'
+import { useWindowStore } from '@/components/ui/windowStore'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -43,8 +44,11 @@ export const Route = createFileRoute('/readingroom')({
 
 // Reading Room with modal
 function ReadingRoomComponent() {
-  const { session, blogs, plants } = Route.useLoaderData()
+  const { session, blogs } = Route.useLoaderData()
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
+  const [isLampOn, setIsLampOn] = useState(false)
+
+  const { open, toggleWindow, openWindow, closeWindow } = useWindowStore()
 
   const stats = useMemo(() => {
     return {
@@ -73,29 +77,27 @@ function ReadingRoomComponent() {
 
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false)
 
-  const [isLampOn, setIsLampOn] = useState(false)
-
   const handleLampClick = () => {
     lampClickSound()
     setIsLampOn(!isLampOn)
   }
 
-  const [isPlantModalOpen, setIsPlantModalOpen] = useState(false)
+  // const [isPlantModalOpen, setIsPlantModalOpen] = useState(false)
 
-  const handleOrchidClick = () => {
-    setIsPlantModalOpen(!isPlantModalOpen)
-  }
+  // const handleOrchidClick = () => {
+  //   setIsPlantModalOpen(!isPlantModalOpen)
+  // }
 
-  const handleHeadPhonesClick = () => {
-    setIsAudioBookModalOpen(!isAudiobookModalOpen)
-  }
+  // const handleHeadPhonesClick = () => {
+  //   setIsAudioBookModalOpen(!isAudiobookModalOpen)
+  // }
 
-  const [isLaptopOpen, setIsLaptopOpen] = useState(false)
-  const handleLaptopClick = () => {
-    setIsLaptopOpen(!isLaptopOpen)
-  }
+  // const [isLaptopOpen, setIsLaptopOpen] = useState(false)
+  // const handleLaptopClick = () => {
+  //   setIsLaptopOpen(!isLaptopOpen)
+  // }
 
-  const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
+  // const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
 
   return (
     <>
@@ -153,47 +155,43 @@ function ReadingRoomComponent() {
         {/** 3D component  */}
         <Experience
           onBookcaseClick={handleBookcaseClick}
-          onCreditsClick={handleCreditsClick}
+          onCreditsClick={() => toggleWindow('credits')}
           onDecksClick={handleDecksClick}
           onFireClick={handleFirePlaceClick}
           onGuitarClick={handleGuitarClick}
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
           onPlantClick={bushSound}
-          onOrchidClick={handleOrchidClick}
-          onHeadPhonesClick={handleHeadPhonesClick}
-          handleLaptopClick={handleLaptopClick}
+          onOrchidClick={() => toggleWindow('plants')}
+          onHeadPhonesClick={() => toggleWindow('audiobooks')}
+          handleLaptopClick={() => toggleWindow('laptop')}
         />
 
         {/** Plant Modal */}
-        {isPlantModalOpen && (
-          <PlantModal
-            isOpen={isPlantModalOpen}
-            onClose={() => setIsPlantModalOpen(false)}
-            refreshPath="/readingroom"
-            // plants={plants || []}
-          />
-        )}
+        <PlantModal
+          isOpen={open.plants}
+          onClose={() => closeWindow('plants')}
+          refreshPath="/readingroom"
+          // plants={plants || []}
+        />
 
         {/** Credits Overlay */}
-        {isCreditsOpen && (
-          <CreditsModal
-            isOpen={isCreditsOpen}
-            onClose={() => setIsCreditsOpen(false)}
-          />
-        )}
+        <CreditsModal
+          isOpen={open.credits}
+          onClose={() => closeWindow('credits')}
+        />
 
         {/** Article modal */}
         <ArticleModal
-          isOpen={isArticleModalOpen}
-          onClose={() => setIsArticleModalOpen(false)}
+          isOpen={open.article}
+          onClose={() => closeWindow('article')}
           refreshPath="/readingroom"
         />
 
         {/** Audiobooks modal */}
         <AudioBooksModal
-          isOpen={isAudiobookModalOpen}
-          onClose={() => setIsAudioBookModalOpen(false)}
+          isOpen={open.audiobooks}
+          onClose={() => closeWindow('audiobooks')}
         />
 
         {/** Blogs Overlay */}
@@ -212,12 +210,9 @@ function ReadingRoomComponent() {
       </div>
       {/** Laptop Overlay */}
       <LaptopModal
-        isOpen={isLaptopOpen}
+        isOpen={open.laptop}
         username={session.user.name}
-        onClose={() => {
-          setIsLaptopOpen(false)
-          closeModal()
-        }}
+        onClose={() => closeWindow('laptop')}
       />
     </>
   )

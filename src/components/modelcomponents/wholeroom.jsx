@@ -24,31 +24,14 @@ export default function CozyRoom({
   const toReadRef = useRef()
   const readingRef = useRef()
 
-  const [isBookcaseHovered, setIsBookcaseHovered] = useState(false)
-  const [isToReadHovered, setIsToReadHovered] = useState(false)
-  const [isReadingHovered, setIsReadingHovered] = useState(false)
-  const [isCreditsHovered, setIsCreditsHovered] = useState(false)
-  const [isGuitarHovered, setIsGuitarHovered] = useState(false)
-  const [isLampHovered, setIsLampHovered] = useState(false)
-  const [isFireHovered, setIsFireHovered] = useState(false)
-  const [isDeckHovered, setIsDeckHovered] = useState(false)
-  const [isHeadphonesHovered, setIsHeadphonesHovered] = useState(false)
-  const [isOrchidHovered, setIsOrchidHovered] = useState(false)
-  const [isPlantHovered, setIsPlantHovered] = useState(false)
+  const [hovered, setHovered] = useState(null)
 
-  useCursor(
-    isBookcaseHovered ||
-      isToReadHovered ||
-      isReadingHovered ||
-      isCreditsHovered ||
-      isGuitarHovered ||
-      isLampHovered ||
-      isFireHovered ||
-      isDeckHovered ||
-      isOrchidHovered ||
-      isPlantHovered ||
-      isHeadphonesHovered,
-  )
+  useCursor(hovered !== null)
+
+  const hoveredHandlers = (id) => ({
+    onPointerOver: () => setHovered(id),
+    onPointerOut: () => setHovered((h) => (h === id ? null : h)),
+  })
 
   return (
     <>
@@ -113,11 +96,10 @@ export default function CozyRoom({
           receiveShadow
           geometry={nodes.Painting.geometry}
           material={materials['Material.007']}
-          onPointerOver={() => setIsCreditsHovered(true)}
-          onPointerOut={() => setIsCreditsHovered(false)}
+          {...hoveredHandlers('credits')}
           onClick={onCreditsClick}
         >
-          {isCreditsHovered && <Outlines thickness={2} color="#d1ccad" />}
+          {hovered === 'credits' && <Outlines thickness={2} color="#d1ccad" />}
         </mesh>
 
         {/* DJ Decks */}
@@ -126,10 +108,11 @@ export default function CozyRoom({
           receiveShadow
           geometry={nodes.DJDeck.geometry}
           material={materials['DJGear_mat.001']}
-          onPointerOver={() => setIsDeckHovered(true)}
-          onPointerOut={() => setIsDeckHovered(false)}
+          {...hoveredHandlers('decks')}
           onClick={onDecksClick}
-        />
+        >
+          {hovered === 'decks' && <Outlines thickness={1} color="#d1ccad" />}
+        </mesh>
 
         {/* Windows */}
         <mesh
@@ -146,10 +129,7 @@ export default function CozyRoom({
         />
 
         {/* Fireplace */}
-        <group
-          onPointerOver={() => setIsFireHovered(true)}
-          onPointerOut={() => setIsFireHovered(false)}
-        >
+        <group {...hoveredHandlers('fire')}>
           <mesh
             castShadow
             receiveShadow
@@ -168,6 +148,7 @@ export default function CozyRoom({
             geometry={nodes.fireplace_mesh_2.geometry}
             material={materials['lambert4SG.001']}
           />
+
           <mesh
             castShadow
             receiveShadow
@@ -175,6 +156,7 @@ export default function CozyRoom({
             material={materials['lambert3SG.002']}
             onClick={onFireClick}
           />
+
           <mesh
             castShadow
             receiveShadow
@@ -186,7 +168,9 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.fireplace_mesh_5.geometry}
             material={materials['lambert8SG.001']}
-          />
+          >
+            {hovered === 'fire' && <Outlines thickness={1} color="#d1ccad" />}
+          </mesh>
           <mesh
             castShadow
             receiveShadow
@@ -210,18 +194,14 @@ export default function CozyRoom({
         />
 
         {/* Lamp */}
-        <group
-          onPointerOver={() => setIsLampHovered(true)}
-          onPointerOut={() => setIsLampHovered(false)}
-          onClick={onLampClick}
-        >
+        <group {...hoveredHandlers('lamp')} onClick={onLampClick}>
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.Lamp_mesh.geometry}
             material={materials['LightMetal.001']}
           >
-            {isLampHovered && <Outlines thickness={2} color="#d1ccad" />}
+            {hovered === 'lamp' && <Outlines thickness={2} color="#d1ccad" />}
           </mesh>
           {/* <mesh
             castShadow
@@ -235,15 +215,12 @@ export default function CozyRoom({
               emissive="orange"
               emissiveIntensity={isLampOn ? 4 : 0} // Push it out of range when on
             />
-            {isLampHovered && <Outlines thickness={2} color="#d1ccad" />}
+            {hovered === 'lamp' && <Outlines thickness={2} color="#d1ccad" />}
           </mesh>
         </group>
 
         {/* Plant */}
-        <group
-          onPointerOver={() => setIsPlantHovered(true)}
-          onPointerOut={() => setIsPlantHovered(false)}
-        >
+        <group {...hoveredHandlers('plant')}>
           <mesh
             castShadow
             receiveShadow
@@ -262,13 +239,14 @@ export default function CozyRoom({
             geometry={nodes.Plant_mesh_2.geometry}
             material={materials['Plant_Green.001']}
             onClick={onPlantClick}
-          />
+          >
+            {hovered === 'plant' && <Outlines thickness={2} color="#d1ccad" />}
+          </mesh>
         </group>
 
         {/** Read Bookcase */}
         <group
-          onPointerOver={() => setIsBookcaseHovered(true)}
-          onPointerOut={() => setIsBookcaseHovered(false)}
+          {...hoveredHandlers('bookcase')}
           onClick={() => onBookcaseClick('read')}
         >
           <mesh
@@ -298,8 +276,9 @@ export default function CozyRoom({
             geometry={nodes.Bookcase_mesh_3.geometry}
             material={materials['Cover1.001']}
           >
-            {' '}
-            {isBookcaseHovered && <Outlines thickness={1.5} color="#d1ccad" />}
+            {hovered === 'bookcase' && (
+              <Outlines thickness={1.5} color="#d1ccad" />
+            )}
           </mesh>
           <mesh
             castShadow
@@ -307,7 +286,9 @@ export default function CozyRoom({
             geometry={nodes.Bookcase_mesh_4.geometry}
             material={materials['Pages.001']}
           >
-            {isBookcaseHovered && <Outlines thickness={1.5} color="#d1ccad" />}
+            {hovered === 'bookcase' && (
+              <Outlines thickness={1.5} color="#d1ccad" />
+            )}
           </mesh>
           <mesh
             castShadow
@@ -315,7 +296,9 @@ export default function CozyRoom({
             geometry={nodes.Bookcase_mesh_5.geometry}
             material={materials['Cover6.001']}
           >
-            {isBookcaseHovered && <Outlines thickness={1.5} color="#d1ccad" />}
+            {hovered === 'bookcase' && (
+              <Outlines thickness={1.5} color="#d1ccad" />
+            )}
           </mesh>
           <mesh
             castShadow
@@ -323,7 +306,9 @@ export default function CozyRoom({
             geometry={nodes.Bookcase_mesh_6.geometry}
             material={materials['Cover2.001']}
           >
-            {isBookcaseHovered && <Outlines thickness={1.5} color="#d1ccad" />}
+            {hovered === 'bookcase' && (
+              <Outlines thickness={1.5} color="#d1ccad" />
+            )}
           </mesh>
           <mesh
             castShadow
@@ -353,10 +338,7 @@ export default function CozyRoom({
         </group>
 
         {/* Guitar */}
-        <group
-          onPointerOver={() => setIsGuitarHovered(true)}
-          onPointerOut={() => setIsGuitarHovered(false)}
-        >
+        <group {...hoveredHandlers('guitar')}>
           <mesh
             castShadow
             receiveShadow
@@ -369,6 +351,7 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.guitar_mesh_1.geometry}
             material={materials['_Tan_.001']}
+            onClick={onGuitarClick}
           />
           <mesh
             castShadow
@@ -376,40 +359,43 @@ export default function CozyRoom({
             geometry={nodes.guitar_mesh_2.geometry}
             material={materials['_SaddleBrown_.001']}
             onClick={onGuitarClick}
-          />
+          >
+            {hovered === 'guitar' && (
+              <Outlines thickness={1.5} color="#d1ccad" />
+            )}
+          </mesh>
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.guitar_mesh_3.geometry}
             material={materials['_Gold_.001']}
+            onClick={onGuitarClick}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.guitar_mesh_4.geometry}
             material={materials['scan_4.001']}
+            onClick={onGuitarClick}
           />
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.guitar_mesh_5.geometry}
             material={materials['_Gray_.001']}
+            onClick={onGuitarClick}
           />
         </group>
 
         {/* Orchid */}
-        <group
-          onPointerOver={() => setIsOrchidHovered(true)}
-          onPointerOut={() => setIsOrchidHovered(false)}
-          onClick={onOrchidClick}
-        >
+        <group {...hoveredHandlers('orchid')} onClick={onOrchidClick}>
           <mesh
             castShadow
             receiveShadow
             geometry={nodes.Orchid_mesh.geometry}
             material={materials['lambert23SG.001']}
           >
-            {isOrchidHovered && <Outlines thickness={2} color="#d1ccad" />}
+            {hovered === 'orchid' && <Outlines thickness={2} color="#d1ccad" />}
           </mesh>
           <mesh
             castShadow
@@ -417,7 +403,7 @@ export default function CozyRoom({
             geometry={nodes.Orchid_mesh_1.geometry}
             material={materials['lambert20SG.001']}
           >
-            {isOrchidHovered && <Outlines thickness={2} color="#d1ccad" />}
+            {hovered === 'orchid' && <Outlines thickness={2} color="#d1ccad" />}
           </mesh>
           <mesh
             castShadow
@@ -447,8 +433,7 @@ export default function CozyRoom({
 
         {/* Headphones */}
         <group
-          onPointerOver={() => setIsHeadphonesHovered(true)}
-          onPointerOut={() => setIsHeadphonesHovered(false)}
+          {...hoveredHandlers('earphones')}
           onClick={() => onHeadPhonesClick()}
         >
           <mesh
@@ -457,7 +442,9 @@ export default function CozyRoom({
             geometry={nodes.headphones_mesh.geometry}
             material={materials['lambert7SG.003']}
           >
-            {isHeadphonesHovered && <Outlines thickness={2} color="#d1ccad" />}
+            {hovered === 'earphones' && (
+              <Outlines thickness={2} color="#d1ccad" />
+            )}
           </mesh>
           <mesh
             castShadow
@@ -477,13 +464,12 @@ export default function CozyRoom({
         <mesh
           castShadow
           receiveShadow
-          onPointerOver={() => setIsToReadHovered(true)}
-          onPointerOut={() => setIsToReadHovered(false)}
+          {...hoveredHandlers('toRead')}
           onClick={() => onBookcaseClick('toRead')}
           geometry={nodes.bottom_book_mesh.geometry}
           material={materials['DarkRed.003']}
         >
-          {isToReadHovered && <Outlines thickness={2} color="#d1ccad" />}
+          {hovered === 'toRead' && <Outlines thickness={2} color="#d1ccad" />}
         </mesh>
         <mesh
           castShadow
@@ -500,15 +486,14 @@ export default function CozyRoom({
           material={materials['Beige.004']}
         />
         <mesh
-          onPointerOver={() => setIsToReadHovered(true)}
-          onPointerOut={() => setIsToReadHovered(false)}
+          {...hoveredHandlers('toRead')}
           castShadow
           receiveShadow
           onClick={() => onBookcaseClick('toRead')}
           geometry={nodes.top_book_mesh.geometry}
           material={materials['DarkRed.003']}
         >
-          {isToReadHovered && <Outlines thickness={2} color="#d1ccad" />}
+          {hovered === 'toRead' && <Outlines thickness={2} color="#d1ccad" />}
         </mesh>
         <mesh
           castShadow
@@ -529,27 +514,21 @@ export default function CozyRoom({
         <mesh
           castShadow
           receiveShadow
-          onPointerOver={() => {
-            setIsReadingHovered(true)
-          }}
-          onPointerOut={() => setIsReadingHovered(false)}
+          {...hoveredHandlers('reading')}
           onClick={() => onBookcaseClick('reading')}
           geometry={nodes.Book1_Open001.geometry}
           material={materials['Beige.006']}
         />
         <mesh
           ref={readingRef}
-          onPointerOver={() => {
-            setIsReadingHovered(true)
-          }}
-          onPointerOut={() => setIsReadingHovered(false)}
+          {...hoveredHandlers('reading')}
           castShadow
           receiveShadow
           onClick={() => onBookcaseClick('reading')}
           geometry={nodes.Book1_Open001_1.geometry}
           material={materials['DarkRed.005']}
         >
-          {isReadingHovered && <Outlines thickness={2} color="#d1ccad" />}
+          {hovered === 'reading' && <Outlines thickness={2} color="#d1ccad" />}
         </mesh>
       </group>
     </>
