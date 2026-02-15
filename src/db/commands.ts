@@ -41,7 +41,7 @@ export const commands: Array<Command> = [
   },
   { action: 'clear', description: 'Clear the terminal.', category: 'system' },
   {
-    action: 'neofetc',
+    action: 'neofetch',
     description: 'Display system info and stats.',
     category: 'system',
   },
