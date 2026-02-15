@@ -57,7 +57,7 @@ const checkWaterNeeds = (
   const minutesSince = today.getTime() - lastDate.getTime()
   const daysSince = Math.floor(minutesSince / (1000 * 60 * 60 * 24))
 
-  return daysSince > recommendedWatering
+  return daysSince >= recommendedWatering
 }
 
 function ExpandedPlantCard({
@@ -284,18 +284,49 @@ export default function PlantModal({
     setExpandedPlant(item)
   }
 
+  // Secondary sort by health priority
+  const healthPriority: Record<string, number> = {
+    needsAttention: 0,
+    ok: 1,
+    thriving: 2,
+  }
+
   // Search filter
   const filteredPlants = useMemo(() => {
     if (!userPlants) return []
 
-    if (!plantSearch.trim()) return userPlants
+    const searchTerm = plantSearch.trim().toLowerCase()
 
-    const searchTerm = plantSearch.toLowerCase()
+    // Sort by
+    const mapped = userPlants.map((plant) => {
+      return {
+        ...plant,
+        needsWater: Boolean(
+          checkWaterNeeds(
+            plant.lastWatered,
+            plant.recommendedWateringIntervalDays,
+          ),
+        ),
+        lastWater: plant.lastWatered
+          ? new Date(plant.lastWatered).getTime()
+          : -Infinity,
+        healthRank: healthPriority[plant.plantHealth],
+      }
+    })
 
-    return userPlants.filter((item) => {
-      const nameMatch = item.name?.toLowerCase().includes(searchTerm)
-      const speciesMatch = item.species.toLowerCase().includes(searchTerm)
-      return nameMatch || speciesMatch
+    const searched = searchTerm
+      ? mapped.filter(
+          (plant) =>
+            (plant.name ?? '').toLowerCase().includes(searchTerm) ||
+            plant.species.toLowerCase().includes(searchTerm),
+        )
+      : mapped
+
+    return searched.sort((a, b) => {
+      if (a.needsWater !== b.needsWater) return a.needsWater ? -1 : 1
+      if (a.healthRank !== b.healthRank) return a.healthRank - b.healthRank
+      if (a.lastWater !== b.lastWater) return a.lastWater - b.lastWater
+      return (a.name ?? a.species).localeCompare(b.name ?? b.species)
     })
   }, [userPlants, plantSearch])
 
@@ -306,7 +337,7 @@ export default function PlantModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={closeModal}
         />
         {/** Edit modal */}
@@ -330,8 +361,8 @@ export default function PlantModal({
           />
         )}
         {/** Modal */}
-        {!isEditOpen && (
-          <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border-slate-700 m-4 p-6">
+        {!isEditOpen && !expandedPlant && (
+          <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border-slate-700 m-4 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-white">Plants</h2>
               <button
@@ -350,11 +381,14 @@ export default function PlantModal({
               + Add Plant
             </button>
             {/** Plant Form */}
-            <PlantForm
-              isOpen={isAddFormOpen}
-              onClose={() => setisAddFormOpen(false)}
-              refreshPath={refreshPath}
-            />
+            {isAddFormOpen && (
+              <PlantForm
+                isOpen={true}
+                onClose={() => setisAddFormOpen(false)}
+                refreshPath={refreshPath}
+              />
+            )}
+
             {/** Search */}
             <div className="pt-4">
               <h3 className="text-sm font-medium text-slate-400 mb-3">
