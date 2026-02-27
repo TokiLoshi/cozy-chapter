@@ -66,7 +66,7 @@ export default function LaptopModal({
   onClose,
   username,
 }: LaptopModalProps) {
-  const [folder, setFolder] = useState(`~/${username}/`)
+  // const [folder, setFolder] = useState(`~/${username}/`)
   const [isGUI, setIsGUI] = useState(false)
 
   if (!isOpen) return null

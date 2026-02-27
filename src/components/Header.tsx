@@ -34,7 +34,7 @@ export default function Header({
           <Link to="/">
             <img
               src="/coffee.png"
-              alt="beach birb"
+              alt="coffee mug"
               className="h-10 rounded-2xl"
             />
           </Link>

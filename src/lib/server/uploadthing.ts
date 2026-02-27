@@ -19,6 +19,7 @@ export const uploadRouter = {
     },
   })
     // Set permissions and file types for this FileRoute
+
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
       const user = await getSessionServer()

@@ -20,12 +20,22 @@ export default function Footer() {
               </span>
             </div>
             <div className="text-gray-400 text-sm">
-              &copy; {currentYear} coded with chaotic curiosity by{' '}
-              <span className="text-cyan-400 font-medium">TokiLoshi</span>
+              &copy; {currentYear} creative coding with a touch of chaos and a
+              lot of curiosity by{' '}
+              <span className="text-gray-400 hover:text-cyan-400 transition-colors">
+                <a
+                  className="underline-none text-cyan-400"
+                  href="https://www.tokiloshi.xyz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  TokiLoshi
+                </a>
+              </span>
             </div>
             <div className="flex gap-6 text-sm">
-              <Link
-                to="https://github.com/TokiLoshi"
+              <a
+                href="https://github.com/TokiLoshi"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-cyan-400 transition-colors"
@@ -34,7 +44,7 @@ export default function Footer() {
                   <Github />
                   GitHub
                 </span>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

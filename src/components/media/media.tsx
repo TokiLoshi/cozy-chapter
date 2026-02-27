@@ -39,6 +39,7 @@ export default function MediaModal({ isOpen, onClose }: MediaModalProps) {
         </div>
         {/** Content */}
         <div className="flex-1 overflow-y-auto p-4">Media Stuff goes here</div>
+        {isOpen && <div>Open</div>}
       </div>
     </>
   )

@@ -75,6 +75,11 @@ export default function useTerminal(username: string) {
         addLine('system', 'Switching to desktop mode...')
         console.log('GUI not implemented yet')
         break
+      case 'cd':
+        console.log('cd', args)
+        setCurrentDir('placeholder')
+        addLine('output', `cd ${args}`)
+        break
       default:
         if (commands.some((c) => c.action === cmd)) {
           addLine('output', `${cmd} ${args} not implemented`)

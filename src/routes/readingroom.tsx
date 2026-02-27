@@ -48,7 +48,12 @@ function ReadingRoomComponent() {
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
 
-  const { open, toggleWindow, openWindow, closeWindow } = useWindowStore()
+  const {
+    open,
+    toggleWindow,
+    // openWindow,
+    closeWindow,
+  } = useWindowStore()
 
   const stats = useMemo(() => {
     return {
@@ -69,35 +74,10 @@ function ReadingRoomComponent() {
     setSelectedStatus(null)
   }
 
-  const [isCreditsOpen, setIsCreditsOpen] = useState(false)
-
-  const handleCreditsClick = () => {
-    setIsCreditsOpen(!isCreditsOpen)
-  }
-
-  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false)
-
   const handleLampClick = () => {
     lampClickSound()
     setIsLampOn(!isLampOn)
   }
-
-  // const [isPlantModalOpen, setIsPlantModalOpen] = useState(false)
-
-  // const handleOrchidClick = () => {
-  //   setIsPlantModalOpen(!isPlantModalOpen)
-  // }
-
-  // const handleHeadPhonesClick = () => {
-  //   setIsAudioBookModalOpen(!isAudiobookModalOpen)
-  // }
-
-  // const [isLaptopOpen, setIsLaptopOpen] = useState(false)
-  // const handleLaptopClick = () => {
-  //   setIsLaptopOpen(!isLaptopOpen)
-  // }
-
-  // const [isAudiobookModalOpen, setIsAudioBookModalOpen] = useState(false)
 
   return (
     <>
@@ -203,7 +183,6 @@ function ReadingRoomComponent() {
             blogs={blogs}
             onAddArticleClick={() => {
               closeModal()
-              setIsArticleModalOpen(true)
             }}
           />
         )}
