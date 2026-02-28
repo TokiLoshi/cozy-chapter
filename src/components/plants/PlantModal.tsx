@@ -21,6 +21,8 @@ import {
 import { useAppForm } from '@/hooks/form'
 import { UploadDropzone } from '@/lib/uploadthing'
 
+type LightPreferences = 'low' | 'medium' | 'brightDirect' | 'brightIndirect'
+
 // Types
 type PlantFormProps = {
   isOpen: boolean
@@ -110,7 +112,7 @@ function ExpandedPlantCard({
           <DetailItem label="Last Watered">
             <p className="text-sm font-medium text-slate-200">
               {item.lastWatered
-                ? item.lastWatered.toLocaleDateString()
+                ? new Date(item.lastWatered).toLocaleDateString()
                 : 'data not available'}
             </p>
           </DetailItem>
@@ -122,6 +124,15 @@ function ExpandedPlantCard({
                 : 'data not available'}
             </p>
           </DetailItem>
+          {/** recommended light */}
+          {item.lightPreferences && (
+            <DetailItem label="Light Preferences">
+              <p className="text-sm font-medium text-slate-200">
+                {formatLightPreference(item.lightPreferences)}
+              </p>
+            </DetailItem>
+          )}
+
           {/** Plant health */}
           <DetailItem label="Plant Health">
             <p
@@ -139,6 +150,21 @@ function ExpandedPlantCard({
       </BaseModal>
     </>
   )
+}
+
+const formatLightPreference = (pref: LightPreferences): string => {
+  switch (pref) {
+    case 'low':
+      return 'LowLight'
+    case 'medium':
+      return 'Medium Light'
+    case 'brightIndirect':
+      return 'Bringt Indirect Light'
+    case 'brightDirect':
+      return 'Bright Direct Light'
+    default:
+      return 'unknown'
+  }
 }
 
 function PlantCard({
@@ -184,6 +210,12 @@ function PlantCard({
               Last watered:{' '}
               {item.lastWatered
                 ? new Date(item.lastWatered).toLocaleDateString()
+                : 'data not available'}
+            </span>
+            <span className="text-xs text-slate-300">
+              Light preferences:{' '}
+              {item.lightPreferences
+                ? formatLightPreference(item.lightPreferences)
                 : 'unknown'}
             </span>
             <span className={`${getHealthColor(item.plantHealth)} text-xs`}>
@@ -435,11 +467,13 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
 
   const form = useAppForm({
     defaultValues: {
+      name: '',
       species: '',
       recommendedWateringIntervalDays: 7,
       group: '',
       lastWatered: null as Date | null,
       plantHealth: 'thriving' as 'thriving' | 'ok' | 'needsAttention',
+      lightPreferences: null as LightPreferences | null,
       notes: '',
     },
     validators: {
@@ -471,11 +505,13 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
         await createPlantServer({
           data: {
             species: value.species,
+            name: value.name || null,
             recommendedWateringIntervalDays:
               value.recommendedWateringIntervalDays,
             group: value.group || null,
             lastWatered: value.lastWatered,
             plantHealth: value.plantHealth,
+            lightPreferences: value.lightPreferences || null,
             notes: value.notes || null,
             plantImageUrl: uploadedImageUrl,
           },
@@ -547,6 +583,16 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
               )}
             </form.AppField>
 
+            {/** Name */}
+            <form.AppField name="name">
+              {(field) => (
+                <field.TextField
+                  label="Name"
+                  placeholder="Does this plant have a name?"
+                />
+              )}
+            </form.AppField>
+
             {/** recommended watering */}
             <form.AppField name="recommendedWateringIntervalDays">
               {(field) => (
@@ -588,6 +634,22 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                     },
                   ]}
                   placeholder="Select status"
+                />
+              )}
+            </form.AppField>
+
+            {/** Light Preferences */}
+            <form.AppField name="lightPreferences">
+              {(field) => (
+                <field.Select
+                  label="Plant Light Preferences"
+                  values={[
+                    { label: 'Low light', value: 'low' },
+                    { label: 'Medium light', value: 'medium' },
+                    { label: 'Bright Indirect', value: 'brightIndirect' },
+                    { label: 'Bright Direct', value: 'brightDirect' },
+                  ]}
+                  placeholder="Select Plant's preferred light"
                 />
               )}
             </form.AppField>

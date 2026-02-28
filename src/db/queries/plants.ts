@@ -1,11 +1,11 @@
 import { and, eq } from 'drizzle-orm'
 import { UTApi } from 'uploadthing/server'
-// eslint-disable-next-line
-import { UserPlants, userPlants } from '../schemas/plant-schema'
+import { userPlants } from '../schemas/plant-schema'
+import type { NewPlant } from '@/db/schemas/plant-schema'
 import { db } from '@/db'
 
 // Create new plant
-export async function createPlant(plant: UserPlants) {
+export async function createPlant(plant: NewPlant) {
   try {
     const [result] = await db.insert(userPlants).values(plant).returning()
     return { success: true, data: result }
@@ -29,11 +29,15 @@ export async function getUsersPlants(userId: string) {
   }
 }
 
+type PlantUpdates = Partial<
+  Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+>
+
 // Update plant
 export async function updatePlant(
   id: string,
   userId: string,
-  updates: Partial<Omit<UserPlants, 'id' | 'userId' | 'createdAt'>>,
+  updates: PlantUpdates,
 ) {
   try {
     const result = await db

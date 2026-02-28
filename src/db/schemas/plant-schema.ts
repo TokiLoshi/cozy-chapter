@@ -14,6 +14,13 @@ export const plantHealthEnum = pgEnum('plant_health', [
   'needsAttention',
 ])
 
+export const lightPreferenceEnum = pgEnum('light_preference', [
+  'low',
+  'medium',
+  'brightIndirect',
+  'brightDirect',
+])
+
 export const userPlants = pgTable('plants', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: text('userId')
@@ -22,6 +29,7 @@ export const userPlants = pgTable('plants', {
   species: text('species').notNull(),
   name: text('name'),
   recommendedWateringIntervalDays: integer('recommendedWateringIntervalDays'),
+  lightPreferences: lightPreferenceEnum('lightPreferences'),
   group: text('group'),
   lastWatered: timestamp('lastWatered'),
   plantHealth: plantHealthEnum('plantHealth').notNull().default('thriving'),
@@ -31,4 +39,5 @@ export const userPlants = pgTable('plants', {
   plantImageUrl: text('plantImageUrl'),
 })
 
-export type UserPlants = typeof userPlants.$inferInsert
+export type Plant = typeof userPlants.$inferSelect
+export type NewPlant = typeof userPlants.$inferInsert

@@ -1,6 +1,6 @@
 {
-  "id": "c1a67efa-9818-4598-9935-8ef95f75efcd",
-  "prevId": "d8b2bfb2-e7f2-4dd0-a6ab-6cf7310261da",
+  "id": "127395ed-4fdc-4c7e-82b4-7e7e7bd8e2a7",
+  "prevId": "c1a67efa-9818-4598-9935-8ef95f75efcd",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -269,6 +269,12 @@
         "rating": {
           "name": "rating",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -835,9 +841,22 @@
           "primaryKey": false,
           "notNull": true
         },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "recommendedWateringIntervalDays": {
           "name": "recommendedWateringIntervalDays",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lightPreferences": {
+          "name": "lightPreferences",
+          "type": "light_preference",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
@@ -880,6 +899,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "plantImageUrl": {
+          "name": "plantImageUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -932,6 +957,16 @@
         "reading",
         "read",
         "abandoned"
+      ]
+    },
+    "public.light_preference": {
+      "name": "light_preference",
+      "schema": "public",
+      "values": [
+        "low",
+        "medium",
+        "brightIndirect",
+        "brightDirect"
       ]
     },
     "public.plant_health": {

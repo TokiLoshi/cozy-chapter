@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { UTApi } from 'uploadthing/server'
-import type { UserPlants } from '@/db/schemas/plant-schema'
+import type { NewPlant } from '@/db/schemas/plant-schema'
 import { auth } from '@/lib/auth'
 import {
   createPlant,
@@ -35,8 +35,7 @@ export const getUserPlants = createServerFn({ method: 'GET' }).handler(
 
 export const createPlantServer = createServerFn({ method: 'POST' })
   .inputValidator(
-    (data: Omit<UserPlants, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) =>
-      data,
+    (data: Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => data,
   )
   .handler(async ({ data }) => {
     const session = await getSessionServer()
@@ -49,9 +48,13 @@ export const createPlantServer = createServerFn({ method: 'POST' })
     return result.data
   })
 
+type PlantUpdates = Partial<
+  Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+>
+
 // Update plants
 export const updatePlantServer = createServerFn({ method: 'POST' })
-  .inputValidator((data: { id: string; updates: Partial<UserPlants> }) => data)
+  .inputValidator((data: { id: string; updates: PlantUpdates }) => data)
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
@@ -84,6 +87,5 @@ export const deleteUploadedImageServer = createServerFn({ method: 'POST' })
       return { success: result.success, deletedCount: result.deletedCount }
     } catch (error) {
       throw new Error('Failed to delete image')
-      return { success: false, deletedCount: 0 }
     }
   })
