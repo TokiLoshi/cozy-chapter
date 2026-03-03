@@ -5,8 +5,8 @@ import {
   text,
   timestamp,
   uuid,
-} from 'drizzle-org/pg-core'
-import { user } from '../schemas/auth-schema'
+} from 'drizzle-orm/pg-core'
+import { user } from '@/db/schemas/auth-schema'
 
 export const podcastStatus = pgEnum('podcastStatus', [
   'toListen',
@@ -37,9 +37,9 @@ export const userPodcasts = pgTable('userPodcasts', {
     .references(() => user.id, { onDelete: 'cascade' }),
   podcastId: text('podcastId')
     .notNull()
-    .referecnes(() => podcasts.id, { onDelete: 'cascade' }),
+    .references(() => podcasts.id, { onDelete: 'cascade' }),
   status: podcastStatus('status').notNull().default('toListen'),
-  lastPositionMs: integer('lastPositionMs').defaultNow(),
+  lastPositionMs: integer('lastPositionMs'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
   startedAt: timestamp('startedAt'),
