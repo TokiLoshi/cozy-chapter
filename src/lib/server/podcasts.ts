@@ -121,3 +121,71 @@ export const searchYouTubePodcasts = createServerFn({ method: 'GET' })
 
 // TODO:
 // ADD Crud
+export const addPodcast = createServerFn({ method: 'POST' })
+  .inputValidator((data: Omit<NewPodcast, 'createdAt' | 'updataedAt'>) => data)
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+
+    const podcastResult = await upsertPodcast(data)
+    if (!podcastResult.success) {
+      throw new Error('Failed to save podcast')
+    }
+
+    const userPodcastResult = await createUserPodcast({
+      userId: session.user.id,
+      podcastId: data.id,
+    })
+
+    if (!userPodcastResult.success) {
+      throw new Error('Failed to link podcast to user')
+    }
+
+    return userPodcastResult.data
+  })
+
+export const getUserPodcastsServer = createServerFn({
+  method: 'GET',
+}).handler(async () => {
+  const session = await getSessionServer()
+  if (!session) throw redirect({ to: '/login' })
+
+  const result = await getUserPodcast(session.user.id)
+  if (!result.success) {
+    throw new Error('Failed to get podcasts')
+  }
+  return result.data
+})
+
+export const updateUserPodcastServer = createServerFn({ method: 'POST' })
+  .inputValidator(
+    (data: { id: string; updates: Partial<NewUserPodcast> }) => data,
+  )
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+
+    const result = await updateUserPodcast(
+      data.id,
+      session.user.id,
+      data.updates,
+    )
+
+    if (!result.success) {
+      throw new Error('Failed to update podcast')
+    }
+    return result.data
+  })
+
+export const deleteUserPodcastServer = createServerFn({ method: 'POST' })
+  .inputValidator((data: string) => data)
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+
+    const result = await deleteUserPodcast(session.user.id, data)
+    if (!result.success) {
+      throw new Error('Error deleting podcast')
+    }
+    return { success: true, id: data }
+  })
