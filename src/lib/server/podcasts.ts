@@ -190,8 +190,8 @@ export const deleteUserPodcastServer = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-
-    const result = await deleteUserPodcast(session.user.id, data)
+    console.log('Delete data received: ', data)
+    const result = await deleteUserPodcast(data, session.user.id)
     if (!result.success) {
       throw new Error('Error deleting podcast')
     }
