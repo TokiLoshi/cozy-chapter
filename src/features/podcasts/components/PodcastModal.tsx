@@ -270,7 +270,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
     isLoading: isSearching,
     error: searchError,
   } = useQuery({
-    queryKey: [],
+    queryKey: ['podcast-search', debouncedQuery, searchSource],
     queryFn: () =>
       searchSource === 'spotify'
         ? searchSpotifyPodcasts({ data: debouncedQuery })
@@ -518,7 +518,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                                 Added
                               </span>
                             ) : (
-                              <Plus className="cursor-pointer text-white bg-amber-600 bhover:bg-amber-500" />
+                              <Plus className="cursor-pointer text-white bg-amber-600 hover:bg-amber-500" />
                             )}
                           </button>
                         </div>
@@ -602,7 +602,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         <div
                           className="cursor-pointer"
                           id={item.podcast.id}
-                          onClick={() => handleCardClick}
+                          onClick={() => handleCardClick(item)}
                         >
                           <PodcastCard
                             item={item}
@@ -644,7 +644,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                             onEdit={() => {
                               // TODO: to wire up edit modal
                             }}
-                            onDelete={() => handleDelete}
+                            onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
                       ))

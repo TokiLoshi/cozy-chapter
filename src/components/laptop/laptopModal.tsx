@@ -68,7 +68,6 @@ export default function LaptopModal({
   username,
 }: LaptopModalProps) {
   // const [folder, setFolder] = useState(`~/${username}/`)
-  console.log('LaptopModal: isOpen: ', isOpen)
   const [isGUI, setIsGUI] = useState(false)
   const [activeApp, setActiveApp] = useState<string | null>(null)
 

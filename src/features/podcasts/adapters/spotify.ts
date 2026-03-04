@@ -9,7 +9,7 @@ type SpotifyEpisode = {
   duration_ms: number
   external_urls: { spotify: string }
   release_date: string
-  show: {
+  show?: {
     name: string
     publisher: string
   }
@@ -18,9 +18,10 @@ type SpotifyEpisode = {
 export function adaptSpotifyEpisode(
   episode: SpotifyEpisode,
 ): Omit<NewPodcast, 'createdAt' | 'updataedAt'> {
+  console.log('In adapter: ', episode)
   return {
     id: `spotify:${episode.id}`,
-    showName: episode.show.name,
+    showName: episode.show?.name ?? null,
     episodeTitle: episode.name,
     description: episode.description,
     coverImageUrl: episode.images?.[0]?.url ?? null,
@@ -34,5 +35,6 @@ export function adaptSpotifyEpisode(
 export function adaptSpotifySearchResults(data: {
   episodes: { items: Array<SpotifyEpisode> }
 }): Array<Omit<NewPodcast, 'createdAt' | 'updatedAt'>> {
+  console.log('In adapter with episodes: ', data)
   return data.episodes.items.map(adaptSpotifyEpisode)
 }

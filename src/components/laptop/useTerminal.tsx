@@ -77,7 +77,6 @@ export default function useTerminal(
         break
       case 'chat':
         addLine('output', 'Chat coming soon')
-        console.log('Chat coming soon')
         break
       case 'podcasts':
         addLine('system', 'Launching podcasts...')
@@ -85,13 +84,12 @@ export default function useTerminal(
         break
       case 'gui':
         addLine('system', 'Switching to desktop mode...')
-        console.log('GUI not implemented yet')
         break
       case 'cd':
-        console.log('cd', args)
         setCurrentDir('placeholder')
         addLine('output', `cd ${args}`)
         break
+      // TODO: add Fred Easter Eggs (play that sh*t Fred, feel it in my blood, if you don't know don't worry, tough love)
       default:
         if (commands.some((c) => c.action === cmd)) {
           addLine('output', `${cmd} ${args} not implemented`)
@@ -103,7 +101,6 @@ export default function useTerminal(
   }
 
   const handleHelp = () => {
-    console.log('HELP echoed from your terminal!')
     const appCommands = commands.filter((c) => c.category === 'app')
     const systemCommands = commands.filter((c) => c.category === 'system')
     const terminalCommands = commands.filter((c) => c.category === 'terminal')
