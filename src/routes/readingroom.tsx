@@ -145,7 +145,6 @@ function ReadingRoomComponent() {
           onOrchidClick={() => toggleWindow('plants')}
           onHeadPhonesClick={() => toggleWindow('audiobooks')}
           handleLaptopClick={() => {
-            console.log('laptop click fired: current state: ', open.laptop)
             toggleWindow('laptop')
           }}
         />

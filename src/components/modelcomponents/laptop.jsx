@@ -24,7 +24,6 @@ export default function Laptop({ handleLaptopClick, ...props }) {
         onPointerOut={() => setIsLaptopHovered(false)}
         onClick={(e) => {
           e.stopPropagation()
-          console.log('Mesh clicked calling laptop click')
           handleLaptopClick()
         }}
       >

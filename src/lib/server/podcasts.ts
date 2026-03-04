@@ -44,6 +44,7 @@ async function getSpotifyToken(): Promise<string> {
       client_secret: clientSecret!,
     }),
   })
+  console.log('Spotify responded: ', response.status)
 
   if (!response.ok) {
     throw new Error('Failed to get spotify token')
@@ -52,21 +53,23 @@ async function getSpotifyToken(): Promise<string> {
   const data = await response.json()
   cachedToken = {
     token: data.access_token,
-    expiresAt: (Date.now() + (data.expieres_in - 60)) * 1000,
+    expiresAt: (Date.now() + (data.expires_in - 60)) * 1000,
   }
+  console.log('spotify search data: ', data)
   return cachedToken.token
 }
 
 export const searchSpotifyPodcasts = createServerFn({ method: 'GET' })
   .inputValidator((query: string) => query)
   .handler(async ({ data: query }) => {
+    console.log('searchSpotifyPodcasts called with: ', query)
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
 
     const token = await getSpotifyToken()
 
     const response = await fetch(
-      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=episdoe&limit=10`,
+      `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=episode&limit=10`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -75,10 +78,14 @@ export const searchSpotifyPodcasts = createServerFn({ method: 'GET' })
     )
 
     if (!response.ok) {
+      console.error('Response failed with: ', response.status)
+      console.error('Response error: ', response.body)
       throw new Error('Failed to search Spotify podcasts')
     }
     const data = await response.json()
+    console.log('Data: ', Object.keys(data))
     const adaptedResults = adaptSpotifySearchResults(data)
+    console.log('Adapted results: ', adaptedResults)
 
     return adaptedResults
   })
@@ -101,10 +108,10 @@ export const searchYouTubePodcasts = createServerFn({ method: 'GET' })
     const searchData = await searchResponse.json()
     const videoIds = searchData.items
       .map((item: any) => item.id.videoId)
-      .join('')
+      .join(' ')
 
     const detailsResponse = await fetch(
-      `https.//www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${apiKey}`,
+      `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${apiKey}`,
     )
 
     const detailsData = detailsResponse.ok
@@ -119,10 +126,8 @@ export const searchYouTubePodcasts = createServerFn({ method: 'GET' })
     )
   })
 
-// TODO:
-// ADD Crud
 export const addPodcast = createServerFn({ method: 'POST' })
-  .inputValidator((data: Omit<NewPodcast, 'createdAt' | 'updataedAt'>) => data)
+  .inputValidator((data: Omit<NewPodcast, 'createdAt' | 'updatedAt'>) => data)
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
@@ -136,6 +141,8 @@ export const addPodcast = createServerFn({ method: 'POST' })
       userId: session.user.id,
       podcastId: data.id,
     })
+
+    console.log('User podcast: ', userPodcastResult)
 
     if (!userPodcastResult.success) {
       throw new Error('Failed to link podcast to user')
@@ -151,6 +158,7 @@ export const getUserPodcastsServer = createServerFn({
   if (!session) throw redirect({ to: '/login' })
 
   const result = await getUserPodcast(session.user.id)
+  console.log('results for user podcasts: ', result.data)
   if (!result.success) {
     throw new Error('Failed to get podcasts')
   }
