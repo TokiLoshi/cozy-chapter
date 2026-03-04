@@ -144,7 +144,10 @@ function ReadingRoomComponent() {
           onPlantClick={bushSound}
           onOrchidClick={() => toggleWindow('plants')}
           onHeadPhonesClick={() => toggleWindow('audiobooks')}
-          handleLaptopClick={() => toggleWindow('laptop')}
+          handleLaptopClick={() => {
+            console.log('laptop click fired: current state: ', open.laptop)
+            toggleWindow('laptop')
+          }}
         />
 
         {/** Plant Modal */}
@@ -174,6 +177,13 @@ function ReadingRoomComponent() {
           onClose={() => closeWindow('audiobooks')}
         />
 
+        {/** Laptop Overlay */}
+        <LaptopModal
+          isOpen={open.laptop}
+          username={session.user.name}
+          onClose={() => closeWindow('laptop')}
+        />
+
         {/** Blogs Overlay */}
         {selectedStatus && (
           <ReadingModal
@@ -187,12 +197,6 @@ function ReadingRoomComponent() {
           />
         )}
       </div>
-      {/** Laptop Overlay */}
-      <LaptopModal
-        isOpen={open.laptop}
-        username={session.user.name}
-        onClose={() => closeWindow('laptop')}
-      />
     </>
   )
 }

@@ -50,6 +50,13 @@
       "when": 1772226460337,
       "tag": "0006_flimsy_famine",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1772508462593,
+      "tag": "0007_nostalgic_magneto",
+      "breakpoints": true
     }
   ]
 }

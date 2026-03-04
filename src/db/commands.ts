@@ -22,6 +22,11 @@ export const commands: Array<Command> = [
     category: 'app',
   },
   {
+    action: 'podcasts',
+    description: 'Launch podcasts from spotify or youtube',
+    category: 'app',
+  },
+  {
     action: 'chat',
     description: 'Launch a chat with Claude.',
     category: 'app',
