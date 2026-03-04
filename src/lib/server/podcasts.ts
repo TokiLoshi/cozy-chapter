@@ -126,8 +126,6 @@ export const searchYouTubePodcasts = createServerFn({ method: 'GET' })
     )
   })
 
-// TODO:
-// ADD Crud
 export const addPodcast = createServerFn({ method: 'POST' })
   .inputValidator((data: Omit<NewPodcast, 'createdAt' | 'updatedAt'>) => data)
   .handler(async ({ data }) => {
@@ -144,6 +142,8 @@ export const addPodcast = createServerFn({ method: 'POST' })
       podcastId: data.id,
     })
 
+    console.log('User podcast: ', userPodcastResult)
+
     if (!userPodcastResult.success) {
       throw new Error('Failed to link podcast to user')
     }
@@ -158,6 +158,7 @@ export const getUserPodcastsServer = createServerFn({
   if (!session) throw redirect({ to: '/login' })
 
   const result = await getUserPodcast(session.user.id)
+  console.log('results for user podcasts: ', result.data)
   if (!result.success) {
     throw new Error('Failed to get podcasts')
   }

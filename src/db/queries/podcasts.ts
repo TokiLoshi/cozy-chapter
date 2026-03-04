@@ -25,7 +25,7 @@ export async function upsertPodcast(
         },
       })
       .returning()
-    return { sucesss: true, data: result[0] }
+    return { success: true, data: result[0] }
   } catch (error) {
     console.error('Error updserting podcast: ', error)
     return { success: false }
@@ -52,6 +52,7 @@ export async function createUserPodcast(
       .insert(userPodcasts)
       .values(data)
       .returning()
+    console.log('Result in query for creating user podcast: ', insertedPodcast)
     return { success: true, data: insertedPodcast[0] }
   } catch (error) {
     console.error('Error creating userPodcast: ', error)

@@ -302,7 +302,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
       toast.success('Podcast removed from your library')
     },
     onError: () => {
-      toast.error('Failed to add podcast')
+      toast.error('Failed to delete podcast')
     },
   })
   const isInLibrary = (podcastId: string) => {
@@ -423,13 +423,13 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
             {/** Source toggle */}
             <div className="flex gap-2 mb-3">
               <button
-                className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'spotify' ? 'bg-green-600 text-white' : 'bg-red-500 text-slate-300 hover:bg-slate-600'}`}
+                className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'spotify' ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-600'}`}
                 onClick={() => setSearchSource('spotify')}
               >
                 Spotify
               </button>
               <button
-                className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'youtube' ? 'bg-red-500 text-slate-300' : 'hover:text-slate-600'}`}
+                className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'youtube' ? 'bg-red-500 text-slate-300' : ' text-white hover:text-slate-600'}`}
                 onClick={() => setSearchSource('youtube')}
               >
                 YouTube
@@ -601,7 +601,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                       podcastsToListen.map((item) => (
                         <div
                           className="cursor-pointer"
-                          id={item.podcast.id}
+                          key={item.podcast.id}
                           onClick={() => handleCardClick(item)}
                         >
                           <PodcastCard
