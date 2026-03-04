@@ -7,7 +7,10 @@ type TerminalLine = {
   content: string | React.ReactNode
 }
 
-export default function useTerminal(username: string) {
+export default function useTerminal(
+  username: string,
+  onLaunchApp: (app: string | null) => void,
+) {
   const [history, setHistory] = useState<Array<TerminalLine>>([
     { id: 0, type: 'system', content: 'Welcome to CozyOS v1.0.0' },
     {
@@ -21,6 +24,7 @@ export default function useTerminal(username: string) {
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [currentDir, setCurrentDir] = useState(`~/${username}`)
   const lineIdRef = useRef(2)
+  const [activeApp, setActiveApp] = useState<string | null>(null)
 
   const addLine = (
     type: TerminalLine['type'],
@@ -60,16 +64,24 @@ export default function useTerminal(username: string) {
         handleSudo(args)
         break
       case 'movies':
-        addLine('output', 'Movies coming soon')
-        console.log('Movies coming soon...')
+        addLine('system', 'Launching movies')
+        setActiveApp('movies')
+        break
+      case 'series':
+        addLine('system', 'Launching series')
+        setActiveApp('series')
         break
       case 'youtube':
-        addLine('output', 'YouTube coming soon')
-        console.log('YouTube coming soon')
+        addLine('system', 'Launching movies...')
+        setActiveApp('youtube')
         break
       case 'chat':
         addLine('output', 'Chat coming soon')
         console.log('Chat coming soon')
+        break
+      case 'podcasts':
+        addLine('system', 'Launching podcasts...')
+        onLaunchApp('podcasts')
         break
       case 'gui':
         addLine('system', 'Switching to desktop mode...')
@@ -216,5 +228,7 @@ export default function useTerminal(username: string) {
     setInputValue,
     currentDir,
     handleKeyDown,
+    activeApp,
+    setActiveApp,
   }
 }

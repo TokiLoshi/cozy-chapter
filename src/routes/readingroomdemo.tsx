@@ -190,6 +190,7 @@ function ReadingRoomDemoComponent() {
 
   const [isLaptopOpen, setIsLaptopOpen] = useState(false)
   const handleLaptopClick = () => {
+    console.log('Clicked Laptop sanity check')
     setIsLaptopOpen(!isLaptopOpen)
   }
   return (

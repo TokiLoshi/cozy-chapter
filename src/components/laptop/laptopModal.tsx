@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import TerminalBody from './terminalBody'
+import PodcastModal from '@/features/podcasts/components/PodcastModal'
 
 type LaptopModalProps = {
   isOpen: boolean
@@ -67,7 +68,9 @@ export default function LaptopModal({
   username,
 }: LaptopModalProps) {
   // const [folder, setFolder] = useState(`~/${username}/`)
+  console.log('LaptopModal: isOpen: ', isOpen)
   const [isGUI, setIsGUI] = useState(false)
+  const [activeApp, setActiveApp] = useState<string | null>(null)
 
   if (!isOpen) return null
   return (
@@ -95,12 +98,16 @@ export default function LaptopModal({
               </div>
             ) : (
               <>
-                <TerminalBody username={username} />
+                <TerminalBody username={username} onLaunchApp={setActiveApp} />
               </>
             )}
           </div>
         </div>
       </div>
+      <PodcastModal
+        isOpen={activeApp == 'podcasts'}
+        onClose={() => setActiveApp(null)}
+      />
     </>
   )
 }

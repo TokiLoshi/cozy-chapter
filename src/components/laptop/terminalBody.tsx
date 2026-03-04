@@ -1,9 +1,15 @@
 import { useEffect, useRef } from 'react'
 import useTerminal from './useTerminal'
 
-export default function TerminalBody({ username }: { username: string }) {
+export default function TerminalBody({
+  username,
+  onLaunchApp,
+}: {
+  username: string
+  onLaunchApp: (app: string | null) => void
+}) {
   const { history, inputValue, setInputValue, currentDir, handleKeyDown } =
-    useTerminal(username)
+    useTerminal(username, onLaunchApp)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
