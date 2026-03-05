@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect, useMemo, useState } from 'react'
 import { formatDuration } from '../utils/utils'
+import EditPodcastModal from './EditPodcastModal'
 import type { Podcast, UserPodcast } from '@/db/schemas/podcast-schema'
 import {
   BaseModal,
@@ -236,6 +237,12 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
   const [expandedPodcast, setExpandedPodcast] = useState<PodcastItem | null>(
     null,
   )
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [podcastToEdit, setPodcastToEdit] = useState<{
+    podcast: Podcast
+    userPodcast: UserPodcast
+  } | null>(null)
+
   const [librarySearch, setLibrarySearch] = useState('')
   const queryClient = useQueryClient()
 
@@ -307,6 +314,16 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
     })
   }
 
+  const handleEdit = (item: { podcast: Podcast; userPodcast: UserPodcast }) => {
+    setExpandedPodcast(null)
+    setPodcastToEdit(item)
+    setIsEditOpen(true)
+  }
+
+  const closeModal = () => {
+    onClose()
+  }
+
   const handleCardClick = (item: PodcastItem) => {
     setExpandedPodcast(item)
   }
@@ -371,18 +388,27 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
           className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
         />
 
+        {/** Edit Modal */}
+        {isEditOpen && podcastToEdit && (
+          <EditPodcastModal
+            podcast={podcastToEdit.podcast}
+            userPodcast={podcastToEdit.userPodcast}
+            onClose={() => {
+              setIsEditOpen(false)
+              setPodcastToEdit(null)
+            }}
+          />
+        )}
+
         {/** Expanded Card */}
         {expandedPodcast && (
           <ExpandedPodcastCard
             item={expandedPodcast}
             onEdit={() => {
-              // TODO Wire this up properly
-              console.log('Edit clicked')
-              setExpandedPodcast(null)
+              handleEdit(expandedPodcast)
             }}
             onDelete={() => {
               handleDelete(expandedPodcast.userPodcast.id)
-              setExpandedPodcast(null)
             }}
             onClose={() => setExpandedPodcast(null)}
           />
@@ -394,7 +420,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
             <h2 className="text-3xl font-bold text-white">Podcasts</h2>
             <button
               className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-              onClick={onClose}
+              onClick={closeModal}
             >
               <XIcon />
             </button>
@@ -587,9 +613,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         >
                           <PodcastCard
                             item={item}
-                            onEdit={() => {
-                              // TODO: wire up edit modal
-                            }}
+                            onEdit={() => handleEdit(item)}
                             onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
@@ -617,14 +641,12 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                       podcastsListening.map((item) => (
                         <div
                           className="cursor-pointer"
-                          onClick={() => handleCardClick}
+                          onClick={() => handleCardClick(item)}
                           key={item.podcast.id}
                         >
                           <PodcastCard
                             item={item}
-                            onEdit={() => {
-                              // TODO: to wire up edit modal
-                            }}
+                            onEdit={() => handleEdit(item)}
                             onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
@@ -643,7 +665,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                       <EmptyTabContent
                         message={
                           librarySearch || sourceFilter !== 'all'
-                            ? 'No podcats match your filter'
+                            ? 'No podcasts match your filter'
                             : "you don't have any podcasts you've finished yet"
                         }
                       />
@@ -656,10 +678,8 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         >
                           <PodcastCard
                             item={item}
-                            onEdit={() => {
-                              // TODO: wire up to edit Modal
-                            }}
-                            onDelete={() => handleDelete}
+                            onEdit={() => handleEdit(item)}
+                            onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
                       ))

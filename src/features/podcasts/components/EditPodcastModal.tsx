@@ -106,7 +106,194 @@ export default function EditPodcastModal({
   })
   return (
     <>
-      <div className="fixed inset-0 z-[60]">{/** Backdrop */}</div>
+      <div className="fixed inset-0 z-[70] flex items-center justify-center">
+        {/** Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        {/** Modal */}
+        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-800/50 p-6 z-10">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex gap-4">
+                {podcast.coverImageUrl && (
+                  <img
+                    src={podcast.coverImageUrl}
+                    alt={podcast.episodeTitle}
+                    className="w-16 h-16 object-cover rounded-lg shadow-md"
+                  />
+                )}
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    {podcast.episodeTitle}
+                  </h2>
+                  {podcast.showName && (
+                    <p className="text-sm text-slate-400">{podcast.showName}</p>
+                  )}
+                  <p className="text-xs text-slate-500 mt-1">
+                    {formatDuration(podcast.durationMs)}
+                  </p>
+                </div>
+              </div>
+              <button
+                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
+                onClick={() => onClose()}
+              >
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/** Form */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              form.handleSubmit()
+            }}
+            className="p-6 space-y-6 text-gray-100"
+          >
+            {/** Status Edit  */}
+            <form.AppField name="status">
+              {(field) => (
+                <field.Select
+                  label="Listening Status"
+                  values={[
+                    { label: 'Want to listen to', value: 'toListen' },
+                    { label: 'Listening to', value: 'listening' },
+                    { label: 'Finished', value: 'listened' },
+                  ]}
+                />
+              )}
+            </form.AppField>
+
+            <form.Subscribe
+              selector={(state) => state.values.status}
+              children={(status) => {
+                const isListeningOrFinished =
+                  status === 'listening' || status === 'listened'
+                const isFinished = status === 'listened'
+                return (
+                  <>
+                    {isListeningOrFinished && (
+                      <>
+                        {/** Last position MS */}
+                        <form.AppField
+                          name="lastPositionMs"
+                          validators={{
+                            onChange: ({ value }) => {
+                              if (value && value < 0)
+                                return 'Position cannot be negative'
+                              return undefined
+                            },
+                          }}
+                        >
+                          {(field) => (
+                            <div>
+                              <label className="block text-sm font-medium text-slate-300 mb-2">
+                                Current Position
+                              </label>
+                              <input
+                                type="range"
+                                min={0}
+                                max={podcastDurationMinutes}
+                                value={field.state.value ?? 0}
+                                onChange={(e) =>
+                                  field.handleChange(Number(e.target.value))
+                                }
+                                className="w-full accent-amber-500"
+                              />
+                              <div className="flex justify-between text-xs text-slate-400 mt-1">
+                                <span>
+                                  {formatDuration(
+                                    (field.state.value ?? 0) * 60000,
+                                  )}
+                                </span>
+                                <span>
+                                  /{formatDuration(podcast.durationMs)}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </form.AppField>
+
+                        {/** StartedAt */}
+                        <form.AppField name="startedAt">
+                          {(field) => (
+                            <field.DateField
+                              label="date started"
+                              placeholder={
+                                userPodcast.startedAt
+                                  ? userPodcast.startedAt.toLocaleDateString()
+                                  : new Date().toLocaleDateString()
+                              }
+                            />
+                          )}
+                        </form.AppField>
+                      </>
+                    )}
+
+                    {isFinished && (
+                      <>
+                        {/** Finished at */}
+                        <form.AppField name="finishedAt">
+                          {(field) => (
+                            <field.DateField
+                              label="date finished"
+                              placeholder={
+                                userPodcast.finishedAt
+                                  ? userPodcast.finishedAt.toLocaleDateString()
+                                  : new Date().toLocaleDateString()
+                              }
+                            />
+                          )}
+                        </form.AppField>
+
+                        {/** Rating */}
+                        <div>
+                          <label className="block text-sm font-medium text-slate-300 mb-2">
+                            Rating
+                          </label>
+                          <form.AppField name="rating">
+                            {(field) => (
+                              <StarRating
+                                value={field.state.value}
+                                onChange={(rating) =>
+                                  field.handleChange(rating)
+                                }
+                                disabled={false}
+                              />
+                            )}
+                          </form.AppField>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )
+              }}
+            />
+
+            {/** Notes  */}
+            <form.AppField name="notes">
+              {(field) => (
+                <field.TextField
+                  label="notes"
+                  placeholder={userPodcast.notes ?? 'notes'}
+                />
+              )}
+            </form.AppField>
+            <div className="flex justify-end">
+              <form.AppForm>
+                <form.SubmitButton
+                  label="Submit Edit"
+                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                />
+              </form.AppForm>
+            </div>
+          </form>
+        </div>
+      </div>
     </>
   )
 }
