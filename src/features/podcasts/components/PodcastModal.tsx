@@ -96,6 +96,21 @@ function ExpandedPodcastCard({
             {formatDuration(item.podcast.durationMs)}
           </p>
         </DetailItem>
+        {/** Progress */}
+        {item.userPodcast.lastPositionMs &&
+          item.userPodcast.lastPositionMs > 0 && (
+            <DetailItem label="Progress">
+              <p className="text-sm font-medium text-slate-200">
+                {formatDuration(item.userPodcast.lastPositionMs)}
+                {item.podcast.durationMs && (
+                  <span className="text-slate-400">
+                    {' '}
+                    / {formatDuration(item.podcast.durationMs)}
+                  </span>
+                )}
+              </p>
+            </DetailItem>
+          )}
 
         {/** Rating */}
         {item.userPodcast.rating && (

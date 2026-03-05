@@ -44,7 +44,6 @@ async function getSpotifyToken(): Promise<string> {
       client_secret: clientSecret!,
     }),
   })
-  console.log('Spotify responded: ', response.status)
 
   if (!response.ok) {
     throw new Error('Failed to get spotify token')
@@ -55,14 +54,12 @@ async function getSpotifyToken(): Promise<string> {
     token: data.access_token,
     expiresAt: (Date.now() + (data.expires_in - 60)) * 1000,
   }
-  console.log('spotify search data: ', data)
   return cachedToken.token
 }
 
 export const searchSpotifyPodcasts = createServerFn({ method: 'GET' })
   .inputValidator((query: string) => query)
   .handler(async ({ data: query }) => {
-    console.log('searchSpotifyPodcasts called with: ', query)
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
 
@@ -83,9 +80,7 @@ export const searchSpotifyPodcasts = createServerFn({ method: 'GET' })
       throw new Error('Failed to search Spotify podcasts')
     }
     const data = await response.json()
-    console.log('Data: ', Object.keys(data))
     const adaptedResults = adaptSpotifySearchResults(data)
-    console.log('Adapted results: ', adaptedResults)
 
     return adaptedResults
   })
@@ -142,8 +137,6 @@ export const addPodcast = createServerFn({ method: 'POST' })
       podcastId: data.id,
     })
 
-    console.log('User podcast: ', userPodcastResult)
-
     if (!userPodcastResult.success) {
       throw new Error('Failed to link podcast to user')
     }
@@ -158,7 +151,6 @@ export const getUserPodcastsServer = createServerFn({
   if (!session) throw redirect({ to: '/login' })
 
   const result = await getUserPodcast(session.user.id)
-  console.log('results for user podcasts: ', result.data)
   if (!result.success) {
     throw new Error('Failed to get podcasts')
   }
@@ -190,7 +182,6 @@ export const deleteUserPodcastServer = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-    console.log('Delete data received: ', data)
     const result = await deleteUserPodcast(data, session.user.id)
     if (!result.success) {
       throw new Error('Error deleting podcast')

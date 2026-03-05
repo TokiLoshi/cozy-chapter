@@ -194,16 +194,37 @@ export default function EditPodcastModal({
                               <label className="block text-sm font-medium text-slate-300 mb-2">
                                 Current Position
                               </label>
-                              <input
-                                type="range"
-                                min={0}
-                                max={podcastDurationMinutes}
-                                value={field.state.value ?? 0}
-                                onChange={(e) =>
-                                  field.handleChange(Number(e.target.value))
-                                }
-                                className="w-full accent-amber-500"
-                              />
+                              {podcastDurationMinutes > 0 ? (
+                                <>
+                                  <input
+                                    type="range"
+                                    min={0}
+                                    max={podcastDurationMinutes}
+                                    value={field.state.value ?? 0}
+                                    onChange={(e) =>
+                                      field.handleChange(Number(e.target.value))
+                                    }
+                                    className="w-full accent-amber-500"
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <input
+                                    type="number"
+                                    min={0}
+                                    value={field.state.value ?? 0}
+                                    onChange={(e) =>
+                                      field.handleChange(Number(e.target.value))
+                                    }
+                                    placeholder="Minutes listened"
+                                    className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                  />
+                                  <p className="text-xs text-slate-400 mt-1">
+                                    Duration unknown - enter minutes manually
+                                  </p>
+                                </>
+                              )}
+
                               <div className="flex justify-between text-xs text-slate-400 mt-1">
                                 <span>
                                   {formatDuration(

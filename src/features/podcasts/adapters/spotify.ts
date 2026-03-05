@@ -18,7 +18,6 @@ type SpotifyEpisode = {
 export function adaptSpotifyEpisode(
   episode: SpotifyEpisode,
 ): Omit<NewPodcast, 'createdAt' | 'updataedAt'> {
-  console.log('In adapter: ', episode)
   return {
     id: `spotify:${episode.id}`,
     showName: episode.show?.name ?? null,
@@ -35,6 +34,5 @@ export function adaptSpotifyEpisode(
 export function adaptSpotifySearchResults(data: {
   episodes: { items: Array<SpotifyEpisode> }
 }): Array<Omit<NewPodcast, 'createdAt' | 'updatedAt'>> {
-  console.log('In adapter with episodes: ', data)
   return data.episodes.items.map(adaptSpotifyEpisode)
 }
