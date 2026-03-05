@@ -1,16 +1,9 @@
-import {
-  Edit,
-  ExternalLink,
-  Loader2,
-  Play,
-  Plus,
-  Search,
-  Trash,
-  XIcon,
-} from 'lucide-react'
+import { Edit, Loader2, Play, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect, useMemo, useState } from 'react'
+import { formatDuration } from '../utils/utils'
+import EditPodcastModal from './EditPodcastModal'
 import type { Podcast, UserPodcast } from '@/db/schemas/podcast-schema'
 import {
   BaseModal,
@@ -27,7 +20,6 @@ import {
   getUserPodcastsServer,
   searchSpotifyPodcasts,
   searchYouTubePodcasts,
-  updateUserPodcastServer,
 } from '@/lib/server/podcasts'
 
 type PodcastModalProps = {
@@ -40,17 +32,8 @@ type PodcastItem = {
   userPodcast: UserPodcast
 }
 
-type SearchSource = 'spotify' | 'youtube'
-type SourceFilter = 'all' | 'spotify' | 'youtube'
-
-function formatDuration(ms: number | null): string {
-  if (!ms) return '--'
-  const totalSeconds = Math.floor(ms / 1000)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const hours = Math.floor(totalSeconds / 3600)
-  if (hours > 0) return `${hours}h ${minutes}m`
-  return `${minutes}m`
-}
+type SearchSource = 'spotify' | 'youTube'
+type SourceFilter = 'all' | 'spotify' | 'youTube'
 
 function SourceBadge({ source }: { source: string }) {
   const isSpotify = source === 'spotify'
@@ -113,6 +96,21 @@ function ExpandedPodcastCard({
             {formatDuration(item.podcast.durationMs)}
           </p>
         </DetailItem>
+        {/** Progress */}
+        {item.userPodcast.lastPositionMs &&
+          item.userPodcast.lastPositionMs > 0 && (
+            <DetailItem label="Progress">
+              <p className="text-sm font-medium text-slate-200">
+                {formatDuration(item.userPodcast.lastPositionMs)}
+                {item.podcast.durationMs && (
+                  <span className="text-slate-400">
+                    {' '}
+                    / {formatDuration(item.podcast.durationMs)}
+                  </span>
+                )}
+              </p>
+            </DetailItem>
+          )}
 
         {/** Rating */}
         {item.userPodcast.rating && (
@@ -147,31 +145,30 @@ function ExpandedPodcastCard({
             </p>
           </DetailItem>
         )}
-
-        {/** Play Button */}
-        {item.podcast.externalUrl && (
-          <div className="mb-4">
-            <a
-              href={item.podcast.externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors ${item.podcast.source === 'spotify' ? 'bg-green-600' : 'bg-red-500'}`}
-            >
-              <Play className="w-4 h-4" />
-              Play on{' '}
-              {item.podcast.source === 'spotify' ? 'Spotify' : 'YouTube'}
-            </a>
-          </div>
-        )}
-
-        {/** Actions */}
-        <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
-
-        {/** Description */}
-        {item.podcast.description && (
-          <DisplayDescription description={item.podcast.description} />
-        )}
       </div>
+
+      {/** Play Button */}
+      {item.podcast.externalUrl && (
+        <div className="mb-4">
+          <a
+            href={item.podcast.externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors ${item.podcast.source === 'spotify' ? 'bg-green-600' : 'bg-red-500'}`}
+          >
+            <Play className="w-4 h-4" />
+            Play on {item.podcast.source === 'spotify' ? 'Spotify' : 'YouTube'}
+          </a>
+        </div>
+      )}
+
+      {/** Actions */}
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
+
+      {/** Description */}
+      {item.podcast.description && (
+        <DisplayDescription description={item.podcast.description} />
+      )}
     </BaseModal>
   )
 }
@@ -193,16 +190,16 @@ function PodcastCard({
           <img
             src={item.podcast.coverImageUrl}
             alt={item.podcast.episodeTitle}
-            className="w-16 h-16 object-cover rounded"
+            className="w-16 h-16 object-cover rounded flex-shrink-0"
           />
         )}
         {/** Title */}
-        <div className="flex min-2-0">
-          <h4 className="font-mdium text-slate-100 truncate">
+        <div className="flex-1 min-w-0 flex flex-col">
+          <h4 className="font-medium text-slate-100 truncate">
             {item.podcast.episodeTitle}
           </h4>
           {/** Showname */}
-          <p className="text-sm font-text-slate-400 truncate">
+          <p className="text-sm text-slate-300 truncate">
             {item.podcast.showName}
           </p>
           {/** Source Badge */}
@@ -214,7 +211,7 @@ function PodcastCard({
             </span>
           </div>
         </div>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center flex-shrink-0">
           <button
             className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
             onClick={(e) => {
@@ -255,6 +252,12 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
   const [expandedPodcast, setExpandedPodcast] = useState<PodcastItem | null>(
     null,
   )
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [podcastToEdit, setPodcastToEdit] = useState<{
+    podcast: Podcast
+    userPodcast: UserPodcast
+  } | null>(null)
+
   const [librarySearch, setLibrarySearch] = useState('')
   const queryClient = useQueryClient()
 
@@ -326,6 +329,16 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
     })
   }
 
+  const handleEdit = (item: { podcast: Podcast; userPodcast: UserPodcast }) => {
+    setExpandedPodcast(null)
+    setPodcastToEdit(item)
+    setIsEditOpen(true)
+  }
+
+  const closeModal = () => {
+    onClose()
+  }
+
   const handleCardClick = (item: PodcastItem) => {
     setExpandedPodcast(item)
   }
@@ -390,18 +403,27 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
           className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
         />
 
+        {/** Edit Modal */}
+        {isEditOpen && podcastToEdit && (
+          <EditPodcastModal
+            podcast={podcastToEdit.podcast}
+            userPodcast={podcastToEdit.userPodcast}
+            onClose={() => {
+              setIsEditOpen(false)
+              setPodcastToEdit(null)
+            }}
+          />
+        )}
+
         {/** Expanded Card */}
         {expandedPodcast && (
           <ExpandedPodcastCard
             item={expandedPodcast}
             onEdit={() => {
-              // TODO Wire this up properly
-              console.log('Edit clicked')
-              setExpandedPodcast(null)
+              handleEdit(expandedPodcast)
             }}
             onDelete={() => {
               handleDelete(expandedPodcast.userPodcast.id)
-              setExpandedPodcast(null)
             }}
             onClose={() => setExpandedPodcast(null)}
           />
@@ -413,7 +435,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
             <h2 className="text-3xl font-bold text-white">Podcasts</h2>
             <button
               className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-              onClick={onClose}
+              onClick={closeModal}
             >
               <XIcon />
             </button>
@@ -429,8 +451,8 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                 Spotify
               </button>
               <button
-                className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'youtube' ? 'bg-red-500 text-slate-300' : ' text-white hover:text-slate-600'}`}
-                onClick={() => setSearchSource('youtube')}
+                className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'youTube' ? 'bg-red-500 text-slate-300' : ' text-white hover:text-slate-600'}`}
+                onClick={() => setSearchSource('youTube')}
               >
                 YouTube
               </button>
@@ -542,7 +564,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                   [
                     { value: 'all', label: 'All' },
                     { value: 'spotify', label: 'Spotify' },
-                    { value: 'youtube', label: 'YouTube' },
+                    { value: 'youTube', label: 'YouTube' },
                   ] as Array<{ value: SourceFilter; label: string }>
                 ).map((option) => (
                   <button
@@ -606,9 +628,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         >
                           <PodcastCard
                             item={item}
-                            onEdit={() => {
-                              // TODO: wire up edit modal
-                            }}
+                            onEdit={() => handleEdit(item)}
                             onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
@@ -636,14 +656,12 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                       podcastsListening.map((item) => (
                         <div
                           className="cursor-pointer"
-                          onClick={() => handleCardClick}
+                          onClick={() => handleCardClick(item)}
                           key={item.podcast.id}
                         >
                           <PodcastCard
                             item={item}
-                            onEdit={() => {
-                              // TODO: to wire up edit modal
-                            }}
+                            onEdit={() => handleEdit(item)}
                             onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
@@ -662,7 +680,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                       <EmptyTabContent
                         message={
                           librarySearch || sourceFilter !== 'all'
-                            ? 'No podcats match your filter'
+                            ? 'No podcasts match your filter'
                             : "you don't have any podcasts you've finished yet"
                         }
                       />
@@ -675,10 +693,8 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         >
                           <PodcastCard
                             item={item}
-                            onEdit={() => {
-                              // TODO: wire up to edit Modal
-                            }}
-                            onDelete={() => handleDelete}
+                            onEdit={() => handleEdit(item)}
+                            onDelete={() => handleDelete(item.userPodcast.id)}
                           />
                         </div>
                       ))
