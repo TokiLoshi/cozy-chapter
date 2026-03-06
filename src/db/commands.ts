@@ -17,13 +17,8 @@ export const commands: Array<Command> = [
     category: 'app',
   },
   {
-    action: 'youtube',
-    description: 'Launch podcast & playlist tracker.',
-    category: 'app',
-  },
-  {
     action: 'podcasts',
-    description: 'Launch podcasts from spotify or youtube',
+    description: 'Launch podcasts from Spotify or YouTube',
     category: 'app',
   },
   {
@@ -34,7 +29,7 @@ export const commands: Array<Command> = [
   {
     action: 'cd',
     description:
-      'Change directory eg ```cd Documents``` use ```cd ..``` to go one level up and ```cd ~``` to go to the home directory.',
+      'Change directory e.g. `cd Documents` use `cd ..` to go one level up and `cd ~` to go to the home directory.',
     category: 'terminal',
   },
   { action: 'gui', description: 'Switch to desktop mode.', category: 'app' },
@@ -52,7 +47,7 @@ export const commands: Array<Command> = [
   },
   {
     action: 'cat',
-    description: 'print the contents of a file.',
+    description: 'Print the contents of a file.',
     category: 'terminal',
   },
   {
@@ -78,25 +73,25 @@ export const commands: Array<Command> = [
   },
   {
     action: 'ls -a',
-    description: 'Long list of files in the directory including hidden files.',
+    description: 'List files in the directory including hidden files.',
     category: 'terminal',
   },
   {
     action: 'ls -lh',
-    description: 'Long list of files with human readable file sizes.',
+    description: 'Long list of files with human-readable file sizes.',
     category: 'terminal',
   },
   {
     action: 'ls -R',
-    description: 'Long listing of Human readable file sizes.',
+    description: 'Recursively list files in subdirectories.',
     category: 'terminal',
   },
   {
     action: 'pwd',
-    description: 'Print working directory',
+    description: 'Print working directory.',
     category: 'terminal',
   },
-  { action: 'cp', description: 'Copy a File.', category: 'terminal' },
+  { action: 'cp', description: 'Copy a file.', category: 'terminal' },
   { action: 'mv', description: 'Rename a file.', category: 'terminal' },
   { action: 'rm', description: 'Delete a file.', category: 'terminal' },
   {
@@ -113,11 +108,11 @@ export const commands: Array<Command> = [
   {
     action: 'sudo',
     description:
-      'Run the command with the security priveleges of the super user. This might also cause chaos.',
+      'Run the command with the security privileges of the super user. This might also cause chaos...',
     category: 'terminal',
   },
 
-  { action: 'open', description: 'open the files', category: 'terminal' },
+  { action: 'open', description: 'Open the files', category: 'terminal' },
   {
     action: 'top',
     description: 'Displays active process. Press q to quit.',
@@ -129,6 +124,9 @@ export const commands: Array<Command> = [
     category: 'terminal',
   },
   { action: 'vim', description: 'Opens the vim editor.', category: 'terminal' },
-  // Easter Egg Ideas
-  // Sudo make me a sandwich
+  {
+    action: 'touch grass',
+    description: 'Step away from the keyboard.',
+    category: 'system',
+  },
 ]
