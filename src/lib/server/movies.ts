@@ -5,11 +5,7 @@ import {
   adaptTMDBMovie,
   adaptTMDBSearchResult,
 } from '../../features/movies/adapters/tmbdAdapter'
-import type {
-  TMDBMovieDetails,
-  TMDBSearchResult,
-} from '../../features/movies/adapters/tmbdAdapter'
-import type { NewMovie, NewUserMovie } from '@/db/schemas/movies-schema'
+import type { NewUserMovie } from '@/db/schemas/movies-schema'
 import {
   createUserMovie,
   deleteUserMovie,
