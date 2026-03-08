@@ -232,3 +232,88 @@ function MovieCard({
     </>
   )
 }
+
+function EmptyTabContent({ message }: { message: string }) {
+  return (
+    <>
+      <p className="text-slate-400 text-sm py-4 text-center">{message}</p>
+    </>
+  )
+}
+
+export default function MovieModal({ isOpen, onClose }: MovieModal) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [expandedMovie, setExpandedMovie] = useState<MovieItem | null>(null)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [movieToEdit, setMovieToEdit] = useState<{
+    movie: Movie
+    userMovie: UserMovie
+  } | null>(null)
+  const [librarySearch, setLibrarySearch] = useState('')
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedQuery(searchQuery)
+    }, 500)
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery])
+
+  // const {
+  //   data: searchResults,
+  //   isLoading: isSearching,
+  //   error: searchError,
+  // } = useQuery({
+  //   queryKey: ['movie-search', debouncedQuery],
+  //   queryFn: () => searchTMDBMovies({data: debouncedQuery}),
+  //   enabled: debouncedQuery.length > 2
+  // })
+
+  // const { data: userMovie } = useQuery({
+  //   mutationFn: (movie: Omit<Movie, 'createdAt' | 'updatedAt'>) =>
+  //     addMovie({data: movie})
+  //   onSuccess:() => {
+  //     queryClient.invalidateQueries({ queryKey: ['user-movies']}),
+  //     onError: () => {
+  //       toast.error('Failed to add movie')
+  //     }
+  //   }
+  // })
+
+  if (!isOpen) return null
+
+  return (
+    <>
+      <div className="fiexed inset-0 z-50 flex items-center justify-center">
+        {/** Backdrop */}
+        <div
+          onClick={onClose}
+          className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
+        />
+
+        {/** Expanded Card */}
+        {expandedMovie && (
+          <ExpandedMovieCard
+            item={expandedMovie}
+            onEdit={() => {
+              // TODO: add action
+              console.log('this needs fixing - edit')
+            }}
+            onDelete={() => {
+              // TODO: add action
+              console.log('this also needs fixing - delete')
+            }}
+          />
+        )}
+
+        {/** Main modal */}
+        <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-white">Movies</h2>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
