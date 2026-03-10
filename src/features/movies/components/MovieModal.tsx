@@ -253,6 +253,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
   const [librarySearch, setLibrarySearch] = useState('')
   const queryClient = useQueryClient()
 
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedQuery(searchQuery)
@@ -260,26 +261,23 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
     return () => clearTimeout(timeoutId)
   }, [searchQuery])
 
-  // const {
-  //   data: searchResults,
-  //   isLoading: isSearching,
-  //   error: searchError,
-  // } = useQuery({
-  //   queryKey: ['movie-search', debouncedQuery],
-  //   queryFn: () => searchTMDBMovies({data: debouncedQuery}),
-  //   enabled: debouncedQuery.length > 2
-  // })
+  const {
+    data: userMovies,
+  } = useQuery({
+    queryKey: ['user-movies'],
+    queryFn: () => getUserMovieServer(),
+  })
 
-  // const { data: userMovie } = useQuery({
-  //   mutationFn: (movie: Omit<Movie, 'createdAt' | 'updatedAt'>) =>
-  //     addMovie({data: movie})
-  //   onSuccess:() => {
-  //     queryClient.invalidateQueries({ queryKey: ['user-movies']}),
-  //     onError: () => {
-  //       toast.error('Failed to add movie')
-  //     }
-  //   }
-  // })
+  const addMutation = useMutation({
+    mutationFn: (tmdbId: number) => addMovie({ data: {tmdbId }}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-movies']})
+      toast.success('Movie added to your library')
+    },
+    onError: () => {
+      toast.error('Failed to add movie')
+    }
+  })
 
   if (!isOpen) return null
 
@@ -295,6 +293,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
         {/** Expanded Card */}
         {expandedMovie && (
           <ExpandedMovieCard
+            onClose={onClose}
             item={expandedMovie}
             onEdit={() => {
               // TODO: add action
@@ -311,6 +310,46 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
         <div className="relative w-full z-60 max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-white">Movies</h2>
+            <button className="cursor-pointer text-gray-400 hover:text-white text-2xl">
+              <XIcon />
+            </button>
+          </div>
+          {/** Search */}
+          <div className="p-4 border-b border-slate-700">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input type="text" placeholder="Search Movies..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+          </div>
+          {/** Search Results */}
+          <div className="flex overflow-y-auto p--4">
+            {debouncedQuery.length && (
+              <div className="mb-6">
+                <div className="flex item-center justify-between mb-3">
+                  <h3 className="text-sm font-medium text-slate-400">
+                    Search Results
+                  </h3>
+                  <button
+                  className="cursor-pointer text-slate-400 hover:text-white"
+                  onClick={() => {
+                    setSearchQuery('')
+                    setDebouncedQuery('')
+                  }}>
+                    <XIcon />
+                  </button>
+
+                </div>
+                {isSearching ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="" />
+                  </div>
+                ) : ()}
+              </div>
+            )}
           </div>
         </div>
       </div>
