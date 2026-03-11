@@ -65,7 +65,7 @@ export default function useTerminal(
         break
       case 'movies':
         addLine('system', 'Launching movies')
-        setActiveApp('movies')
+        onLaunchApp('movies')
         break
       case 'series':
         addLine('system', 'Launching series')

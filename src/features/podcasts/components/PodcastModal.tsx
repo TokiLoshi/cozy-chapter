@@ -400,7 +400,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
         {/** Backdrop */}
         <div
           onClick={onClose}
-          className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
         />
 
         {/** Edit Modal */}
