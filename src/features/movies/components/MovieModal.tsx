@@ -2,6 +2,7 @@ import { Edit, Loader2, Play, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect, useMemo, useState } from 'react'
+import EditMovieModal from './EditMovieModal'
 import type { Movie, UserMovie } from '@/db/schemas/movies-schema'
 import {
   BaseModal,
@@ -17,7 +18,6 @@ import {
   deleteUserMovieServer,
   getUserMovieServer,
   searchTMDBMovies,
-  updateUserMovieServer,
 } from '@/lib/server/movies'
 
 type MovieModal = {
@@ -46,7 +46,11 @@ function ExpandedMovieCard({
       {/** Header */}
       <div className="flex gap-4 mb-4">
         {item.movie.posterPath && (
-          <img src={item.movie.posterPath} alt={item.movie.title} />
+          <img
+            src={item.movie.posterPath}
+            alt={item.movie.title}
+            className="w-16 h-16 object-cover rounded"
+          />
         )}
         <div className="flex-1 min-w-0">
           <h3 className="text-xl font-bold text-slate-100 mb-1">
@@ -70,11 +74,13 @@ function ExpandedMovieCard({
         </DetailItem>
 
         {/** Runtime */}
-        <DetailItem label="Duration">
-          <p className="text-sm font-medium text-slate-200">
-            {item.movie.runtime}
-          </p>
-        </DetailItem>
+        {item.movie.runtime && (
+          <DetailItem label="Duration">
+            <p className="text-sm font-medium text-slate-200">
+              {item.movie.runtime}
+            </p>
+          </DetailItem>
+        )}
 
         {/** Rating  */}
         {item.userMovie.rating && (
@@ -153,22 +159,21 @@ function ExpandedMovieCard({
             </a>
           </div>
         )}
-
-        {/** Notes  */}
-        {item.userMovie.notes && (
-          <DetailItem label="Notes">
-            <p className="text-sm text-slate-400">{item.userMovie.notes}</p>
-          </DetailItem>
-        )}
-
-        {/** Actions */}
-        <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
-
-        {/** Overview */}
-        {item.movie.overview && (
-          <DisplayDescription description={item.movie.overview} />
-        )}
       </div>
+      {/** Notes  */}
+      {item.userMovie.notes && (
+        <DetailItem label="Notes">
+          <p className="text-sm text-slate-400">{item.userMovie.notes}</p>
+        </DetailItem>
+      )}
+
+      {/** Actions */}
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
+
+      {/** Overview */}
+      {item.movie.overview && (
+        <DisplayDescription description={item.movie.overview} />
+      )}
     </BaseModal>
   )
 }
@@ -187,17 +192,21 @@ function MovieCard({
       <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
         {/**  Poster */}
         {item.posterPath ? (
-          <img src={item.posterPath} alt={item.title} />
+          <img
+            src={item.posterPath}
+            alt={item.title}
+            className="w-16 h-16 object-cover rounded flex-shrink-0"
+          />
         ) : (
           <Play />
         )}
         {/** Title */}
-        <div className="flex-1 min-2-0 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col">
           <h4 className="font-medium text-slate-100 truncate">{item.title}</h4>
           {/** Tagline */}
           <p className="text-sm text-slate-300 truncate">{item.tagline}</p>
-          Runtime
-          <p className="text-sm text-slate-300">runtime: {item.runtime}</p>
+          {/** Runtime */}
+          <p className="text-sm text-slate-300">Runtime: {item.runtime}</p>
           {/** Genres */}
           {item.genreIds && (
             <p className="text-sm text-slate-300">
@@ -378,22 +387,32 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         {/** Backdrop */}
         <div
-          onClick={() => closeModal()}
-          className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
+          onClick={onClose}
+          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
         />
+
+        {/** Edit Modal */}
+        {isEditOpen && movieToEdit && (
+          <EditMovieModal
+            movie={movieToEdit.movie}
+            userMovie={movieToEdit.userMovie}
+            onClose={() => {
+              setIsEditOpen(false)
+              setMovieToEdit(null)
+            }}
+          />
+        )}
 
         {/** Expanded Card */}
         {expandedMovie && (
           <ExpandedMovieCard
-            onClose={onClose}
+            onClose={() => setExpandedMovie(null)}
             item={expandedMovie}
             onEdit={() => {
-              // TODO: add action
-              console.log('this needs fixing - edit')
+              handleEdit(expandedMovie)
             }}
             onDelete={() => {
-              // TODO: add action
-              console.log('this also needs fixing - delete')
+              handleDelete(expandedMovie.userMovie.id)
             }}
           />
         )}
@@ -423,8 +442,8 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
             </div>
           </div>
           {/** Search Results */}
-          <div className="flex overflow-y-auto p-4">
-            {debouncedQuery.length && (
+          <div className="flex flex-col overflow-y-auto p-4">
+            {debouncedQuery.length > 2 && (
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-medium text-slate-400">
@@ -454,7 +473,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
                   <div className="space-y-3">
                     {searchResults?.map(
                       (movie: Omit<Movie, 'createdAt' | 'updatedAt'>) => (
-                        <div key={movie.id}>
+                        <div key={movie.id} className="flex items-center gap-3">
                           {movie.posterPath && (
                             <img
                               src={movie.posterPath}
@@ -522,7 +541,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
                     Watching ({moviesWatching.length})
                   </TabsTrigger>
                   <TabsTrigger
-                    value="watching"
+                    value="watched"
                     className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                   >
                     Watched ({moviesWatched.length})
