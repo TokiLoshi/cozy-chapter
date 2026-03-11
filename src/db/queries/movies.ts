@@ -62,8 +62,8 @@ export async function getUserMovies(userId: string) {
   try {
     const result = await db
       .select({
-        userMovies: userMovies,
-        movies: movies,
+        movie: movies,
+        userMovie: userMovies,
       })
       .from(userMovies)
       .innerJoin(movies, eq(userMovies.movieId, movies.id))
