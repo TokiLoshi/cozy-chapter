@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import TerminalBody from './terminalBody'
 import PodcastModal from '@/features/podcasts/components/PodcastModal'
+import MovieModal from '@/features/movies/components/MovieModal'
 
 type LaptopModalProps = {
   isOpen: boolean
@@ -104,7 +105,11 @@ export default function LaptopModal({
         </div>
       </div>
       <PodcastModal
-        isOpen={activeApp == 'podcasts'}
+        isOpen={activeApp === 'podcasts'}
+        onClose={() => setActiveApp(null)}
+      />
+      <MovieModal
+        isOpen={activeApp === 'movies'}
         onClose={() => setActiveApp(null)}
       />
     </>

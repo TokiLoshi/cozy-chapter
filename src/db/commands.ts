@@ -8,7 +8,7 @@ export const commands: Array<Command> = [
   // Apps
   {
     action: 'movies',
-    description: 'Launch the movie & series tracker.',
+    description: 'Browse and track movies on your watch list',
     category: 'app',
   },
   {

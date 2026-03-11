@@ -19,7 +19,6 @@ import {
   searchTMDBMovies,
   updateUserMovieServer,
 } from '@/lib/server/movies'
-import { createUserMovie } from '@/db/queries/movies'
 
 type MovieModal = {
   isOpen: boolean

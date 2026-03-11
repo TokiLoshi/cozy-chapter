@@ -75,8 +75,6 @@ export const searchSpotifyPodcasts = createServerFn({ method: 'GET' })
     )
 
     if (!response.ok) {
-      console.error('Response failed with: ', response.status)
-      console.error('Response error: ', response.body)
       throw new Error('Failed to search Spotify podcasts')
     }
     const data = await response.json()

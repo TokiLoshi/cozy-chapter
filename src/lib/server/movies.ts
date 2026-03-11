@@ -23,6 +23,9 @@ const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
 const TMDB_API_KEY = process.env.TMDB_API_KEY
 const TMDB_SEARCH_URL = 'https://api.themoviedb.org/3/search/movie'
 
+console.log('Auth header:', `Bearer ${TMDB_API_KEY}`.slice(0, 20))
+console.log('TMDB_API_KEY defined:', !!TMDB_API_KEY)
+
 export const searchTMDBMovies = createServerFn({ method: 'GET' })
   .inputValidator((query: string) => query)
   .handler(async ({ data: query }) => {
