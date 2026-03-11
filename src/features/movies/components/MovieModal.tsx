@@ -206,7 +206,10 @@ function MovieCard({
           {/** Tagline */}
           <p className="text-sm text-slate-300 truncate">{item.tagline}</p>
           {/** Runtime */}
-          <p className="text-sm text-slate-300">Runtime: {item.runtime}</p>
+          {item.runtime && (
+            <p className="text-sm text-slate-300">Runtime: {item.runtime}</p>
+          )}
+
           {/** Genres */}
           {item.genreIds && (
             <p className="text-sm text-slate-300">
