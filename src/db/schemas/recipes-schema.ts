@@ -31,6 +31,9 @@ export const mealDay = pgEnum('mealDay', [
 export const recipes = pgTable('recipes', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  userId: text('userId')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
   description: text('description'),
   ingredients: jsonb('ingredients'),
   cookingInstructions: jsonb('cookingInstructions'),
@@ -77,3 +80,12 @@ export const mealPlanEntries = pgTable('mealPlanEntries', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
+
+export type Recipe = typeof recipes.$inferSelect
+export type NewRecipe = typeof recipes.$inferInsert
+export type RecipeTag = typeof recipeTags.$inferSelect
+export type NewRecipeTag = typeof recipeTags.$inferInsert
+export type MealPlan = typeof mealPlans.$inferSelect
+export type NewMealPlan = typeof mealPlans.$inferInsert
+export type MealPlanEntry = typeof mealPlanEntries.$inferSelect
+export type NewMealPlanEntry = typeof mealPlanEntries.$inferInsert

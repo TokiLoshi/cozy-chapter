@@ -71,6 +71,10 @@ export default function useTerminal(
         addLine('system', 'Launching series')
         setActiveApp('series')
         break
+      case 'recipes':
+        addLine('system', 'Launching recipe noms')
+        setActiveApp('recipes')
+        break
       case 'youtube':
         addLine('system', 'Launching movies...')
         setActiveApp('youtube')

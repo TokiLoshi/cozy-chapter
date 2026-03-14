@@ -12,6 +12,16 @@ export const commands: Array<Command> = [
     category: 'app',
   },
   {
+    action: 'series',
+    description: 'Track your series',
+    category: 'app',
+  },
+  {
+    action: 'recipes',
+    description: 'View recipes and meal planning',
+    category: 'app',
+  },
+  {
     action: 'courses',
     description: 'Launch the course tracker.',
     category: 'app',
