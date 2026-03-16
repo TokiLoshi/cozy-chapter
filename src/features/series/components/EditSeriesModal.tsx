@@ -2,43 +2,47 @@ import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
-import type { Movie, UserMovie } from '@/db/schemas/movies-schema'
+import type { TvSeries, UserSeries } from '@/db/schemas/series-schema'
 import StarRating from '@/components/StarRating'
 import { useAppForm } from '@/hooks/form'
-import { updateUserMovieServer } from '@/lib/server/movies'
+import { updateUserSeriesServer } from '@/lib/server/series'
 
-type EditMovieModalProps = {
-  movie: Movie
-  userMovie: UserMovie
+type EditSeriesModalProps = {
+  series: TvSeries
+  userSeries: UserSeries
   onClose: () => void
 }
 
-const editMovieSchema = z.object({
+const editSeriesSchema = z.object({
   status: z.enum(['toWatch', 'watching', 'watched']),
   watchingOn: z.string().nullable(),
   startedAt: z.date().nullable(),
   finishedAt: z.date().nullable(),
+  currentSeason: z.number().nullable(),
+  currentEpisode: z.number().nullable(),
   rating: z.number().min(0).max(5).nullable(),
   notes: z.string().nullable(),
 })
 
-type EditMovieFormValues = z.infer<typeof editMovieSchema>
+type EditSeriesFormValues = z.infer<typeof editSeriesSchema>
 
-export default function EditMovieModal({
-  movie,
-  userMovie,
+export default function EditSeriesModal({
+  series,
+  userSeries,
   onClose,
-}: EditMovieModalProps) {
+}: EditSeriesModalProps) {
   const queryClient = useQueryClient()
   const form = useAppForm({
     defaultValues: {
-      status: userMovie.status,
-      watchingOn: userMovie.watchingOn,
-      startedAt: userMovie.startedAt,
-      finishedAt: userMovie.finishedAt,
-      rating: userMovie.rating,
-      notes: userMovie.notes,
-    } as EditMovieFormValues,
+      status: userSeries.status,
+      watchingOn: userSeries.watchingOn,
+      startedAt: userSeries.startedAt,
+      finishedAt: userSeries.finishedAt,
+      currentSeason: userSeries.currentSeason,
+      currentEpisode: userSeries.currentEpisode,
+      rating: userSeries.rating,
+      notes: userSeries.notes,
+    } as EditSeriesFormValues,
     validators: {
       onBlur: ({ value }) => {
         const errors = {
@@ -48,46 +52,48 @@ export default function EditMovieModal({
         }
         if (value.rating && value.rating < 0) {
           errors.fields.rating =
-            "rating can't be negative - the movie couldn't have been that bad"
+            "rating can't be negative - the series couldn't have been that bad"
         }
         return errors
       },
     },
     onSubmit: async ({ value }) => {
-      const loadingToast = toast.loading('Updating movie...', {
+      const loadingToast = toast.loading('Updating series...', {
         classNames: {
           toast: 'bg-slate-800 border-slate-700',
           title: 'text-slate-100',
         },
       })
       try {
-        await updateUserMovieServer({
+        await updateUserSeriesServer({
           data: {
-            id: userMovie.id,
+            id: userSeries.id,
             updates: {
               status: value.status,
               watchingOn: value.watchingOn,
               startedAt: value.startedAt,
               finishedAt: value.finishedAt,
+              currentSeason: value.currentSeason,
+              currentEpisode: value.currentEpisode,
               rating: value.rating,
               notes: value.notes,
             },
           },
         })
         toast.dismiss(loadingToast)
-        toast.success('Movie updated!', {
+        toast.success('Series updated!', {
           classNames: {
-            toast: 'bg-slate-800 border-sltate-700',
+            toast: 'bg-slate-800 border-slate-700',
             title: 'text-slate-100',
           },
         })
-        queryClient.invalidateQueries({ queryKey: ['user-movies'] })
+        queryClient.invalidateQueries({ queryKey: ['user-series'] })
         onClose()
       } catch (error) {
         console.error(`Error updating movies: ${(error as Error).message}`)
         toast.dismiss(loadingToast)
         toast.error('Please try again', {
-          description: 'Failed to update movie',
+          description: 'Failed to update series',
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
             title: 'text-slate-100',
@@ -111,20 +117,24 @@ export default function EditMovieModal({
         <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-800/50 p-6 z-10">
           <div className="flex items-center justify-between gap-4">
             <div className="flex gap-4">
-              {movie.posterPath && (
+              {series.posterPath && (
                 <img
-                  src={movie.posterPath}
-                  alt={movie.title}
+                  src={series.posterPath}
+                  alt={series.title}
                   className="w-16 h-16 object-cover rounded-lg shadow-md"
                 />
               )}
               <div>
-                <h2 className="text-2xl font-bold text-white">{movie.title}</h2>
-                {movie.tagline && (
-                  <p className="text-slate-400">{movie.tagline}</p>
+                <h2 className="text-2xl font-bold text-white">
+                  {series.title}
+                </h2>
+                {series.tagline && (
+                  <p className="text-slate-400">{series.tagline}</p>
                 )}
-                {movie.runtime && (
-                  <p className="text-xs text-slate-500 mt-1">{movie.runtime}</p>
+                {series.numberOfEpisodes && (
+                  <p className="text-xs text-slate-500 mt-1">
+                    {series.numberOfEpisodes}
+                  </p>
                 )}
               </div>
             </div>
@@ -176,10 +186,28 @@ export default function EditMovieModal({
                           <field.DateField
                             label="date started"
                             placeholder={
-                              userMovie.startedAt
-                                ? userMovie.startedAt.toLocaleDateString()
+                              userSeries.startedAt
+                                ? userSeries.startedAt.toLocaleDateString()
                                 : new Date().toLocaleDateString()
                             }
+                          />
+                        )}
+                      </form.AppField>
+                      {/** Current Season */}
+                      <form.AppField name="currentSeason">
+                        {(field) => (
+                          <field.NumberField
+                            label="current season"
+                            placeholder={String(userSeries.currentSeason ?? 0)}
+                          />
+                        )}
+                      </form.AppField>
+                      {/** Current Episode */}
+                      <form.AppField name="currentEpisode">
+                        {(field) => (
+                          <field.NumberField
+                            label="current episode"
+                            placeholder={String(userSeries.currentEpisode ?? 0)}
                           />
                         )}
                       </form.AppField>
@@ -193,8 +221,8 @@ export default function EditMovieModal({
                           <field.DateField
                             label="Date Finished"
                             placeholder={
-                              userMovie.finishedAt
-                                ? userMovie.finishedAt.toLocaleDateString()
+                              userSeries.finishedAt
+                                ? userSeries.finishedAt.toLocaleDateString()
                                 : new Date().toLocaleDateString()
                             }
                           />
@@ -228,7 +256,9 @@ export default function EditMovieModal({
               <field.TextField
                 label="platform watching on"
                 placeholder={
-                  userMovie.status === 'watched' ? 'watched on:' : 'watching on'
+                  userSeries.status === 'watched'
+                    ? 'watched on:'
+                    : 'watching on'
                 }
               />
             )}
@@ -239,7 +269,7 @@ export default function EditMovieModal({
             {(field) => (
               <field.TextField
                 label="notes"
-                placeholder={userMovie.notes ?? 'notes'}
+                placeholder={userSeries.notes ?? 'notes'}
               />
             )}
           </form.AppField>

@@ -69,7 +69,7 @@ export default function useTerminal(
         break
       case 'series':
         addLine('system', 'Launching series')
-        setActiveApp('series')
+        onLaunchApp('series')
         break
       case 'recipes':
         addLine('system', 'Launching recipe noms')

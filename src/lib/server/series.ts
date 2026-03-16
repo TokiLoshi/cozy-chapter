@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { adaptTMDBTVDetails } from '../../features/series/adapters/tmdbAdapter'
+import type { TMDBTVSearchResult } from '../../features/series/adapters/tmdbAdapter'
 import type { NewUserSeries } from '@/db/schemas/series-schema'
 import {
   createUserSeries,
@@ -40,7 +41,16 @@ export const searchTMDBSeries = createServerFn({ method: 'GET' })
       throw new Error('Failed to search series')
     }
     const data = await response.json()
-    return data.results
+
+    return data.results.map((series: TMDBTVSearchResult) => ({
+      id: series.id,
+      title: series.name,
+      overview: series.overview,
+      posterPath: series.posterPath
+        ? `https://image.tmdb.org/t/p/w500${series.posterPath}`
+        : null,
+      firstAirDate: series.firstAirDate,
+    }))
   })
 
 export const addSeries = createServerFn({ method: 'POST' })
