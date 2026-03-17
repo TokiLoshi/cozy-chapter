@@ -54,6 +54,20 @@ export default function EditSeriesModal({
           errors.fields.rating =
             "rating can't be negative - the series couldn't have been that bad"
         }
+        if (
+          series.numberOfSeasons &&
+          value.currentSeason &&
+          value.currentSeason > series.numberOfSeasons
+        ) {
+          errors.fields.currentSeason = `this series only has ${series.numberOfSeasons} seasons`
+        }
+        if (
+          series.numberOfEpisodes &&
+          value.currentEpisode &&
+          value.currentEpisode > series.numberOfEpisodes
+        ) {
+          errors.fields.currentEpisode = `this series only has ${series.numberOfEpisodes} episodes in total`
+        }
         return errors
       },
     },
