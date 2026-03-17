@@ -196,6 +196,11 @@ function PlantCard({
           <h4 className="font-medium text-slate-100 truncate">
             {item.name ?? item.species}
           </h4>
+          {item.name && (
+            <p className="text-sm font-medium text-slate-100">
+              Species: {item.species}
+            </p>
+          )}
           {checkWaterNeeds(
             item.lastWatered,
             item.recommendedWateringIntervalDays,

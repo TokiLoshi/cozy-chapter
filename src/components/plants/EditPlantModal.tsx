@@ -29,6 +29,7 @@ export default function EditPlantModal({
   const form = useAppForm({
     defaultValues: {
       species: plant.species,
+      name: plant.name,
       recommendedWateringIntervalDays:
         plant.recommendedWateringIntervalDays || null,
       group: plant.group || '',
@@ -127,6 +128,15 @@ export default function EditPlantModal({
             <form.AppField name="species">
               {(field) => (
                 <field.TextField label="Title" placeholder={plant.species} />
+              )}
+            </form.AppField>
+            {/** Name */}
+            <form.AppField name="name">
+              {(field) => (
+                <field.TextField
+                  label="Name"
+                  placeholder="Does this plant have a name?"
+                />
               )}
             </form.AppField>
 
