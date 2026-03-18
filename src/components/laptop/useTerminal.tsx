@@ -200,8 +200,18 @@ export default function useTerminal(
         break
       case 'f*ck':
         if (
-          args.join() === 'the neighbours' ||
-          args.join() === 'the neighbors'
+          args.join(' ') === 'the neighbours' ||
+          args.join(' ') === 'the neighbors'
+        ) {
+          addLine('system', 'TURN THE MUSIC UP')
+        } else {
+          addLine('error', `zsh: command not found: ${args.join()}`)
+        }
+        break
+      case 'fuck':
+        if (
+          args.join(' ') === 'the neighbours' ||
+          args.join(' ') === 'the neighbors'
         ) {
           addLine('system', 'TURN THE MUSIC UP')
         } else {
@@ -209,7 +219,7 @@ export default function useTerminal(
         }
         break
       case 'feel':
-        if (args.join() === 'it in my blood') {
+        if (args.join(' ') === 'it in my blood') {
           addLine('system', 'AND THE LIGHTS BURN DIMMER')
           addLine('system', 'AND THE LIGHTS BURN DIMMER')
         } else {
@@ -217,15 +227,15 @@ export default function useTerminal(
         }
         break
       case 'if':
-        if (args.join() === "you don't know") {
-          addLine('system', "Don't worry!")
+        if (args.join(' ') === "you don't know") {
+          addLine('system', "DON'T WORRY")
         } else {
           addLine('error', `zsh: command not found: ${args.join()}`)
         }
         break
       case 'hey':
-        if (args.join() === 'listen you hear that') {
-          addLine('system', 'killers in the jungle')
+        if (args.join(' ') === 'listen you hear that') {
+          addLine('system', 'KILLERS IN THE JUNGLE')
         } else {
           addLine('error', `zsh: command not found: ${args.join()}`)
         }
@@ -312,8 +322,9 @@ export default function useTerminal(
             setSandwichCount(0)
         }
         break
-      case 'rm -rf /':
+      case 'rm -rf':
         addLine('error', 'Nice try! The cozy room remains intact.')
+
         break
       case '':
         addLine('error', 'sudo: a command is required')

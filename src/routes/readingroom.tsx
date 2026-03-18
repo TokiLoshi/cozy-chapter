@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/room/Experience'
 import ArticleModal from '../components/articles/ArticleModal'
@@ -53,7 +53,20 @@ function ReadingRoomComponent() {
     toggleWindow,
     // openWindow,
     closeWindow,
+    closeAll,
   } = useWindowStore()
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      console.log(`${e.key} pushed`)
+      if (e.key === 'Escape') {
+        console.log('Escaping')
+        closeAll()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [closeAll])
 
   const stats = useMemo(() => {
     return {

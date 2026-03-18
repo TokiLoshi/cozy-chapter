@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import TerminalBody from './terminalBody'
 import PodcastModal from '@/features/podcasts/components/PodcastModal'
 import MovieModal from '@/features/movies/components/MovieModal'
@@ -72,6 +72,12 @@ export default function LaptopModal({
   // const [folder, setFolder] = useState(`~/${username}/`)
   const [isGUI, setIsGUI] = useState(false)
   const [activeApp, setActiveApp] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveApp(null)
+    }
+  }, [isOpen])
 
   if (!isOpen) return null
   return (
