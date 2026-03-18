@@ -31,18 +31,6 @@ export const commands: Array<Command> = [
     description: 'Launch podcasts from Spotify or YouTube',
     category: 'app',
   },
-  {
-    action: 'chat',
-    description: 'Launch a chat with Claude.',
-    category: 'app',
-  },
-  {
-    action: 'cd',
-    description:
-      'Change directory e.g. `cd Documents` use `cd ..` to go one level up and `cd ~` to go to the home directory.',
-    category: 'terminal',
-  },
-  { action: 'gui', description: 'Switch to desktop mode.', category: 'app' },
   // System
   {
     action: 'help',
@@ -66,53 +54,14 @@ export const commands: Array<Command> = [
     category: 'terminal',
   },
   {
-    action: 'touch',
-    description:
-      "Create a new file. Note these won't persist after your session.",
-    category: 'terminal',
-  },
-  {
-    action: 'ls',
-    description: 'List files in the directory.',
-    category: 'terminal',
-  },
-  {
-    action: 'ls -l',
-    description: 'Long list the files in the directory.',
-    category: 'terminal',
-  },
-  {
-    action: 'ls -a',
-    description: 'List files in the directory including hidden files.',
-    category: 'terminal',
-  },
-  {
-    action: 'ls -lh',
-    description: 'Long list of files with human-readable file sizes.',
-    category: 'terminal',
-  },
-  {
-    action: 'ls -R',
-    description: 'Recursively list files in subdirectories.',
-    category: 'terminal',
-  },
-  {
     action: 'pwd',
     description: 'Print working directory.',
     category: 'terminal',
   },
-  { action: 'cp', description: 'Copy a file.', category: 'terminal' },
-  { action: 'mv', description: 'Rename a file.', category: 'terminal' },
-  { action: 'rm', description: 'Delete a file.', category: 'terminal' },
   {
     action: 'rm -rf',
     description:
       'Recursively delete the files in a folder. This should be done with caution and might cause KABOOMs.',
-    category: 'terminal',
-  },
-  {
-    action: 'man',
-    description: 'Show the manual for a command.',
     category: 'terminal',
   },
   {
@@ -121,22 +70,29 @@ export const commands: Array<Command> = [
       'Run the command with the security privileges of the super user. This might also cause chaos...',
     category: 'terminal',
   },
-
-  { action: 'open', description: 'Open the files', category: 'terminal' },
-  {
-    action: 'top',
-    description: 'Displays active process. Press q to quit.',
-    category: 'terminal',
-  },
-  {
-    action: 'nano',
-    description: 'Opens the nano editor.',
-    category: 'terminal',
-  },
-  { action: 'vim', description: 'Opens the vim editor.', category: 'terminal' },
   {
     action: 'touch grass',
     description: 'Step away from the keyboard.',
+    category: 'system',
+  },
+  {
+    action: 'whoami',
+    description: 'returns username',
+    category: 'system',
+  },
+  {
+    action: 'echo',
+    description: 'echoes your thoughts',
+    category: 'system',
+  },
+  {
+    action: 'date',
+    description: 'tells you the date',
+    category: 'system',
+  },
+  {
+    action: 'history',
+    description: 'prints command history',
     category: 'system',
   },
 ]
