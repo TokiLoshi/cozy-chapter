@@ -1,6 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { Panda, Sparkles, Waves } from 'lucide-react'
+import {
+  BookOpen,
+  Film,
+  Headphones,
+  Leaf,
+  MonitorPlay,
+  Newspaper,
+  Popcorn,
+  Terminal,
+} from 'lucide-react'
 import Footer from '../components/Footer'
 
 export const Route = createFileRoute('/')({
@@ -10,29 +19,79 @@ export const Route = createFileRoute('/')({
 function App() {
   const features = [
     {
-      icon: <Sparkles className="w-12 h-12 text-cyan-400" />,
-      title: 'Easy to use (hopefully)',
-      description: 'Track your reading in a cozy 3D environment.',
-    },
-
-    {
-      icon: <Waves className="w-12 h-12 text-cyan-400" />,
-      title: 'Work in progress (WIP)',
-      description: 'Trying to make article tracking cozy and more fun.',
+      icon: <Newspaper className="w-16 h-6" />,
+      title: 'Articles',
+      description: 'Save articles and track your reading progress.',
+      color: 'from-cyan-500/30 to-cyan-500-6',
+      border: 'border-cyan-500/30',
+      accent: 'text-cyan-400',
     },
     {
-      icon: <Panda className="w-12 h-12 text-cyan-400" />,
-      title: 'Coded with (chaotic) curiosity',
-      description: 'Built to learn tanstack start and practice three.js.',
+      icon: <BookOpen className="w-6 h-6" />,
+      title: 'Books',
+      description:
+        'Track your reading page by page to achieve your reading goals',
+      color: 'from-amber-500/20 to amber-500/5',
+      border: 'border-amber-500/40',
+      accent: 'text-ambber-400',
+    },
+    {
+      icon: <Headphones className="w-6 h-6" />,
+      title: 'AudioBooks',
+      description: 'Track your listening progress',
+      color: 'from-purple-500 to-purple-500/5',
+      border: 'border-purple-500/30',
+      accent: 'text-purple-400',
+    },
+    {
+      icon: <Popcorn className="w-6 h-6" />,
+      title: 'Movies',
+      description: 'Build your watchlist with TMDB integration',
+      color: 'from-rose-500/20 to-rose-500/5',
+      border: 'border-rose-500/30',
+      accent: 'text-rose-400',
+    },
+    {
+      icon: <MonitorPlay className="w-6 h-6" />,
+      title: 'Series',
+      description: 'Track seasons, episodes, and your binge progress',
+      color: 'from-blue-500/20 to-blue-500/5',
+      border: 'border-blue-500/30',
+      accent: 'text-blue-400',
+    },
+    {
+      icon: <Film className="w-6 h-6" />,
+      title: 'Podcasts',
+      description:
+        'Track your listens across spotify and youtube and launch your podcast',
+      color: 'from-green-500/20 to-green-500/5',
+      border: 'border-green-500/30',
+      accent: 'text-green-400',
+    },
+    {
+      icon: <Leaf className="w-6 h-6" />,
+      title: 'Plants',
+      description: 'Monitor watering schedules and plant health',
+      color: 'from-emerald-500/20 to-emerald-500/5',
+      border: 'border-emerald-500/30',
+      accent: 'text-emerald-400',
+    },
+    {
+      icon: <Terminal className="w-6 h-6" />,
+      title: 'Terminal',
+      description: 'Launch Movies, Series, Podcasts and soon, courses',
+      color: 'from-zinc-500/20 to-zinc-500/5',
+      border: 'border-zinc-500/30',
+      accent: 'text-zinc-300',
     },
   ]
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-        {/** Background image */}
+      <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
         <section className="relative py-20 px-6 text-center overflow-hidden">
           <div className="absolute inset-0">
+            {/** Background image */}
             <img
               src="/homedemo.png"
               alt="home demo"
@@ -40,7 +99,7 @@ function App() {
             />
             <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-800/70 to-slate-900/90"></div>
           </div>
-          <div className="absolute inset09 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
+          <div className="absolute inset-9 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10"></div>
           {/** Content */}
           <div className="relative z-10 max-w-5xl mx-auto">
             <div className="flex items-center justify-center gap-6 mb-6">
@@ -52,10 +111,10 @@ function App() {
               </h1>
             </div>
             <p className="text-2xl md:text-3xl text-gray-300 mb-4 font-light">
-              A 3D Reading Tracker
+              A 3D Media and Plant Tracker
             </p>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8">
-              Trying to make reading a little more fun
+              A cozy place to view your progress
             </p>
             <div className="flex flex-col items-center gap-4">
               <a
@@ -66,32 +125,19 @@ function App() {
                 Sign up
               </a>
               <p className="text-gray-400 text-sm mt-2">
-                Create an account if you want to begin your own cozy reading
-                journey{' '}
+                Create an account if you want to begin your own cozy journey{' '}
                 <code className="px-2 py-1 bg-slate-700 rounded text-cyan-400">
                   in 3D
-                </code>
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-4">
-              <a
-                href="./readingroomdemo"
-                rel="noopener noreferrer"
-                className="px-8 mt-4 py-3 bg-violet-600/90 hover:bg-violet-700/90 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
-              >
-                Demo
-              </a>
-              <p className="text-gray-400 text-sm mt-2">
-                Try the one made for{' '}
-                <code className="px-2 py-1 bg-violet-600/90 rounded text-white">
-                  three.js journey
                 </code>
               </p>
             </div>
           </div>
         </section>
 
-        <section className="py-16 px-6 max-w-7xl mx-auto">
+        <section className="py-16 px-6 max-w-7xl mx-auto text-center">
+          <p className="text-sm font-medium text-cyan-400 tracking-widest uppercase mb-3">
+            Everything in one room
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <div
