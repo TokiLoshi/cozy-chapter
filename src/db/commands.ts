@@ -17,11 +17,6 @@ export const commands: Array<Command> = [
     category: 'app',
   },
   {
-    action: 'recipes',
-    description: 'View recipes and meal planning',
-    category: 'app',
-  },
-  {
     action: 'courses',
     description: 'Launch the course tracker.',
     category: 'app',
@@ -42,16 +37,6 @@ export const commands: Array<Command> = [
     action: 'neofetch',
     description: 'Display system info and stats.',
     category: 'system',
-  },
-  {
-    action: 'cat',
-    description: 'Print the contents of a file.',
-    category: 'terminal',
-  },
-  {
-    action: 'mkdir',
-    description: "Create a new directory. Note these won't be permanent.",
-    category: 'terminal',
   },
   {
     action: 'pwd',
@@ -87,7 +72,7 @@ export const commands: Array<Command> = [
   },
   {
     action: 'date',
-    description: 'tells you the date',
+    description: 'tells you the date and time',
     category: 'system',
   },
   {
