@@ -1,8 +1,35 @@
 # ☕️📚 Cozy Chapter
 
-A cozy 3D reading room where you can track your reading journey through blogs and articles.
+A 3D interactive room where you can track your books, articles, movies, series, podcasts, audiobooks and plants — all from a cozy virtual space filled with clickable objects and hidden easter eggs.
+
+## ❔What is it?
+
+Cozy Chapter is a full-stack media tracker wrapped in a 3D room. Instead of a traditional dashboard, you interact with objects in the room — click the bookshelf to manage articles, the laptop to browse movies, the headphones for audiobooks, the orchid for plant care, and so on. There's also a terminal emulator with hidden commands to launch, and several buried easter eggs.
 
 ## ✨ Features
+
+### Media Tracking
+
+- **Articles** — save articles with URL, author, and reading status (to read / reading / read)
+- **Books** — track page-by-page progress with chapter bookmarks via Google Books
+- **Audiobooks** — monitor listening progress with chapter and position tracking
+- **Movies** — search and add from TMDB, rate, review, and track watchlist status
+- **Series** — track seasons and episodes with TMDB integration
+- **Podcasts** — save episodes from Spotify and YouTube with playback position
+
+### Beyond Media
+
+- **Plants** — track watering schedules, light preferences, and plant health status
+- **Terminal** — a command-line interface to launch apps, view stats, and discover easter eggs
+- **Sound effects** — every clickable object has audio feedback (fireplace crackle, guitar strums, page turns)
+- **Ambient music** — multiple lo-fi tracks to set the mood while you browse
+
+### 3D Room
+
+- Fully interactive Three.js environment
+- Clickable objects: bookshelf, laptop, headphones, orchid, guitar, fireplace, DJ decks, lamp, and more
+- Toggle the lamp on and off
+- A husky that does husky things
 
 - Interactive 3D reading room environment
 - Track read, currently reading, and to-read blogs
@@ -10,17 +37,69 @@ A cozy 3D reading room where you can track your reading journey through blogs an
 - Full-stack application with modern tech
 - Audio and sound efffects implemented with howler.js
 
-## 🛠️ Built With
+## 🛠️ Tech Stack
 
-- **Frontend**: TanStack Start, Three.js, Tailwind CSS, Shadcn UI
-- **Backend**: Drizzle ORM, Neon (PostgreSQL)
-- **Deployment**: Netlify
-- **Validation**: Zod
-- **Image uploads**: upload thing
+| Layer         | Tools                                           |
+| ------------- | ----------------------------------------------- |
+| Framework     | TanStack Start, TanStack Router, TanStack Query |
+| 3D            | Three.js, React Three Fiber, Drei               |
+| Styling       | Tailwind CSS, shadcn/ui                         |
+| Database      | Neon (PostgreSQL), Drizzle ORM                  |
+| Auth          | Better Auth                                     |
+| Validation    | Zod                                             |
+| Forms         | TanStack Form                                   |
+| Audio         | Howler.js                                       |
+| Image uploads | UploadThing                                     |
+| Deployment    | Netlify                                         |
 
-![demo](https://github.com/TokiLoshi/cozy-chapter/blob/main/public/homedemo.png)
+## APIs
+
+- **TMDB** — movie and TV series search, details, and metadata
+- **Google Books** — book search and details
+- **Spotify** — podcast episode search
+- **YouTube** — podcast and video search
+
+# Getting Started
+
+```bash
+# Clone the repo
+git clone https://github.com/TokiLoshi/cozy-chapter.git
+cd cozy-chapter
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Fill in your API keys for TMDB, Spotify, Google Books, etc.
+
+# Run database migrations
+npx drizzle-kit push
+
+# Start the dev server
+npm run dev
+```
+
+## Terminal Commands
+
+The laptop in the 3D room opens a terminal emulator. Some commands to try:
+
+| Command                   | What it does                |
+| ------------------------- | --------------------------- |
+| `help`                    | Show all available commands |
+| `movies`                  | Launch the movie tracker    |
+| `series`                  | Launch the series tracker   |
+| `podcasts`                | Launch the podcast tracker  |
+| `neofetch`                | Display system info         |
+| `whoami`                  | Print your username         |
+| `history`                 | Show command history        |
+| `sudo make me a sandwich` | Try it and find out         |
+
+There are more hidden commands. Explore and you might even see a humorous KABOOM💥
 
 ## 🙌 Attributions:
+
+<summary>3D Models</summary>
 
 1. Bookcase with Books by Quaternius via [polypizza](https://poly.pizza/m/tACDGJ4CGW)
 2. Wall Corner by Kenney via [polypizza](https://poly.pizza/m/Rad76BJn2L)
@@ -48,7 +127,11 @@ A cozy 3D reading room where you can track your reading journey through blogs an
 24. Acoustic Guitar by Dave Edwards [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/bf6_h_1wp2D)
 25. Laptop by J-Toastie [CC-BY] (https://creativecommons.org/licenses/by/3.0/) via Poly Pizza (https://poly.pizza/m/WMW4C2J021)
 
-### Sound effect attributions
+Model JSX auto-generated by NikkitaFTW and [Poimandres](https://gltf.pmnd.rs/)
+
+</details>
+
+### Sound effects
 
 1. Sassy Husky Sound Effect by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=62412) from [Pixabay](https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=62412)
 2. Ambient noise background by [ido berg](https://pixabay.com/users/idoberg-34953295/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=248205) from [Pixabay](https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=248205)
@@ -71,12 +154,3 @@ A cozy 3D reading room where you can track your reading journey through blogs an
 19. Pages Turning Sound Effect by (freesound_community)[https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=79935] from (Pixabay)[https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=79935]
 20. Book Close Sound Effect by (freesound_community)[https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=48184] from (Pixabay)[https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=48184]
 21. Bush movement Sound Effect by (freesound_community)[https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6986] from (Pixabay)[https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=6986]
-
-Model jsx auto generated by NikkitaFTW and [Poimandres](https://gltf.pmnd.rs/)
-
-## APIs:
-
-1. Spotify
-2. Google Books
-3. TMDB
-4. Google YouTube
