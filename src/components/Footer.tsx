@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router'
 import { Github } from 'lucide-react'
 
 export default function Footer() {
