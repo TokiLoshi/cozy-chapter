@@ -1,5 +1,5 @@
 import { betterAuth } from 'better-auth'
-import { reactStartCookies } from 'better-auth/react-start'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { magicLink } from 'better-auth/plugins'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { db } from '../db'
@@ -15,6 +15,7 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: false,
+    // eslint-disable-next-line @typescript-eslint/require-await
     sendResetPassword: async ({ user, url }, _request) => {
       void sendEmail({
         to: user.email,
@@ -35,6 +36,7 @@ export const auth = betterAuth({
   trustedOrigins: ['http://localhost:3000', 'https://cozy-chapter.netlify.app'],
   plugins: [
     magicLink({
+      // eslint-disable-next-line @typescript-eslint/require-await
       sendMagicLink: async ({ email, url }, _ctx) => {
         void sendEmail({
           to: email,
@@ -48,7 +50,7 @@ export const auth = betterAuth({
         })
       },
     }),
-    reactStartCookies(),
+    tanstackStartCookies(),
   ],
 })
 

@@ -16,4 +16,19 @@ function ForgotPasswordPage() {
     setLoading(true)
     setError(null)
   }
+  const params = new URLSearchParams(window.location.search)
+  const token = params.get('token')
+  const urlError = params.get('error')
+
+  return (
+    <>
+      <div className="flex items-center justify-center min-h-screen bg-slate-800">
+        <div className="w-full max-w-md px-6 text-center">
+          {(!token || urlError) && (
+            <h1 className="text-3xl font-bold text-white mb-4">Invalid or </h1>
+          )}
+        </div>
+      </div>
+    </>
+  )
 }
