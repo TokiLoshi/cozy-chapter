@@ -72,8 +72,9 @@ function ResetPasswordComponent() {
               htmlFor="password"
               className="block text-gray-300 text-sm font-medium mb-2"
             >
-              Password
+              New Password
             </label>
+            <input />
           </div>
         </div>
       </div>

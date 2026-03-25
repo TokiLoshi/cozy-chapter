@@ -25,7 +25,9 @@ function SignupPage() {
 
     try {
       if (password !== passwordConfirmation) {
-        setError('Bad Request')
+        setError('Passwords do not match')
+        setLoading(false)
+        return
       }
       await signUp.email({
         email,
