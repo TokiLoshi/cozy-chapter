@@ -8,6 +8,7 @@ export const {
   signUp,
   getSession,
   requestPasswordReset,
+  resetPassword,
   magicLink,
 } = createAuthClient({
   baseURL: import.meta.env.VITE_BETTER_AUTH_URL,
