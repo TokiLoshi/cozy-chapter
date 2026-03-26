@@ -12,7 +12,7 @@ export default function sendEmail({
   html: string
 }) {
   return resend.emails.send({
-    from: 'Cozy Chapter <noreply@resend.com>',
+    from: 'Cozy Chapter <noreply@cozychapter.xyz>',
     to,
     subject,
     html,
