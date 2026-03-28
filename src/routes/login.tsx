@@ -97,6 +97,15 @@ function LoginRoute() {
                 Sign Up
               </a>
             </p>
+            <p className="mt-6 text-center text-sm text-gray-400">
+              Forgot your password?{' '}
+              <a
+                href="/forgot-password"
+                className="cursor-pointer text-cyan-500 hover:bg-cyan-600 font-medium"
+              >
+                Reset it
+              </a>
+            </p>
           </form>
         </div>
       </div>
