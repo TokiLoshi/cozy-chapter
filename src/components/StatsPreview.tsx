@@ -80,7 +80,15 @@ export default function StatsWidget({
         <h2 className="text-lg font-bold text-white">
           Welcome back, {username}!
         </h2>
-        <p className="text-md text-slate-400"></p>
+        <p className="text-md text-slate-400">
+          {books.length} {books.length === 1 ? 'book' : 'books'} in your library
+        </p>
+      </div>
+      {/** Streak and Yearly Goal */}
+      <div className="mb-4 flex items-center gap-3">
+        <div
+          className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${streak.current > 0 ? 'border-amber-500/30' : 'border-slate-600/30 bg-slate-700/30'}`}
+        ></div>
       </div>
     </div>
   )
