@@ -74,6 +74,12 @@ export default function StatsWidget({
   books = MOCK_BOOKS,
   sessions = MOCK_SESSIONS,
 }: Props) {
+  const streak = {
+    current: 7,
+  }
+  const booksReadThisYear = 3
+  const yearlyBookGoal = 10
+  const currentlyReading = 'Just kids'
   return (
     <div className="absolute top-6 lefft-6 z-10 min-w[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
       <div className="mb-4">
@@ -88,7 +94,48 @@ export default function StatsWidget({
       <div className="mb-4 flex items-center gap-3">
         <div
           className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${streak.current > 0 ? 'border-amber-500/30' : 'border-slate-600/30 bg-slate-700/30'}`}
-        ></div>
+        >
+          <FlameIcon size={13} lit={true} />
+          <span
+            className={`font-mono text-sm font-bold ${streak.current > 0} ? 'text-amber-400' : 'text-slate-500`}
+          >
+            {streak.current}
+          </span>
+          <span className="text-[9px] uppercase tracking-wide text-slate-500">
+            streak
+          </span>
+        </div>
+        {/** Books Goal */}
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-green-500" />
+          <span className="text-md text-slate-300">Finished</span>
+          <span className="ml-auto text-sm font-semibold text-white">
+            {booksReadThisYear} / {yearlyBookGoal}
+          </span>
+        </div>
+      </div>
+      {/** Quick counts */}
+      <div className="mb-4 grid grid-cols-2 gap-3">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-22 rounded-full bg-blue-500" />
+          <span className="text-md text-slate-300">Reading</span>
+          <span className="ml-auto text-sm font-semibold text-white">
+            {currentlyReading}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-green-500" />
+          <span className="ml-auto text-sm font-semibold text-white">
+            {booksReadThisYear}
+          </span>
+        </div>
+      </div>
+      {/* Week activity */}
+      <div>
+        <p className="mb-2 text-sm font-semibold uppoercase tracking-widest text-slate500">
+          This Week
+        </p>
+        <div className="flex justify-between gap-1.5">Stuff goes here</div>
       </div>
     </div>
   )
