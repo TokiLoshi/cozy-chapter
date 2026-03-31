@@ -135,7 +135,14 @@ export default function StatsWidget({
         <p className="mb-2 text-sm font-semibold uppoercase tracking-widest text-slate500">
           This Week
         </p>
-        <div className="flex justify-between gap-1.5">Stuff goes here</div>
+        <div className="flex justify-between gap-1.5">{weekData.map((day) => (
+          <div className="flex justify-between gap-1.5">
+            <MiniWeekBar minutes={day.minutes}
+            maxMin={maxWeekMin} 
+            isToday={day.key === todayKey } />
+            <span className={`text-sm ${day.key === todayKey ? 'font-semibold text-amber-400 : 'text-slate-600}`}></span>
+          </div>
+        ))}</div>
       </div>
     </div>
   )
