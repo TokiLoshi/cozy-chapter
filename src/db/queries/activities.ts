@@ -1,32 +1,30 @@
-import { and, desc, eq, gte, sql } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { activityLog, userStats } from '../schemas/activity-schema'
 import type { ActivityLogInsert } from '../schemas/activity-schema'
 import { db } from '@/db'
 
-type userActivity = {
-  userId: string
-  contentType: ActivityLogInsert['contentType']
-  contentId: string
-  activityType: ActivityLogInsert['activityType']
-  value?: number | null
-  durationMinutes?: number | null
-  notes?: string | null
+function getDateStringInTz(date: Date, timeZone: string): string {
+  return date.toLocaleDateString('en-US', { timeZone })
 }
 
-function getDateString(date: Date): string {
-  return date.toISOString().split('T')[0]
+function getYesterdayAndToday(timezone: string) {
+  const now = new Date()
+  const today = getDateStringInTz(now, timezone)
+  const yesterday = getDateStringInTz(
+    new Date(now.getTime() - 86_400_000),
+    timezone,
+  )
+
+  return { today, yesterday }
 }
 
-function getYesterday(): string {
-  const day = new Date()
-  day.setDate(day.getDate() - 1)
-  return getDateString(day)
-}
-
-export async function createActivityLog(data: ActivityLogInsert) {
+export async function createActivityLog(
+  data: ActivityLogInsert,
+  timeZone: string,
+) {
   try {
     const result = await db.insert(activityLog).values(data).returning()
-    await updateStreak(data.userId)
+    await updateStreak(data.userId, timeZone)
     return { success: true, data: result[0] }
   } catch (error) {
     console.error(`Error creating activity ${error as Error}`)
@@ -34,9 +32,9 @@ export async function createActivityLog(data: ActivityLogInsert) {
   }
 }
 
-export async function updateStreak(userId: string) {
-  const today = getDateString(new Date())
-  const yesterday = getYesterday()
+export async function updateStreak(userId: string, timeZone: string) {
+  const { today, yesterday } = getYesterdayAndToday(timeZone)
+
   try {
     const existing = await db
       .select()
@@ -53,6 +51,7 @@ export async function updateStreak(userId: string) {
       })
       return { success: true }
     }
+
     const stats = existing[0]
     if (stats.lastActivityDate === today) {
       return { success: true }
@@ -66,6 +65,7 @@ export async function updateStreak(userId: string) {
       .set({
         currentStreak: newStreak,
         bestStreak: newBest,
+        lastActivityDate: today,
         updatedAt: new Date(),
       })
       .where(eq(userStats.userId, userId))
@@ -77,7 +77,7 @@ export async function updateStreak(userId: string) {
   }
 }
 
-export async function getUserStats(userId: string) {
+export async function getUserStats(userId: string, timeZone: string) {
   try {
     const result = await db
       .select()
@@ -85,13 +85,31 @@ export async function getUserStats(userId: string) {
       .where(eq(userStats.userId, userId))
     if (!result[0]) {
       return {
-        sucess: true,
+        success: true,
         data: {
           currentStreak: 0,
           bestStreak: 0,
         },
       }
     }
+    const stats = result[0]
+    const { today, yesterday } = getYesterdayAndToday(timeZone)
+
+    // Handle broken string
+    if (
+      stats.lastActivityDate !== today &&
+      stats.lastActivityDate !== yesterday
+    ) {
+      stats.currentStreak = 0
+      return {
+        success: true,
+        data: {
+          currentStreak: 0,
+          bestStreak: stats.bestStreak,
+        },
+      }
+    }
+    return { success: true, data: stats }
   } catch (error) {
     console.error(`Error getting user stats: ${(error as Error).message}`)
     return { success: false, error }
