@@ -53,7 +53,7 @@ function ForgotPasswordPage() {
               {sent ? (
                 <div>
                   <div className="text-center">
-                    <p className="text-green mb-4">
+                    <p className="text-gray-300 mb-4">
                       If an account with that email exists you'll receive a link
                       shortly
                     </p>
