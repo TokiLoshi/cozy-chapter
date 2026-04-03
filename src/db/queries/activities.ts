@@ -9,6 +9,7 @@ function getDateStringInTz(date: Date, timeZone: string): string {
 
 function getYesterdayAndToday(timezone: string) {
   const now = new Date()
+
   const today = getDateStringInTz(now, timezone)
   const yesterday = getDateStringInTz(
     new Date(now.getTime() - 86_400_000),
