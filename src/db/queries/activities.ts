@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { and, desc, eq, gte } from 'drizzle-orm'
 import { activityLog, userStats } from '../schemas/activity-schema'
 import type { ActivityLogInsert } from '../schemas/activity-schema'
 import { db } from '@/db'
@@ -113,6 +113,25 @@ export async function getUserStats(userId: string, timeZone: string) {
     return { success: true, data: stats }
   } catch (error) {
     console.error(`Error getting user stats: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
+export async function getRecentActivity(userId: string, days = 7) {
+  try {
+    const since = new Date()
+    since.setDate(since.getDate() - days)
+    since.setHours(0, 0, 0, 0)
+    const result = await db
+      .select()
+      .from(activityLog)
+      .where(
+        and(eq(activityLog.userId, userId), gte(activityLog.createdAt, since)),
+      )
+      .orderBy(desc(activityLog.createdAt))
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(`Error getting recent activity: ${(error as Error).message}`)
     return { success: false, error }
   }
 }
