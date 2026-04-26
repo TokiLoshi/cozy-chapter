@@ -20,13 +20,17 @@ import {
   pagesTurning,
 } from '../components/SoundEffects'
 import AudioComponent from '../components/Audio'
-import type { Blog, ReadStatus } from '@/lib/types/Blog'
+// import type { Blog, ReadStatus } from '@/lib/types/Blog'
+import type { ReadStatus } from '@/lib/types/Blog'
 import { auth } from '@/lib/auth'
 import { getUserPlants } from '@/lib/server/plants'
 import { getUserBlogs } from '@/lib/server/articles'
+import { getUserBookServer } from '@/lib/server/books'
 import { useWindowStore } from '@/components/ui/windowStore'
-import { getRecentActivity, getUserStats } from '@/db/queries/activities'
-import { getUserBooks } from '@/db/queries/books'
+import {
+  getRecentActivityServer,
+  getUserStatsServer,
+} from '@/lib/server/activities'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -40,25 +44,27 @@ export const Route = createFileRoute('/readingroom')({
     if (!session) throw redirect({ to: '/login' })
     // const blogs = await getUserBlogs()
     // const plants = await getUserPlants()
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const [blogs, plants, statsResult, activityResult, booksResult] =
+    // const stats = await getUserStatsServer()
+    // const recentActivity = await getRecentActivityServer({ data: { days: 7 } })
+    // const booksResult = await getUserBooks(session.user.id)
+    // const booksResult = await getUserBookServer()
+    // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const [blogs, plants, stats, recentActivity, booksResult] =
       await Promise.all([
         getUserBlogs(),
         getUserPlants(),
-        getUserStats(session.user.id, timeZone),
-        getRecentActivity(session.user.id, 7),
-        getUserBooks(session.user.id),
+        getUserStatsServer(),
+        getRecentActivityServer({ data: { days: 7 } }),
+        getUserBookServer(),
       ])
 
     return {
       session,
       blogs,
       plants,
-      stats: statsResult.success
-        ? statsResult.data
-        : { currentStreak: 0, bestStreak: 0 },
-      recentActivity: activityResult.success ? activityResult.data : [],
-      userBooks: booksResult.success ? booksResult.data : [],
+      stats: stats ?? { currentStreak: 0, bestStreak: 0 },
+      recentActivity: recentActivity ?? [],
+      userBooks: booksResult ?? [],
     }
   },
   component: ReadingRoomComponent,
@@ -83,9 +89,7 @@ function ReadingRoomComponent() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log(`${e.key} pushed`)
       if (e.key === 'Escape') {
-        console.log('Escaping')
         closeAll()
       }
     }
@@ -104,14 +108,13 @@ function ReadingRoomComponent() {
 
   const { booksFinishedThisYear } = useMemo(() => {
     const currentYear = new Date().getFullYear()
-    const finished = userBooks
-      ? userBooks.filter(
-          ({ userBook }) =>
-            userBook.status === 'read' &&
-            userBook.finishedAt !== null &&
-            new Date(userBook.finishedAt).getFullYear() === currentYear,
-        )
-      : []
+    const finished = userBooks.filter(
+      ({ userBook }) =>
+        userBook.status === 'read' &&
+        userBook.finishedAt !== null &&
+        new Date(userBook.finishedAt).getFullYear() === currentYear,
+    )
+
     // const active = userBooks ? userBooks.find(({ userBook }) => userBook.status === 'reading') : "nothing right now"
     return {
       booksFinishedThisYear: finished.length,
@@ -148,7 +151,7 @@ function ReadingRoomComponent() {
           recentActivity={recentActivity}
           booksFinishedThisYear={booksFinishedThisYear}
           yearlyGoal={YEARLY_BOOK_GOAL}
-          libraryCount={userBooks ? userBooks.length : 0}
+          libraryCount={userBooks.length}
         />
 
         {/** Stats Overlay - Top Left */}
