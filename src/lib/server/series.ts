@@ -43,7 +43,6 @@ export const searchTMDBSeries = createServerFn({ method: 'GET' })
       throw new Error('Failed to search series')
     }
     const data = await response.json()
-    console.log('DATA: ', data)
     return data.results.map(adaptTMDBTVSearchResult)
   })
 
