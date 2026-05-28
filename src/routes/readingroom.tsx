@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import CreditsModal from '../components/Credits'
 import Experience from '../components/room/Experience'
 import ArticleModal from '../components/articles/ArticleModal'
@@ -31,6 +32,7 @@ import {
   getRecentActivityServer,
   getUserStatsServer,
 } from '@/lib/server/activities'
+import { getPlantAlert } from '@/lib/plants'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -136,6 +138,18 @@ function ReadingRoomComponent() {
     setIsLampOn(!isLampOn)
   }
 
+  const handlePlantClick = () => {
+    bushSound()
+    console.log('Plant clicked!')
+    toggleWindow('plants')
+  }
+
+  const { data: plants = [] } = useQuery({
+    queryKey: ['user-plants'],
+    queryFn: async () => (await getUserPlants()) ?? [],
+  })
+  const plantAlert = useMemo(() => getPlantAlert(plants), [plants])
+
   return (
     <>
       {/** Audio Overlay top right */}
@@ -151,7 +165,9 @@ function ReadingRoomComponent() {
           recentActivity={recentActivity}
           booksFinishedThisYear={booksFinishedThisYear}
           yearlyGoal={YEARLY_BOOK_GOAL}
+          plantAlert={plantAlert}
           libraryCount={userBooks.length}
+          onPlantsClick={handlePlantClick}
         />
 
         {/** Stats Overlay - Top Left */}
@@ -208,7 +224,7 @@ function ReadingRoomComponent() {
           onGuitarClick={handleGuitarClick}
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
-          onPlantClick={bushSound}
+          onPlantClick={handlePlantClick}
           onOrchidClick={() => toggleWindow('plants')}
           onHeadPhonesClick={() => toggleWindow('audiobooks')}
           handleLaptopClick={() => {
