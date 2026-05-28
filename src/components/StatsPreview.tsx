@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Leaf } from 'lucide-react'
 import type {
   ActivityLogSelect,
   UserStatsSelect,
@@ -79,6 +80,8 @@ type Props = {
   booksFinishedThisYear: number
   yearlyGoal: number
   libraryCount: number
+  plantAlert: 'allGood' | 'needsWater' | 'needsAttention'
+  onPlantsClick: () => void
 }
 
 const DAY_KEYS: Array<DayKey> = [
@@ -127,6 +130,8 @@ export default function StatsWidget({
   booksFinishedThisYear,
   yearlyGoal,
   libraryCount,
+  plantAlert,
+  onPlantsClick,
 }: Props) {
   const todayKey = useMemo(() => {
     const rawDay = new Date().getDay()
@@ -164,6 +169,36 @@ export default function StatsWidget({
         </div>
         {/** Streak + Goal row */}
         <div className="mb-4 flex items-center gap-3">
+          {plantAlert !== 'allGood' && (
+            <button
+              onClick={onPlantsClick}
+              title={
+                plantAlert === 'needsAttention'
+                  ? 'A plant needs attention'
+                  : 'a plant needs water'
+              }
+              className={`flex items-center gap-1.5 cursor-pointer rounded-full border px-2.5 py-1 transition-colors ${
+                plantAlert === 'needsAttention'
+                  ? 'border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20'
+                  : 'border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20'
+              }`}
+            >
+              {' '}
+              <Leaf
+                size={13}
+                className={
+                  plantAlert === 'needsAttention'
+                    ? 'text-rose-400'
+                    : 'text-amber-400'
+                }
+              />
+              <span
+                className={`text-sm uppercase tracking wide ${plantAlert === 'needsAttention' ? 'text-rose-400' : 'text-amber-400'}`}
+              >
+                {plantAlert === 'needsAttention' ? 'attention' : 'water'}
+              </span>
+            </button>
+          )}
           {/** Streak badge */}
           <div
             className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 ${
