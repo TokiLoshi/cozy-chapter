@@ -136,6 +136,12 @@ function ReadingRoomComponent() {
     setIsLampOn(!isLampOn)
   }
 
+  const handlePlantClick = () => {
+    bushSound()
+    console.log('Plant clicked!')
+    toggleWindow('plants')
+  }
+
   return (
     <>
       {/** Audio Overlay top right */}
@@ -208,7 +214,7 @@ function ReadingRoomComponent() {
           onGuitarClick={handleGuitarClick}
           onLampClick={handleLampClick}
           isLampOn={isLampOn}
-          onPlantClick={bushSound}
+          onPlantClick={handlePlantClick}
           onOrchidClick={() => toggleWindow('plants')}
           onHeadPhonesClick={() => toggleWindow('audiobooks')}
           handleLaptopClick={() => {
