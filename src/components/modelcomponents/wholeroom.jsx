@@ -238,7 +238,10 @@ export default function CozyRoom({
             receiveShadow
             geometry={nodes.Plant_mesh_2.geometry}
             material={materials['Plant_Green.001']}
-            onClick={onPlantClick}
+            onClick={(e) => {
+              e.stopPropagation()
+              onPlantClick()
+            }}
           >
             {hovered === 'plant' && <Outlines thickness={2} color="#d1ccad" />}
           </mesh>
