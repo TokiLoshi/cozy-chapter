@@ -138,8 +138,7 @@ function ReadingRoomComponent() {
     setIsLampOn(!isLampOn)
   }
 
-  const handlePlantClick = (e: any) => {
-    e.stopPropagation()
+  const handlePlantClick = () => {
     bushSound()
     console.log('Plant clicked!')
     toggleWindow('plants')
