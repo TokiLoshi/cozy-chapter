@@ -60,6 +60,11 @@ export const Route = createFileRoute('/readingroom')({
         getUserBookServer(),
       ])
 
+    const allStuff = await getRecentActivityServer({ data: { days: 7 } })
+    console.log('READING ROOM STATS: ', allStuff)
+    const userStats = await getUserStatsServer()
+    console.log('User stats: ', userStats)
+
     return {
       session,
       blogs,
@@ -78,6 +83,7 @@ const YEARLY_BOOK_GOAL = 12
 function ReadingRoomComponent() {
   const { session, blogs, stats, recentActivity, userBooks } =
     Route.useLoaderData()
+  console.log('Stats in reading room component: ', stats)
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
 

@@ -35,16 +35,15 @@ function FlameIcon({
 }
 
 function MiniWeekBar({
-  minutes,
+  pages,
   maxMin,
   isToday,
 }: {
-  minutes: number
+  pages: number
   maxMin: number
   isToday: boolean
 }) {
-  const pct =
-    minutes > 0 ? Math.max((minutes / Math.max(maxMin, 1)) * 100, 10) : 0
+  const pct = pages > 0 ? Math.max((pages / Math.max(maxMin, 1)) * 100, 10) : 0
   return (
     <>
       <div className="flex flex-col items-center gap-1">
@@ -67,14 +66,14 @@ type DayKey = 'Mon' | 'Tues' | 'Wed' | 'Thurs' | 'Fri' | 'Sat' | 'Sun'
 
 type WeekDayData = {
   key: DayKey
-  minutes: number
+  pages: number
 }
 
 type Props = {
   username: string
   stats:
     | Pick<UserStatsSelect, 'currentStreak' | 'bestStreak'>
-    | { currentStreak: 0; bestStreak: 0 }
+    | { currentStreak: number; bestStreak: number }
   recentActivity: Array<ActivityLogSelect>
   currentlyReadingTitle?: string
   booksFinishedThisYear: number
@@ -101,7 +100,16 @@ function buildWeekData(sessions: Array<ActivityLogSelect>): Array<WeekDayData> {
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
   startOfWeek.setDate(now.getDate() - daysSinceMonday)
   startOfWeek.setHours(0, 0, 0, 0)
-  const minutesByDay: Record<number, number> = {
+  // const minutesByDay: Record<number, number> = {
+  //   0: 0,
+  //   1: 0,
+  //   2: 0,
+  //   3: 0,
+  //   4: 0,
+  //   5: 0,
+  //   6: 0,
+  // }
+  const pagesByDay: Record<number, number> = {
     0: 0,
     1: 0,
     2: 0,
@@ -110,16 +118,18 @@ function buildWeekData(sessions: Array<ActivityLogSelect>): Array<WeekDayData> {
     5: 0,
     6: 0,
   }
+
   for (const session of sessions) {
     const sessionDate = new Date(session.createdAt)
     if (sessionDate >= startOfWeek) {
       const rawDay = sessionDate.getDay()
 
       const mondayFirstIndex = rawDay === 0 ? 6 : rawDay - 1
-      minutesByDay[mondayFirstIndex] += session.durationMinutes ?? 0
+      // minutesByDay[mondayFirstIndex] += session.durationMinutes ?? 0
+      pagesByDay[mondayFirstIndex] += session.value ?? 0
     }
   }
-  return DAY_KEYS.map((key, index) => ({ key, minutes: minutesByDay[index] }))
+  return DAY_KEYS.map((key, index) => ({ key, pages: pagesByDay[index] }))
 }
 
 export default function StatsWidget({
@@ -144,10 +154,11 @@ export default function StatsWidget({
   }, [recentActivity])
 
   const maxWeekMin = useMemo(() => {
-    return Math.max(...weekData.map((day) => day.minutes), 1)
+    return Math.max(...weekData.map((day) => day.pages), 1)
   }, [weekData])
 
   const { currentStreak } = stats
+  console.log('STats in widget: ', stats)
   const isStreakActive = currentStreak > 0
   const goalPct = Math.min(
     (booksFinishedThisYear / Math.max(yearlyGoal, 1)) * 100,
@@ -252,7 +263,7 @@ export default function StatsWidget({
             {weekData.map((day) => (
               <div key={day.key} className="flex flex-col items-center gap-1">
                 <MiniWeekBar
-                  minutes={day.minutes}
+                  pages={day.pages}
                   maxMin={maxWeekMin}
                   isToday={day.key === todayKey}
                 />

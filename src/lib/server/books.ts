@@ -10,6 +10,7 @@ import {
   updateUserBook,
   upsertBook,
 } from '@/db/queries/books'
+import { createActivityLog } from '@/db/queries/activities'
 
 // Session to ensure user is authenticated
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -133,6 +134,22 @@ export const updateUserBookServer = createServerFn({ method: 'POST' })
     )
     if (!updatedBook.success) {
       throw new Error(`Error updating users books`)
+    }
+
+    if (updatedBook.madeProgress) {
+      console.log("User made some progress let's set their streak")
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const activityUpdated = await createActivityLog(
+        {
+          userId: session.user.id,
+          contentType: 'book',
+          contentId: updatedBook.bookId,
+          activityType: 'manual',
+          value: updatedBook.pagesRead,
+        },
+        timeZone,
+      )
+      console.log('activity updated: ', activityUpdated)
     }
 
     return updatedBook.data

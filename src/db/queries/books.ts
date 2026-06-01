@@ -109,6 +109,11 @@ export async function updateUserBook(
       updatedAt: new Date(),
     }
 
+    const oldPage = currentBook.currentPage ?? 0
+    const newPage = updates.currentPage
+    const madeProgress = typeof newPage === 'number' && newPage > oldPage
+    const pagesRead = madeProgress ? newPage - oldPage : 0
+
     const isStatusUpdated =
       updates.status && updates.status !== currentBook.status
     if (isStatusUpdated) {
@@ -143,7 +148,13 @@ export async function updateUserBook(
       .set(finalUpdates)
       .where(and(eq(userBooks.id, id), eq(userBooks.userId, userId)))
       .returning()
-    return { success: true, data: result }
+    return {
+      success: true,
+      data: result,
+      madeProgress,
+      bookId: currentBook.bookId,
+      pagesRead,
+    }
   } catch (error) {
     console.error(`Error updating user books: ${(error as Error).message}`)
     return { success: false, error }
