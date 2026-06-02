@@ -45,6 +45,7 @@ export const userStats = pgTable('userStats', {
   currentStreak: integer('currentStreak').notNull().default(0),
   bestStreak: integer('bestStreak').notNull().default(0),
   lastActivityDate: date('lastActivityDate'),
+  booksGoal: integer('booksGoal').notNull().default(12),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })

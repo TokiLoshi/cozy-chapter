@@ -7,6 +7,7 @@ export type WindowId =
   | 'laptop'
   | 'media'
   | 'plants'
+  | 'preferences'
 
 type WindowState = {
   open: Record<WindowId, boolean>
@@ -23,6 +24,7 @@ const initialOpen: Record<WindowId, boolean> = {
   laptop: false,
   media: false,
   plants: false,
+  preferences: false,
 }
 
 export const useWindowStore = create<WindowState>((set) => ({

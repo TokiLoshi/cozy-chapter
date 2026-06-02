@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Leaf } from 'lucide-react'
+import { Leaf, Settings } from 'lucide-react'
 import type {
   ActivityLogSelect,
   UserStatsSelect,
@@ -71,9 +71,7 @@ type WeekDayData = {
 
 type Props = {
   username: string
-  stats:
-    | Pick<UserStatsSelect, 'currentStreak' | 'bestStreak'>
-    | { currentStreak: number; bestStreak: number }
+  stats: Pick<UserStatsSelect, 'currentStreak' | 'bestStreak' | 'booksGoal'>
   recentActivity: Array<ActivityLogSelect>
   currentlyReadingTitle?: string
   booksFinishedThisYear: number
@@ -81,6 +79,7 @@ type Props = {
   libraryCount: number
   plantAlert: 'allGood' | 'needsWater' | 'needsAttention'
   onPlantsClick: () => void
+  onSettingsClick: () => void
 }
 
 const DAY_KEYS: Array<DayKey> = [
@@ -100,15 +99,7 @@ function buildWeekData(sessions: Array<ActivityLogSelect>): Array<WeekDayData> {
   const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
   startOfWeek.setDate(now.getDate() - daysSinceMonday)
   startOfWeek.setHours(0, 0, 0, 0)
-  // const minutesByDay: Record<number, number> = {
-  //   0: 0,
-  //   1: 0,
-  //   2: 0,
-  //   3: 0,
-  //   4: 0,
-  //   5: 0,
-  //   6: 0,
-  // }
+
   const pagesByDay: Record<number, number> = {
     0: 0,
     1: 0,
@@ -142,6 +133,7 @@ export default function StatsWidget({
   libraryCount,
   plantAlert,
   onPlantsClick,
+  onSettingsClick,
 }: Props) {
   const todayKey = useMemo(() => {
     const rawDay = new Date().getDay()
@@ -165,14 +157,23 @@ export default function StatsWidget({
     100,
   )
 
+  const handlePreferences = () => {
+    console.log('User wants to update preferences')
+    onSettingsClick()
+  }
+
   return (
     <>
       <div className="absolute top-6 left-6 z-10 min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
         {/** Header */}
+        <button className="absolute top-3 right-3 text-amber-500/70 cursor-pointer hover:text-amber-500/60 ">
+          <Settings onClick={handlePreferences} />
+        </button>
         <div className="mb-4">
           <h2 className="text-lg font-bold text-white">
             Welcome back, {username}!
           </h2>
+
           <p className="text-sm text-slate-400">
             {libraryCount} {libraryCount === 1 ? 'book' : 'books'} in your
             library

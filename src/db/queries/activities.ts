@@ -101,6 +101,7 @@ export async function getUserStats(userId: string, timeZone: string) {
         data: {
           currentStreak: 0,
           bestStreak: 0,
+          booksGoal: 12,
         },
       }
     }
@@ -124,6 +125,7 @@ export async function getUserStats(userId: string, timeZone: string) {
         data: {
           currentStreak: 0,
           bestStreak: stats.bestStreak,
+          booksGoal: stats.booksGoal,
         },
       }
     }
@@ -149,6 +151,25 @@ export async function getRecentActivity(userId: string, days = 7) {
     return { success: true, data: result }
   } catch (error) {
     console.error(`Error getting recent activity: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
+export async function updateBookGoal(userId: string, goal: number) {
+  try {
+    const result = await db
+      .update(userStats)
+      .set({
+        booksGoal: goal,
+        updatedAt: new Date(),
+      })
+      .where(eq(userStats.userId, userId))
+      .returning()
+    return { success: true, data: result[0] }
+  } catch (error) {
+    console.error(
+      `Error getting updating user stats ${(error as Error).message}`,
+    )
     return { success: false, error }
   }
 }

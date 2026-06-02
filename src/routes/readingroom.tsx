@@ -33,6 +33,7 @@ import {
   getUserStatsServer,
 } from '@/lib/server/activities'
 import { getPlantAlert } from '@/lib/plants'
+import EditUserPreferences from '@/components/activities/preferences'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -44,13 +45,6 @@ export const Route = createFileRoute('/readingroom')({
   loader: async () => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-    // const blogs = await getUserBlogs()
-    // const plants = await getUserPlants()
-    // const stats = await getUserStatsServer()
-    // const recentActivity = await getRecentActivityServer({ data: { days: 7 } })
-    // const booksResult = await getUserBooks(session.user.id)
-    // const booksResult = await getUserBookServer()
-    // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
     const [blogs, plants, stats, recentActivity, booksResult] =
       await Promise.all([
         getUserBlogs(),
@@ -69,15 +63,13 @@ export const Route = createFileRoute('/readingroom')({
       session,
       blogs,
       plants,
-      stats: stats ?? { currentStreak: 0, bestStreak: 0 },
+      stats: stats ?? { currentStreak: 0, bestStreak: 0, booksGoal: 12 },
       recentActivity: recentActivity ?? [],
       userBooks: booksResult ?? [],
     }
   },
   component: ReadingRoomComponent,
 })
-
-const YEARLY_BOOK_GOAL = 12
 
 // Reading Room with modal
 function ReadingRoomComponent() {
@@ -105,15 +97,6 @@ function ReadingRoomComponent() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [closeAll])
 
-  // const oldStats = useMemo(() => {
-  //   return {
-  //     toRead: blogs.filter((blog: Blog) => blog.status === 'toRead').length,
-  //     reading: blogs.filter((blog: Blog) => blog.status === 'reading').length,
-  //     read: blogs.filter((blog: Blog) => blog.status === 'read').length,
-  //     total: blogs.length,
-  //   }
-  // }, [blogs])
-
   const { booksFinishedThisYear } = useMemo(() => {
     const currentYear = new Date().getFullYear()
     const finished = userBooks.filter(
@@ -123,7 +106,6 @@ function ReadingRoomComponent() {
         new Date(userBook.finishedAt).getFullYear() === currentYear,
     )
 
-    // const active = userBooks ? userBooks.find(({ userBook }) => userBook.status === 'reading') : "nothing right now"
     return {
       booksFinishedThisYear: finished.length,
     }
@@ -156,6 +138,17 @@ function ReadingRoomComponent() {
   })
   const plantAlert = useMemo(() => getPlantAlert(plants), [plants])
 
+  const { data: userStats } = useQuery({
+    queryKey: ['user-stats'],
+    queryFn: async () =>
+      (await getUserStatsServer()) ?? {
+        currentStreak: 0,
+        bestStreak: 0,
+        booksGoal: 12,
+      },
+    initialData: Route.useLoaderData().stats,
+  })
+
   return (
     <>
       {/** Audio Overlay top right */}
@@ -167,59 +160,15 @@ function ReadingRoomComponent() {
         {/** Stats widget */}
         <StatsWidget
           username={session.user.name}
-          stats={stats}
+          stats={userStats}
           recentActivity={recentActivity}
           booksFinishedThisYear={booksFinishedThisYear}
-          yearlyGoal={YEARLY_BOOK_GOAL}
+          yearlyGoal={userStats.booksGoal}
           plantAlert={plantAlert}
           libraryCount={userBooks.length}
           onPlantsClick={handlePlantClick}
+          onSettingsClick={() => toggleWindow('preferences')}
         />
-
-        {/** Stats Overlay - Top Left */}
-        {/* <div className="absolute top-6 left-6 z-10 bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
-          <div className="mb-4">
-            <h2 className="text-2xl font-bold text-white mb-1">
-              welcome back, {session.user.name}!
-            </h2>
-            <p className="text-sm text-gray-400">
-              {stats.total} {stats.total === 1 ? 'article' : 'articles'} in
-              total
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <span className="text-sm text-gray-300">To Read</span>
-              </div>
-              <span className="text-lg font-semibold text-white">
-                {stats.toRead}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                <span className="text-sm text-gray-300">Reading</span>
-              </div>
-              <span className="text-lg font-semibold text-white">
-                {stats.reading}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-sm text-gray-300">Read</span>
-              </div>
-              <span className="text-lg font-semibold text-white">
-                {stats.read}
-              </span>
-            </div>
-          </div>
-        </div> */}
 
         {/** 3D component  */}
         <Experience
@@ -237,6 +186,13 @@ function ReadingRoomComponent() {
             toggleWindow('laptop')
           }}
         />
+
+        {open.preferences && (
+          <EditUserPreferences
+            bookGoal={userStats.booksGoal}
+            onClose={() => closeWindow('preferences')}
+          />
+        )}
 
         {/** Plant Modal */}
         <PlantModal
