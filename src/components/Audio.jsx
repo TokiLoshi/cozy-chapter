@@ -5,11 +5,13 @@ import {
   CircleArrowRight,
   CirclePause,
   CirclePlay,
+  Volume2,
 } from 'lucide-react'
 
 export default function AudioComponent() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
+  const [volume, setVolume] = useState(0.3)
   const soundRef = useRef(null)
 
   const tracks = [
@@ -41,7 +43,7 @@ export default function AudioComponent() {
     soundRef.current = new Howl({
       src: [tracks[currentTrackIndex]],
       loop: true,
-      volume: 0.3,
+      volume,
       onend: () => {
         handleNext()
       },
@@ -59,6 +61,11 @@ export default function AudioComponent() {
     }
   }, [currentTrackIndex])
 
+  useEffect(() => {
+    if (!soundRef.current) return
+    soundRef.current.volume(volume)
+  }, [volume, currentTrackIndex])
+
   const handleClick = () => {
     if (soundRef.current) {
       if (isPlaying) {
@@ -75,13 +82,34 @@ export default function AudioComponent() {
   }
 
   const handleBack = () => {
-    setCurrentTrackIndex((prev) => (prev - 1) % tracks.length)
+    setCurrentTrackIndex((prev) => (prev - 1 + tracks.length) % tracks.length)
   }
 
   return (
     <>
       <div className="flex flex-col items-center gap-4">
         <h3 className="text-white text-lg font-semibold">music player</h3>
+
+        {isPlaying && (
+          <>
+            <div className="flex items-center gap-2 w-full px-2">
+              <span className="text-white/50 text-xs">
+                <Volume2 />
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={1}
+                step={0.01}
+                value={volume}
+                onChange={(e) => setVolume(parseFloat(e.target.value))}
+                aria-label="Volume"
+                className="w-full accent-amber-500 cursor-pointer"
+              />
+            </div>
+          </>
+        )}
+
         {currentTrackIndex >= 1 && (
           <button
             onClick={handleBack}
