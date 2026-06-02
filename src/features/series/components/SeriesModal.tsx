@@ -361,7 +361,6 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
   const handleEdit = (item: { series: TvSeries; userSeries: UserSeries }) => {
     setExpandedSeries(null)
     setSeriesToEdit(item)
-    console.log('Editing: ', item.series.title)
     setIsEditOpen(true)
   }
 

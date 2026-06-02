@@ -150,7 +150,6 @@ export default function StatsWidget({
   }, [weekData])
 
   const { currentStreak } = stats
-  console.log('STats in widget: ', stats)
   const isStreakActive = currentStreak > 0
   const goalPct = Math.min(
     (booksFinishedThisYear / Math.max(yearlyGoal, 1)) * 100,
@@ -158,7 +157,6 @@ export default function StatsWidget({
   )
 
   const handlePreferences = () => {
-    console.log('User wants to update preferences')
     onSettingsClick()
   }
 

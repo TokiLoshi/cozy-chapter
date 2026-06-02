@@ -137,9 +137,8 @@ export const updateUserBookServer = createServerFn({ method: 'POST' })
     }
 
     if (updatedBook.madeProgress) {
-      console.log("User made some progress let's set their streak")
       const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-      const activityUpdated = await createActivityLog(
+      await createActivityLog(
         {
           userId: session.user.id,
           contentType: 'book',
@@ -149,7 +148,6 @@ export const updateUserBookServer = createServerFn({ method: 'POST' })
         },
         timeZone,
       )
-      console.log('activity updated: ', activityUpdated)
     }
 
     return updatedBook.data

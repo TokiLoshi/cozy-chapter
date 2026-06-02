@@ -54,11 +54,6 @@ export const Route = createFileRoute('/readingroom')({
         getUserBookServer(),
       ])
 
-    const allStuff = await getRecentActivityServer({ data: { days: 7 } })
-    console.log('READING ROOM STATS: ', allStuff)
-    const userStats = await getUserStatsServer()
-    console.log('User stats: ', userStats)
-
     return {
       session,
       blogs,
@@ -73,9 +68,8 @@ export const Route = createFileRoute('/readingroom')({
 
 // Reading Room with modal
 function ReadingRoomComponent() {
-  const { session, blogs, stats, recentActivity, userBooks } =
-    Route.useLoaderData()
-  console.log('Stats in reading room component: ', stats)
+  const { session, blogs, userBooks } = Route.useLoaderData()
+
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
 
@@ -128,7 +122,6 @@ function ReadingRoomComponent() {
 
   const handlePlantClick = () => {
     bushSound()
-    console.log('Plant clicked!')
     toggleWindow('plants')
   }
 
@@ -147,6 +140,15 @@ function ReadingRoomComponent() {
         booksGoal: 12,
       },
     initialData: Route.useLoaderData().stats,
+  })
+
+  const { data: recentActivity = [] } = useQuery({
+    queryKey: ['recent-activity'],
+    queryFn: async () =>
+      (await getRecentActivityServer({
+        data: { days: 7 },
+      })) ?? [],
+    initialData: Route.useLoaderData().recentActivity,
   })
 
   return (

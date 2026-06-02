@@ -90,6 +90,8 @@ export default function EditBookModal({
           },
         })
         queryClient.invalidateQueries({ queryKey: ['user-books'] })
+        queryClient.invalidateQueries({ queryKey: ['user-stats'] })
+        queryClient.invalidateQueries({ queryKey: ['recent-activity'] })
         onClose()
       } catch (error) {
         console.error(`Error updating book: ${(error as Error).message}`)

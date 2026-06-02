@@ -335,7 +335,6 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
   const handleEdit = (item: { movie: Movie; userMovie: UserMovie }) => {
     setExpandedMovie(null)
     setMovieToEdit(item)
-    console.log('Editing: ', item.movie.title)
     setIsEditOpen(true)
   }
 

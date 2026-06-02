@@ -293,7 +293,6 @@ export default function useTerminal(
   const [sandwichCount, setSandwichCount] = useState(0)
 
   const handleSudo = (args: Array<string>) => {
-    console.log('SUDO invoked, chaos will reign')
     const userInput = args.join(' ').toLowerCase()
     switch (userInput) {
       case 'make me a sandwich':
@@ -339,7 +338,6 @@ export default function useTerminal(
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      console.log('Enter pressed')
       executeCommand(inputValue)
     } else if (e.key === 'ArrowUp') {
       e.preventDefault()
@@ -348,7 +346,6 @@ export default function useTerminal(
         setHistoryIndex(newIndex)
         setInputValue(commandHistory[newIndex])
       }
-      console.log('Arrow up pushed')
     } else if (e.key === 'ArrowDown') {
       e.preventDefault()
       if (historyIndex > 0) {

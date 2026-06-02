@@ -34,8 +34,8 @@ export async function createActivityLog(
 ) {
   try {
     const result = await db.insert(activityLog).values(data).returning()
-    const streakUpdate = await updateStreak(data.userId, timeZone)
-    console.log('Streak update: ', streakUpdate)
+    await updateStreak(data.userId, timeZone)
+
     return { success: true, data: result[0] }
   } catch (error) {
     console.error(`Error creating activity ${error as Error}`)
@@ -94,7 +94,7 @@ export async function getUserStats(userId: string, timeZone: string) {
       .select()
       .from(userStats)
       .where(eq(userStats.userId, userId))
-    console.log('user stats result in server: ', result)
+
     if (!result[0]) {
       return {
         success: true,
@@ -106,19 +106,14 @@ export async function getUserStats(userId: string, timeZone: string) {
       }
     }
     const stats = result[0]
-    console.log('Our stats after the query: ', stats)
+
     const { today, yesterday } = getYesterdayAndToday(timeZone)
-    console.log(`Today in server: ${today} and ${yesterday}`)
-    console.log(`Last activity dates: ${stats.lastActivityDate}`)
+
     // Handle broken string
     if (
       stats.lastActivityDate !== today &&
       stats.lastActivityDate !== yesterday
     ) {
-      console.log(
-        `Bool for last activity date not being today ${stats.lastActivityDate !== today} and ${stats.lastActivityDate !== yesterday}`,
-      )
-      console.log('BOOM BAM Resetting streak on the server')
       stats.currentStreak = 0
       return {
         success: true,
