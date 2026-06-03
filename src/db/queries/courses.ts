@@ -30,6 +30,19 @@ export async function getCourses(userId: string) {
   }
 }
 
+export async function getCourseById(userId: string, id: string) {
+  try {
+    const result = await db
+      .select()
+      .from(courses)
+      .where(and(eq(courses.userId, userId), eq(courses.id, id)))
+    return { success: true, data: result[0] }
+  } catch (error) {
+    console.error(`Error getting course by id ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
 type CourseUpdates = Partial<
   Omit<NewCourse, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 >
