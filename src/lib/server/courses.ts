@@ -18,7 +18,8 @@ const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
 
 export const createCourseServer = createServerFn({ method: 'POST' })
   .inputValidator(
-    (data: Omit<NewCourse, 'id' | 'createdAt' | 'updatedAt'>) => data,
+    (data: Omit<NewCourse, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) =>
+      data,
   )
   .handler(async ({ data }) => {
     const session = await getSessionServer()
@@ -43,6 +44,19 @@ export const getUserCoursesServer = createServerFn({ method: 'GET' }).handler(
     return result.data
   },
 )
+
+export const getSingleCourseServer = createServerFn({ method: 'GET' })
+  .inputValidator((data: { id: string }) => data)
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+
+    const result = await getCourseById(session.user.id, data.id)
+    if (!result.success) {
+      throw new Error(`Failed to get single course for user: ${result.error}`)
+    }
+    return result.data
+  })
 
 type CourseUpdates = Partial<
   Omit<NewCourse, 'id' | 'userId' | 'createdAt' | 'updatedAt'>

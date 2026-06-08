@@ -4,6 +4,7 @@ export type WindowId =
   | 'article'
   | 'audiobooks'
   | 'credits'
+  | 'courses'
   | 'laptop'
   | 'media'
   | 'plants'
@@ -21,6 +22,7 @@ const initialOpen: Record<WindowId, boolean> = {
   article: false,
   audiobooks: false,
   credits: false,
+  courses: false,
   laptop: false,
   media: false,
   plants: false,

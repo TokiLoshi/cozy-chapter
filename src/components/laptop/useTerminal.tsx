@@ -129,6 +129,10 @@ export default function useTerminal(
         addLine('system', 'Launching series')
         onLaunchApp('series')
         break
+      case 'courses':
+        addLine('system', 'Launching courses')
+        onLaunchApp('courses')
+        break
       case 'whoami':
         addLine('system', username)
         break
@@ -185,7 +189,7 @@ export default function useTerminal(
         }
         break
       case 'play':
-        if (args.join() === 'that shit fred') {
+        if (args.join(' ') === 'that shit fred') {
           addLine('system', 'I need you to see me, we danced so,, sooo hard')
         } else {
           addLine('error', `zsh: command not found: ${args.join()}`)
@@ -233,8 +237,8 @@ export default function useTerminal(
           addLine('error', `zsh: command not found: ${args.join()}`)
         }
         break
-      case 'hey':
-        if (args.join(' ') === 'listen you hear that') {
+      case 'hey,':
+        if (args.join(' ') === 'yo, listen you hear that') {
           addLine('system', 'KILLERS IN THE JUNGLE')
         } else {
           addLine('error', `zsh: command not found: ${args.join()}`)

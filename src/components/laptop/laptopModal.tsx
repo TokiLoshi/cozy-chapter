@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import CoursesModal from '../courses/CoursesModal'
 import TerminalBody from './terminalBody'
 import PodcastModal from '@/features/podcasts/components/PodcastModal'
 import MovieModal from '@/features/movies/components/MovieModal'
@@ -91,7 +92,7 @@ export default function LaptopModal({
         <div className="relative z-60 w-full max-w-4xl max-h-[80vh] overflow-hidden bg-black rounded-xl shadow-2xl border border-zinc-700 m-4 flex flex-col">
           {/** Title Bar */}
           <TerminalTitleBar
-            title={`${username}/~~/${username}/-zsh`}
+            title={`${username} - ${username}@iCozy- ~ -- -zsh`}
             onClose={onClose}
             onToggleGUI={() => setIsGUI(!isGUI)}
           />
@@ -114,6 +115,11 @@ export default function LaptopModal({
       <PodcastModal
         isOpen={activeApp === 'podcasts'}
         onClose={() => setActiveApp(null)}
+      />
+      <CoursesModal
+        isOpen={activeApp === 'courses'}
+        onClose={() => setActiveApp(null)}
+        refreshPath="/readingroom"
       />
       <MovieModal
         isOpen={activeApp === 'movies'}

@@ -22,6 +22,7 @@ export const courses = pgTable('courses', {
     .references(() => user.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   author: text('author'),
+  description: text('description'),
   platform: text('platform'),
   category: text('category'),
   url: text('url'),
