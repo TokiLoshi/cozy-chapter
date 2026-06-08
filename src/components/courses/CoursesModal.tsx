@@ -75,7 +75,6 @@ function ExpandedCourseCard({
         )}
 
         {/** progressCurrent */}
-        {/** url */}
         {item.progressCurrent && (
           <DetailItem label="Current Progress">
             <p className="text-sm font-medium text-slate-200">
@@ -574,7 +573,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             {/** ProgressCurrent */}
             <form.AppField name="progressCurrent">
               {(field) => (
-                <field.TextField
+                <field.NumberField
                   label="progressCurrent"
                   placeholder="Course ProgressCurrent"
                 />
@@ -594,7 +593,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             {/** ProgressTotal */}
             <form.AppField name="progressTotal">
               {(field) => (
-                <field.TextField
+                <field.NumberField
                   label="ProgressTotal"
                   placeholder="Course Progress Total"
                 />
@@ -604,7 +603,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             {/** EstimatedMinutesRemaining */}
             <form.AppField name="estimatedMinutesRemaining">
               {(field) => (
-                <field.TextField
+                <field.NumberField
                   label="EstimatedMinutesRemaining"
                   placeholder="Course Estimated Minues Remaining"
                 />
