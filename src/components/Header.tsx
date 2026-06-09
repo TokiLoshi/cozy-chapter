@@ -77,7 +77,7 @@ export default function Header({
           {/* Reading Links */}
           {!isAuthenticated && (
             <>
-              <Link
+              {/* <Link
                 to="/readingroomdemo"
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition-colors mb-2"
@@ -88,7 +88,7 @@ export default function Header({
               >
                 <Sparkles size={20} />
                 <span className="font-medium">Demo</span>
-              </Link>
+              </Link> */}
               <Link
                 to="/login"
                 onClick={() => setIsOpen(false)}
