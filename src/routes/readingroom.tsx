@@ -33,7 +33,7 @@ import {
   getUserStatsServer,
 } from '@/lib/server/activities'
 import { getPlantAlert } from '@/lib/plants'
-import EditUserPreferences from '@/components/activities/preferences'
+import EditUserPreferences from '@/components/activities/Preferences'
 
 // Authentication
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
