@@ -5,7 +5,9 @@ import {
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
+import { PostHogProvider } from '@posthog/react'
 import Header from '../components/Header'
+
 // import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 // import { TanStackDevtools } from '@tanstack/react-devtools'
 // import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
@@ -61,6 +63,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootDocument({ children }: { children: React.ReactNode }) {
   const { session } = Route.useLoaderData()
   const isAuthenticated = !!session?.user
+  const apiKey = import.meta.env.VITE_POSTHOG_PROJECT_TOKEN
+  const apiHost = import.meta.env.VITE_POSTHOG_HOST
 
   return (
     <html lang="en">
@@ -68,8 +72,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <Header isAuthenticated={isAuthenticated} />
-        {children}
+        <PostHogProvider
+          apiKey={apiKey}
+          options={{
+            api_host: apiHost,
+            defaults: '2026-01-30',
+          }}
+        >
+          <Header isAuthenticated={isAuthenticated} />
+
+          {children}
+        </PostHogProvider>
         <Toaster
           toastOptions={{
             style: {

@@ -11,6 +11,7 @@ import {
   DisplayActions,
   DisplayDescription,
 } from '@/components/ExpandedCard'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import SearchArea from '@/components/SearchArea'
 import {
   createCourseServer,
@@ -349,9 +350,9 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
                 What are we learning today?
               </h3>
               {/** Empty State */}
-              {filteredCourses.length === 0 && (
+              {courses?.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
-                  No courses added to inventory yet
+                  No courses added to inventory yet, star
                 </div>
               )}
               <SearchArea value={courseSearch} onChange={setCourseSearch} />
