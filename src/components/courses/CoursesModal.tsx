@@ -129,7 +129,7 @@ function ExpandedCourseCard({
                 target="_blank"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-green-600"
               >
-                <Laptop className="w-4 h-4" />
+                <Laptop className="w-4 h-4 text-cyan-300" />
                 Go do a lesson
               </a>
             </div>
@@ -164,25 +164,76 @@ function CourseCard({
   onEdit: () => void
   onDelete: () => void
 }) {
+  const priorityColor = {
+    high: 'bg-red-500/20 text-red-300 border-red-500/30',
+    medium: 'bg-amber-500/20 text-amber-300 border-amber-300/30',
+    low: 'bg-emerald-500/20 text-emerald-300 border-emerald-300/30',
+    none: 'bg-slate-600/30 text-slate-400 border-slate-600/40',
+  }
+
+  const pct =
+    item.progressCurrent && item.progressTotal
+      ? Math.min(
+          100,
+          Math.round((item.progressCurrent / item.progressTotal) * 100),
+        )
+      : null
   return (
     <>
-      <div className="flex items-start gap-3 p-3 bg-slate-700/50 text-white rounded-lg">
-        <Laptop />
-        {/** Title */}
-        <div className="flex-1 min-w-0 flex flex-col">
-          <h4 className="font-medium text-slate-100 truncate">{item.title}</h4>
-          <p className="text-sm text-slate-300 truncate">
-            {item.description ?? 'No description provided'}
-          </p>
+      <div className="flex items-start gap-3 p-4 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 rounded-xl transition-all duration-200 text-white">
+        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+          <Laptop className="w-5 h-5 text-cyan-300" />
+        </div>
+        <div className="flex-1 min-w-0 flex flex-col gap-1">
+          {/** Title */}
+          <div className="flex items-center gap-2">
+            <h4 className="font-semibold text-slate-100 ">{item.title}</h4>
+
+            {/** Priority */}
+            <span
+              className={`text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border ${priorityColor}`}
+            >
+              {item.priority}
+            </span>
+          </div>
+
+          {/** Description */}
+          {item.description && (
+            <p className="text-sm text-slate-400 truncate">
+              {item.description}
+            </p>
+          )}
+
           {/** Author */}
-          <p className="text-sm text-slate">Author: {item.author}</p>
+          {item.author && (
+            <p className="text-sm text-slate-400">Author: {item.author}</p>
+          )}
+
           {/** Category */}
-          {item.category && <p className="text-slate-300">{item.category}</p>}
-          {/** Progress Current */}
-          <p className="text-slate-300">
-            {/** Progress Total */}
-            {item.progressCurrent} / {item.progressTotal ?? 'unknown total'}
-          </p>
+          {item.category && <p className="text-slate-400">{item.category}</p>}
+
+          {/** Progress  */}
+          {pct !== null ? (
+            <div className="mt-1.5">
+              <div className="flex justify-between text-xs text-slate-400 mb-1">
+                <span>
+                  {item.progressCurrent} / {item.progressTotal}{' '}
+                  {item.progressUnit ? item.progressUnit : ''}
+                </span>
+                <span>{pct}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-cyan-500 rounded-full transition-all"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs text-slate-500 mt-1">
+              {item.progressCurrent} / {item.progressTotal ?? '-'}
+            </p>
+          )}
         </div>
         <div className="flex gap-2 items-center flex-shrink-0">
           <button
@@ -199,9 +250,9 @@ function CourseCard({
               e.stopPropagation()
               onDelete()
             }}
-            className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-red-500 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
           >
-            <Trash className="h-4 w-4" />
+            <Trash className="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -213,6 +264,41 @@ function EmptyTabContent({ message }: { message: string }) {
   return (
     <>
       <p className="text-slate-400 text-sm py-4 text-center">{message}</p>
+    </>
+  )
+}
+
+function CourseGrid({
+  items,
+  onCardClick,
+  onEdit,
+  onDelete,
+  emptyMessage,
+}: {
+  items: Array<Courses>
+  onCardClick: (i: Courses) => void
+  onEdit: (i: Courses) => void
+  onDelete: (i: string) => void
+  emptyMessage: string
+}) {
+  if (items.length === 0) return <EmptyTabContent message={emptyMessage} />
+  return (
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="cursor-pointer"
+            onClick={() => onCardClick(item)}
+          >
+            <CourseCard
+              item={item}
+              onEdit={() => onEdit(item)}
+              onDelete={() => onDelete(item.id)}
+            />
+          </div>
+        ))}
+      </div>
     </>
   )
 }
@@ -283,6 +369,18 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
     return filtered
   }, [courses, courseSearch])
+
+  const byPriority = useMemo(() => {
+    const base = filteredCourses
+    const group = (p: string) => base.filter((c) => c.priority === p)
+    return {
+      high: group('high'),
+      medium: group('medium'),
+      low: group('low'),
+      none: group('none'),
+    }
+  }, [filteredCourses])
+
   const refreshPath = '/readingroom'
 
   if (!isOpen) return null
@@ -328,7 +426,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
               </button>
             </div>
             <button
-              className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
+              className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-cyan-600 hover:bg-cyan text-white font-medium transition-colors"
               onClick={() => {
                 setisAddOpen(true)
               }}
@@ -352,30 +450,54 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
               {/** Empty State */}
               {courses?.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
-                  No courses added to inventory yet, star
+                  No courses added to inventory yet
                 </div>
               )}
               <SearchArea value={courseSearch} onChange={setCourseSearch} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              {filteredCourses.length === 0 && courseSearch ? (
-                <EmptyTabContent message="No courses match your search" />
-              ) : (
-                filteredCourses.map((item: Courses) => (
-                  <div
-                    key={item.id}
-                    className="cursor-pointer"
-                    onClick={() => handleCardClick(item)}
-                  >
-                    <CourseCard
-                      item={item}
-                      onEdit={() => handleEdit(item)}
-                      onDelete={() => handleDelete(item.id)}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
+            <Tabs defaultValue="high" className="w-full mt-4">
+              <TabsList className="grid w-full grid-cols-4 bg-slate-800">
+                <TabsTrigger
+                  value="high"
+                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                >
+                  High ({byPriority.high.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="medium"
+                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                >
+                  Medium ({byPriority.medium.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="low"
+                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                >
+                  Low ({byPriority.low.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="none"
+                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                >
+                  None ({byPriority.none.length})
+                </TabsTrigger>
+              </TabsList>
+              {(['high', 'medium', 'low', 'none'] as const).map((p) => (
+                <TabsContent key={p} value={p} className="mt-4">
+                  <CourseGrid
+                    items={byPriority[p]}
+                    onCardClick={handleCardClick}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    emptyMessage={
+                      courseSearch
+                        ? 'No courses match your search'
+                        : 'Nothing added to courses yet'
+                    }
+                  />
+                </TabsContent>
+              ))}
+            </Tabs>
           </div>
         )}
       </div>
