@@ -2,11 +2,12 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import {
   BookOpen,
+  Contact,
+  FileQuestionMark,
   Home,
   LogIn,
   LogOut,
   Menu,
-  Sparkles,
   UserPlus,
   X,
 } from 'lucide-react'
@@ -144,6 +145,31 @@ export default function Header({
                   <span className="font-medium">Blogs</span>
                 </Link>
               </div> */}
+              <Link
+                to="/contact"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800/900 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-slate-800 transition-colors mb-2',
+                }}
+              >
+                <Contact size={20} />
+                <span className="font-medium">Contact</span>
+              </Link>
+
+              <Link
+                to="/about"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800/900 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-slate-800 transition-colors mb-2',
+                }}
+              >
+                <FileQuestionMark size={20} />
+                <span className="font-medium">About</span>
+              </Link>
               {/** Divider */}
               <div className="my-4 border-t border-gray-700"></div>
               <button

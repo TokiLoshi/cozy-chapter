@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 
 import {
   BookOpen,
@@ -80,7 +80,8 @@ function App() {
     {
       icon: <Terminal className="w-6 h-6" />,
       title: 'Terminal',
-      description: 'Launch Movies, Series, Podcasts and soon, courses.',
+      description:
+        "Launch Movies, Series, Podcasts and (in dev) courses. Includes easter eggs for devs and fred fans, if you don't know don't worry",
       color: 'from-zinc-500/20 to-zinc-500/5',
       border: 'border-zinc-500/30',
       accent: 'text-zinc-400',
@@ -121,8 +122,9 @@ function App() {
           {/** Background image */}
           <div className="absolute inset-0">
             <img
-              src="/homedemo.png"
-              alt="home demo"
+              src="/homedemoupdate.png"
+              alt=""
+              aria-hidden="true"
               className="w-full h-full object-cover opacity-60"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-900/60 to-slate-950" />
@@ -154,13 +156,12 @@ function App() {
               Built with Three.js, TanStack Start, and a love for cozy vibes
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="./signup"
-                rel="noopener noreferrer"
+              <Link
+                to="/signup"
                 className="group relative px-8 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/40"
               >
-                Get started
-              </a>
+                Get Cozy
+              </Link>
             </div>
           </div>
           {/** Scroll hint */}
@@ -256,18 +257,18 @@ function App() {
               in seconds.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="./signup"
+              <Link
+                to="/signup"
                 className="px-8 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/40"
               >
                 Create your own room
-              </a>
-              <a
-                href="./login"
+              </Link>
+              <Link
+                to="/login"
                 className="px-8 py-3.5 text-slate-400 hover:text-white font-medium transition-colors"
               >
                 Already have an account? Login →
-              </a>
+              </Link>
             </div>
           </div>
         </section>
