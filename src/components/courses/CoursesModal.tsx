@@ -103,10 +103,10 @@ function ExpandedCourseCard({
         )}
 
         {/** EstimatedMinutes remaining */}
-        {item.progressTotal && (
+        {item.estimatedMinutesRemaining && (
           <DetailItem label="Estimated Time Remaining">
             <p className="text-sm font-medium text-slate-200">
-              {item.progressTotal}
+              {item.estimatedMinutesRemaining}
             </p>
           </DetailItem>
         )}
@@ -127,7 +127,7 @@ function ExpandedCourseCard({
               <a
                 href={item.url}
                 target="_blank"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-green-600"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-cyan-600 hover:bg-cyan-500"
               >
                 <Laptop className="w-4 h-4 text-cyan-300" />
                 Go do a lesson
@@ -347,7 +347,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
   }
 
   const handleEdit = (item: Courses) => {
-    setExpandedCourse(item)
+    setExpandedCourse(null)
     setCourseToEdit(item)
     setIsEditOpen(true)
   }

@@ -94,7 +94,7 @@ function ErrorMessages({
       {errors.map((error) => (
         <div
           key={typeof error === 'string' ? error : error.message}
-          className="text-red-500 mt0-1 font-bold"
+          className="text-red-500 mt-1 font-bold"
         >
           {typeof error === 'string' ? error : error.message}
         </div>
@@ -269,7 +269,7 @@ export function Switch({ label }: { label: string }) {
   const errors = useStore(field.store, (state) => state.meta.errors)
   return (
     <div>
-      <div className="felx items-center gap-2">
+      <div className="flex items-center gap-2">
         <ShadcnSwitch
           id={label}
           onBlur={field.handleBlur}

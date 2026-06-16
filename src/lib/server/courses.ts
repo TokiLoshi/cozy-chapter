@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../auth'
-import type { NewCourse } from '@/db/schemas/course-schema'
+import type { Courses, NewCourse } from '@/db/schemas/course-schema'
 import {
   createCourse,
   deleteCourse,
@@ -59,7 +59,7 @@ export const getSingleCourseServer = createServerFn({ method: 'GET' })
   })
 
 type CourseUpdates = Partial<
-  Omit<NewCourse, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+  Omit<Courses, 'userId' | 'createdAt' | 'updatedAt'>
 >
 
 export const updateCoursesServer = createServerFn({ method: 'POST' })
