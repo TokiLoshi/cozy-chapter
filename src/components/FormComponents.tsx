@@ -220,6 +220,12 @@ export function Select({
 
   return (
     <div>
+      <label
+        htmlFor={field.name}
+        className="block text-lg font-bold text-slate-100 mb-2"
+      >
+        {label}
+      </label>
       <ShadcnSelect.Select
         name={field.name}
         value={field.state.value}

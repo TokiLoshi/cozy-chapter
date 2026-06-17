@@ -73,12 +73,13 @@ export const updateCoursesServer = createServerFn({ method: 'POST' })
       throw new Error("This course doesn't exist")
     }
 
-    const isFinishing = !!data.updates.finishedAt
+    const wasFinished = !!currentCourse.data?.finishedAt
+    const nowFinished = !!data.updates.finishedAt
 
     const finalUpdates: CourseUpdates = { ...data.updates }
-    if (isFinishing) {
-      finalUpdates.priority = 'none'
+    if (!wasFinished && nowFinished) {
       finalUpdates.finishedAt = new Date()
+      finalUpdates.priority = 'none'
     }
 
     const result = await updateCourse(session.user.id, data.id, finalUpdates)

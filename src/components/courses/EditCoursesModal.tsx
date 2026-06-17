@@ -208,7 +208,7 @@ export default function EditCoursesModal({
             <form.AppField name="progressCurrent">
               {(field) => (
                 <field.NumberField
-                  label="progressCurrent"
+                  label="Current Progress"
                   placeholder={'Current Progress'}
                 />
               )}
@@ -216,7 +216,9 @@ export default function EditCoursesModal({
 
             {/** ProgressUnit */}
             <form.AppField name="progressUnit">
-              {(field) => <field.TextField label="ProgressUnit" />}
+              {(field) => (
+                <field.TextField label="Progress Unit (lessons / videos)" />
+              )}
             </form.AppField>
 
             {/** ProgressTotal */}
@@ -252,10 +254,23 @@ export default function EditCoursesModal({
             {/** Date Finished */}
             <form.AppField name="finishedAt">
               {(field) => (
-                <field.DateField
-                  label="date course finished"
-                  placeholder={'Finished At'}
-                />
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <field.DateField
+                      label="date course finished"
+                      placeholder={'Finished At'}
+                    />
+                    {field.state.value && (
+                      <button
+                        type="button"
+                        onClick={() => field.handleChange(null)}
+                        className="cursor-pointer mt-2 mb-2 px-3 py-2 text-sm rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 transition-colors"
+                      >
+                        Reset Date
+                      </button>
+                    )}
+                  </div>
+                </div>
               )}
             </form.AppField>
 
