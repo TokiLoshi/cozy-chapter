@@ -18,3 +18,25 @@ export const sendContactEmail = createServerFn({ method: 'POST' })
     })
     return { ok: true }
   })
+
+export const inviteHousehold = createServerFn({ method: 'POST' })
+  .inputValidator(
+    (data: {
+      emailTo: string
+      username: string
+      code: string
+      messageFrom: string
+    }) => data,
+  )
+  .handler(async ({ data }) => {
+    await sendEmail({
+      to: data.emailTo,
+      subject: `Cozy Chapter - ${data.username} has invited you to their cozy space`,
+      html: `<p>From: ${data.messageFrom}<p>
+    <p>${data.username} is inviting you to join their household so you can look after your plants together</p>
+    <p>Copy and paste this code to accept:  </p>
+    <p>${data.code}</p>
+    <button><a>https://https://cozy-chapter.netlify.app/household/${data.code}</a></button>
+    <p>This invite will expire in 48 hours</p>`,
+    })
+  })

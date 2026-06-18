@@ -7,6 +7,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core'
 import { user } from '../schemas/auth-schema'
+import { household } from '../schemas/household-schema'
 
 export const plantHealthEnum = pgEnum('plant_health', [
   'thriving',
@@ -37,6 +38,12 @@ export const userPlants = pgTable('plants', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   updatedAt: timestamp('updatedAt').notNull().defaultNow(),
   plantImageUrl: text('plantImageUrl'),
+  householdId: uuid('householdId').references(() => household.id, {
+    onDelete: 'set null',
+  }),
+  updatedBy: text('updatedBy').references(() => user.id, {
+    onDelete: 'set null',
+  }),
 })
 
 export type Plant = typeof userPlants.$inferSelect
