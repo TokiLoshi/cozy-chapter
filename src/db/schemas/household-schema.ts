@@ -15,6 +15,7 @@ export const household = pgTable('household', {
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
 
 export const householdRoleEnum = pgEnum('householdRole', ['owner', 'member'])
@@ -31,6 +32,7 @@ export const householdMember = pgTable(
       .references(() => user.id, { onDelete: 'cascade' }),
     role: householdRoleEnum('role').notNull().default('member'),
     joinedAt: timestamp('joinedAt').notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt').notNull().defaultNow(),
   },
   (h) => [unique().on(h.userId)],
 )
@@ -55,6 +57,7 @@ export const householdInvite = pgTable('householdInvite', {
   status: inviteStatusEnum('status').notNull().default('pending'),
   expiresAt: timestamp('expiresAt').notNull(),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 })
 
 export type Household = typeof household.$inferSelect

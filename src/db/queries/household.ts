@@ -1,17 +1,18 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, not } from 'drizzle-orm'
 import { user } from 'auth-schema'
 import {
   household,
   householdInvite,
   householdMember,
 } from '../schemas/household-schema'
-import type {
+import {
   Household,
   NewHousehold,
   NewHouseholdMember,
   householdRoleEnum,
 } from '../schemas/household-schema'
 import { db } from '@/db'
+import { detachPlantsFromHousehold, plantCleanup } from './plants'
 
 // Create a household
 export async function createHousehold(input: { userId: string; name: string }) {
@@ -40,6 +41,67 @@ export async function createHousehold(input: { userId: string; name: string }) {
   } catch (error) {
     console.error(
       `Error creating household ${(error as Error).message} for ${input.userId}`,
+    )
+    return { success: false, error }
+  }
+}
+
+export async function addHouseholdMember(userId: string, token: string) {
+  // User can't be in household
+  try {
+    const existing = getMembershipByUser(userId)
+    if ((await existing).data) {
+      return { success: false, message: 'user already in household' }
+    }
+    // Token can't be expired and must match
+    const invites = await db
+      .select()
+      .from(householdInvite)
+      .where(eq(householdInvite.token, token))
+
+    if (invites.length === 0) {
+      return { success: false, message: 'invalid token' }
+    }
+    const invite = invites[0]
+
+    if (invite.status !== 'pending') {
+      return { success: false, message: `Invite already ${invite.status}` }
+    }
+    if (!invite.token) {
+      return { success: false, message: 'invalid token' }
+    }
+    if (invite.expiresAt < new Date()) {
+      // invite has expired updaate the invite
+      await db
+        .update(householdInvite)
+        .set({
+          status: 'expired',
+        })
+        .where(eq(householdInvite.token, token))
+
+      return { success: false, message: 'token expired' }
+    }
+    // If household exists an owner must exist too so new member role is member
+    const result = await db.transaction(async (tx) => {
+      const [member] = await tx
+        .insert(householdMember)
+        .values({
+          userId,
+          householdId: invite.householdId,
+          role: 'member',
+        })
+        .returning()
+      await tx
+        .update(householdInvite)
+        .set({ status: 'accepted' })
+        .where(eq(householdInvite.token, token))
+      return member
+    })
+
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(
+      `Error adding member ${userId} to household ${(error as Error).message}`,
     )
     return { success: false, error }
   }
@@ -113,12 +175,67 @@ export async function getHouseholdMembers(householdId: string) {
   }
 }
 
-// Modify a household
-export async function updateHousehold(
-  householdId: string,
-  updates: NewHouseholdMember,
-) {
-  // If the household exists and a new member joins they should be a member
+export async function renameHousehold(householdId: string, name: string) {
+  try {
+    const householdName = name.trim()
+    if (householdName.length === 0) {
+      return { success: false, message: "name can't be empty" }
+    }
+    const [result] = await db
+      .update(household)
+      .set({
+        name: householdName,
+        updatedAt: new Date(),
+      })
+      .where(eq(household.id, householdId))
+      .returning()
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(`Error renaming household ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
+export async function leaveHousehold(householdId: string, userId: string) {
+  // Get user's role
+  const memberShip = await db
+    .select({ role: householdMember.role })
+    .from(householdMember)
+  // detatch user's plants setting their householdId to null
+  const resetPlants = await detachPlantsFromHousehold(householdId, userId)
+  if (!resetPlants.success) {
+    return { success: false, message: 'failed to clean up plants' }
+  }
+
+  try {
+    // If role is owner promote other person to owner
+    if (memberShip === 'owner') {
+      const [houseMate] = await db
+        .select({ userId: householdMember.userId })
+        .from(householdMember)
+        .where(
+          and(
+            eq(householdMember.householdId, householdId),
+            not(householdMember.userId),
+          ),
+        )
+      await db
+        .update(householdMember)
+        .set({
+          role: 'owner',
+          updatedAt: new Date(),
+        })
+        .where(eq(householdMember.userId, houseMate.userId))
+    }
+    const [result] = await db
+      .delete(householdMember)
+      .where(eq(householdMember.userId, userId))
+      .returning()
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(`Error leaving household ${(error as Error).message}`)
+    return { success: false, error }
+  }
 }
 
 // updateHousehold member

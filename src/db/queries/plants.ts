@@ -52,6 +52,31 @@ export async function updatePlant(
   }
 }
 
+export async function detachPlantsFromHousehold(
+  householdId: string,
+  userId: string,
+) {
+  try {
+    const result = await db
+      .update(userPlants)
+      .set({
+        householdId: null,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(userPlants.householdId, householdId),
+          eq(userPlants.userId, userId),
+        ),
+      )
+      .returning()
+    return { success: true, result }
+  } catch (error) {
+    console.error(`Error cleaning up plants: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
 const utapi = new UTApi()
 
 // Delete Plant
