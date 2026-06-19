@@ -1,4 +1,5 @@
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
+import { user } from 'auth-schema'
 import {
   household,
   householdInvite,
@@ -16,8 +17,8 @@ import { db } from '@/db'
 export async function createHousehold(input: { userId: string; name: string }) {
   try {
     // Check if household exists
-    const existing = await getHousehold(input.userId)
-    if (existing.householdData) {
+    const existing = await getMembershipByUser(input.userId)
+    if (existing.data) {
       return { success: false, message: 'User already belongs to a household' }
     }
     const result = await db.transaction(async (tx) => {
@@ -46,11 +47,16 @@ export async function createHousehold(input: { userId: string; name: string }) {
 
 // get user membership:
 export async function getMembershipByUser(userId: string) {
-  const [member] = await db
-    .select()
-    .from(householdMember)
-    .where(eq(householdMember.userId, userId))
-  return member
+  try {
+    const [member] = await db
+      .select()
+      .from(householdMember)
+      .where(eq(householdMember.userId, userId))
+    return { success: true, data: member }
+  } catch (error) {
+    console.error(`Failed to get householdmember ${(error as Error).message}`)
+    return { success: false, error }
+  }
 }
 
 // Get a household
@@ -70,9 +76,9 @@ export async function getHousehold(householdId: string) {
 }
 
 // get householdMember
-export async function getHouseHoldMember(householdMemberId: string) {
+export async function getHouseholdMember(householdMemberId: string) {
   try {
-    const member = await db
+    const [member] = await db
       .select()
       .from(householdMember)
       .where(eq(householdMember.id, householdMemberId))
@@ -80,6 +86,28 @@ export async function getHouseHoldMember(householdMemberId: string) {
   } catch (error) {
     console.error(
       `Error getting householdMember ${(error as Error).message} for ${householdMemberId}`,
+    )
+    return { success: false, error }
+  }
+}
+
+export async function getHouseholdMembers(householdId: string) {
+  try {
+    const members = await db
+      .select({
+        userId: householdMember.userId,
+        role: householdMember.role,
+        joinedAt: householdMember.joinedAt,
+        name: user.name,
+        image: user.image,
+      })
+      .from(householdMember)
+      .innerJoin(user, eq(householdMember.userId, user.id))
+      .where(eq(householdMember.householdId, householdId))
+    return { success: true, members }
+  } catch (error) {
+    console.error(
+      `Error getting household memebers ${(error as Error).message}`,
     )
     return { success: false, error }
   }
@@ -98,9 +126,10 @@ export async function updateHousehold(
 // Delete a household
 export async function deleteHousehold(householdId: string) {
   try {
-    const result = await db
+    const [result] = await db
       .delete(household)
       .where(eq(household.id, householdId))
+      .returning()
     return { success: true, data: result }
   } catch (error) {
     console.error(
@@ -113,11 +142,13 @@ export async function deleteHousehold(householdId: string) {
 // Check the invite status
 export async function getInviteStatus(householdId: string) {
   try {
-    const inviteStatus = await db
+    const [invite] = await db
       .select()
       .from(householdInvite)
       .where(eq(householdInvite.householdId, householdId))
-    return { success: true, data: inviteStatus }
+      .orderBy(desc(householdInvite.createdAt))
+      .limit(1)
+    return { success: true, data: invite }
   } catch (error) {
     console.error(
       `Error fetching invite status ${(error as Error).message} for ${householdId}`,
