@@ -16,13 +16,21 @@ export async function createPlant(plant: NewPlant) {
 }
 
 // get plant data for user
-export async function getUsersPlants(userId: string) {
+export async function getUsersPlants(userId: string, householdId?: string) {
   try {
-    const result = await db
-      .select()
-      .from(userPlants)
-      .where(eq(userPlants.userId, userId))
-    return { success: true, data: result }
+    if (householdId) {
+      const result = await db
+        .select()
+        .from(userPlants)
+        .where(eq(userPlants.householdId, householdId))
+      return { success: true, data: result }
+    } else {
+      const result = await db
+        .select()
+        .from(userPlants)
+        .where(eq(userPlants.userId, userId))
+      return { success: true, data: result }
+    }
   } catch (error) {
     console.error('Error getting plants for user: ', userId)
     return { success: false, error }
@@ -38,13 +46,32 @@ export async function updatePlant(
   id: string,
   userId: string,
   updates: PlantUpdates,
+  householdId?: string,
 ) {
   try {
+    let householdCondition
+    if (householdId) {
+      householdCondition = and(
+        eq(userPlants.id, id),
+        eq(userPlants.householdId, householdId),
+      )
+    } else {
+      householdCondition = and(
+        eq(userPlants.id, id),
+        eq(userPlants.userId, userId),
+      )
+    }
     const result = await db
       .update(userPlants)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(userPlants.id, id), eq(userPlants.userId, userId)))
+      .set({ ...updates, updatedBy: userId, updatedAt: new Date() })
+      .where(householdCondition)
       .returning()
+    if (!result[0]) {
+      return {
+        success: false,
+        message: 'plant update not found or not permitted',
+      }
+    }
     return { success: true, data: result[0] }
   } catch (error) {
     console.error('Error editing plant with id: ', id)
@@ -70,9 +97,29 @@ export async function detachPlantsFromHousehold(
         ),
       )
       .returning()
-    return { success: true, result }
+    return { success: true, data: result }
   } catch (error) {
     console.error(`Error cleaning up plants: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
+export async function attachPlantsToHousehold(
+  householdId: string,
+  userId: string,
+) {
+  try {
+    const result = await db
+      .update(userPlants)
+      .set({
+        householdId,
+        updatedAt: new Date(),
+      })
+      .where(eq(userPlants.userId, userId))
+      .returning()
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(`Error attaching plants: ${(error as Error).message}`)
     return { success: false, error }
   }
 }
