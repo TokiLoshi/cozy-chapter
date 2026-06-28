@@ -76,7 +76,7 @@ export const inviteHousehold = createServerFn({ method: 'POST' })
     <p>${senderUsername} is inviting you to join their household so you can look after your plants together</p>
     <p>Copy and paste this code to accept:  </p>
     <p>${randomCode}</p>
-    <button><a>https://cozy-chapter.netlify.app/household/${randomCode}</a></button>
+    <p><a>https://cozy-chapter.netlify.app/household/${randomCode}</a></p>
     <p>This invite will expire in 48 hours</p>`,
     })
   })
