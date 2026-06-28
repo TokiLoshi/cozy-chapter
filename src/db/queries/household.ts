@@ -271,3 +271,28 @@ export async function getInviteStatus(householdId: string) {
     return { success: false, error }
   }
 }
+
+export async function createInvite(
+  householdId: string,
+  invitedBy: string,
+  email: string,
+  token: string,
+) {
+  try {
+    const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000)
+    const [invite] = await db
+      .insert(householdInvite)
+      .values({
+        householdId,
+        invitedBy,
+        email,
+        token,
+        expiresAt,
+      })
+      .returning()
+    return { success: true, data: invite }
+  } catch (error) {
+    console.error(`Error adding invite: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}

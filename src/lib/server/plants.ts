@@ -40,7 +40,6 @@ export const getUserPlants = createServerFn({ method: 'GET' }).handler(
 )
 
 // Create plants
-
 export const createPlantServer = createServerFn({ method: 'POST' })
   .inputValidator(
     (data: Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => data,
