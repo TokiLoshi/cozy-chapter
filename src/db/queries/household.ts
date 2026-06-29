@@ -5,6 +5,7 @@ import {
   householdInvite,
   householdMember,
 } from '../schemas/household-schema'
+import { userPlants } from '../schemas/plant-schema'
 import { detachPlantsFromHousehold } from './plants'
 import { db } from '@/db'
 
@@ -43,8 +44,8 @@ export async function createHousehold(input: { userId: string; name: string }) {
 export async function addHouseholdMember(userId: string, token: string) {
   // User can't be in household
   try {
-    const existing = getMembershipByUser(userId)
-    if ((await existing).data) {
+    const existing = await getMembershipByUser(userId)
+    if (existing.data) {
       return { success: false, message: 'user already in household' }
     }
     // Token can't be expired and must match
@@ -61,9 +62,7 @@ export async function addHouseholdMember(userId: string, token: string) {
     if (invite.status !== 'pending') {
       return { success: false, message: `Invite already ${invite.status}` }
     }
-    if (!invite.token) {
-      return { success: false, message: 'invalid token' }
-    }
+
     if (invite.expiresAt < new Date()) {
       // invite has expired updaate the invite
       await db
@@ -83,16 +82,25 @@ export async function addHouseholdMember(userId: string, token: string) {
           userId,
           householdId: invite.householdId,
           role: 'member',
+          updatedAt: new Date(),
         })
         .returning()
       await tx
         .update(householdInvite)
-        .set({ status: 'accepted' })
+        .set({ status: 'accepted', updatedAt: new Date() })
         .where(eq(householdInvite.token, token))
+
+      await tx
+        .update(userPlants)
+        .set({ householdId: invite.householdId, updatedAt: new Date() })
+        .where(eq(userPlants.userId, userId))
       return member
     })
 
-    return { success: true, data: result }
+    return {
+      success: true,
+      data: { member: result, invitedBy: invite.invitedBy },
+    }
   } catch (error) {
     console.error(
       `Error adding member ${userId} to household ${(error as Error).message}`,
@@ -169,6 +177,19 @@ export async function getHouseholdMembers(householdId: string) {
   }
 }
 
+export async function getUserEmail(userId: string) {
+  try {
+    const [userDetails] = await db
+      .select({ email: user.email, name: user.name })
+      .from(user)
+      .where(eq(user.id, userId))
+    return { success: true, data: userDetails }
+  } catch (error) {
+    console.error(`Error getting user's email: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
 export async function renameHousehold(householdId: string, name: string) {
   try {
     const householdName = name.trim()
@@ -190,7 +211,7 @@ export async function renameHousehold(householdId: string, name: string) {
   }
 }
 
-export async function leaveHousehold(householdId: string, userId: string) {
+export async function leaveHouseholdById(householdId: string, userId: string) {
   try {
     const memberships = await db
       .select({ role: householdMember.role })
@@ -293,6 +314,23 @@ export async function createInvite(
     return { success: true, data: invite }
   } catch (error) {
     console.error(`Error adding invite: ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
+export async function declineInviteByToken(token: string) {
+  try {
+    const [updatedInvite] = await db
+      .update(householdInvite)
+      .set({
+        status: 'declined',
+        updatedAt: new Date(),
+      })
+      .where(eq(householdInvite.token, token))
+      .returning()
+    return { success: true, data: updatedInvite }
+  } catch (error) {
+    console.error(`Error updating invite: ${(error as Error).message}`)
     return { success: false, error }
   }
 }

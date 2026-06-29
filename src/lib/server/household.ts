@@ -5,11 +5,16 @@ import { getRequest } from '@tanstack/react-start/server'
 import sendEmail from '../email'
 import { auth } from '@/lib/auth'
 import {
+  addHouseholdMember,
   createHousehold,
   createInvite,
+  declineInviteByToken,
+  getHousehold,
   getHouseholdMembers,
   getInviteStatus,
   getMembershipByUser,
+  getUserEmail,
+  leaveHouseholdById,
 } from '@/db/queries/household'
 
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -76,46 +81,99 @@ export const inviteHousehold = createServerFn({ method: 'POST' })
     <p>${senderUsername} is inviting you to join their household so you can look after your plants together</p>
     <p>Copy and paste this code to accept:  </p>
     <p>${randomCode}</p>
-    <p><a>https://cozy-chapter.netlify.app/household/${randomCode}</a></p>
+    <p><a href="https://cozy-chapter.netlify.app/household/${randomCode}">Accept invite</a></p>
     <p>This invite will expire in 48 hours</p>`,
     })
   })
 
 // Accept invite
 export const acceptInvite = createServerFn({ method: 'POST' })
-  .inputValidator(
-    (data: { username: string; code: string; userId: string }) => data,
-  )
+  .inputValidator((data: { code: string }) => data)
   .handler(async ({ data }) => {
-    console.log('DATA placeholder: ', data)
     // look up user by username and id
-    // validate token exists
-    // validate token is still valid
-    // if enough time has passed that token should not be valid invalidate
-    // return message to user
-    // if token is still valid add user to household
-    // update the invite status
-    // show success message to user that they have joined the household
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    const userId = session.user.id
+    const token = data.code
+    const result = await addHouseholdMember(userId, token)
+    if (!result.success || !result.data) {
+      throw new Error(
+        `Couldn't add user to houehold: ${result.error ?? result.message}`,
+      )
+    }
+    const owner = await getUserEmail(result.data.invitedBy)
+
     // send email notification to owner (user inviting) that username has joined their household
+    if (owner.success && owner.data) {
+      await sendEmail({
+        to: owner.data.email,
+        subject: `Cozy Chapter - ${session.user.name} has joined your cozy space`,
+        html: `
+    <p>Hi ${owner.data.name} congrats on your new housemate! Now you can water your plants together</p>
+    <p>Take a look at your extra cozy space with your household</p>
+   
+    <p><a href="https://cozy-chapter.netlify.app/readingroom">Get Cozy</a></p>`,
+      })
+    }
+
+    // show success message to user that they have joined the household
+    return {
+      success: true,
+      message: "You've successfully joined your household",
+    }
   })
 
 // invalidate
 export const declineInvite = createServerFn({ method: 'POST' })
-  .inputValidator(
-    (data: { username: string; userId: string; code: string }) => data,
-  )
+  .inputValidator((data: { code: string }) => data)
   .handler(async ({ data }) => {
-    // look up user by username and id
-    // validate token exists and is valid
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+
     // invalidate token and update status
-    // show success message to user the invite has been decline
+    const declined = await declineInviteByToken(data.code)
+    if (!declined.success || !declined.data) {
+      throw new Error(`Couldn't decline invite: ${declined.error}`)
+    }
+
     // send notification to owner / inviting user that user declined to join household
+    const owner = await getUserEmail(declined.data.invitedBy)
+    if (owner.success && owner.data) {
+      await sendEmail({
+        to: owner.data.email,
+        subject: `Cozy Chapter - ${session.user.name} has declined your invite`,
+        html: `
+    <p>Hi ${owner.data.name}</p>
+    <p>Your invite was declined but you can always invite someone else. Your cozy household remains intact.</p>
+   
+    <p><a href="https://cozy-chapter.netlify.app/readingroom">Get Cozy</a></p>`,
+      })
+    }
+    // show success message to user the invite has been decline
+    return {
+      success: true,
+      message: 'You have successfully declined this invite',
+    }
   })
 
 // leave household
-export const leaveHousehold = createServerFn({ method: 'POST' })
-  .inputValidator((data: { userId: string }) => data)
-  .handler(async ({ data }) => {
-    // get householdId
+export const leaveHousehold = createServerFn({ method: 'POST' }).handler(
+  async () => {
+    // user and get householdId
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    const household = await getMembershipByUser(session.user.id)
+    if (!household.success || !household.data) {
+      throw new Error(`Failed to get household: ${household.error}`)
+    }
+    const successfullyLeft = await leaveHouseholdById(
+      household.data.householdId,
+      session.user.id,
+    )
+    if (!successfullyLeft.success) {
+      throw new Error('Something went wrong trying to leave household')
+    }
     // leave household
-  })
+    return { success: true, message: 'Successfully left the household' }
+  },
+)
