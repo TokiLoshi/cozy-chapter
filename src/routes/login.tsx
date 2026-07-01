@@ -11,25 +11,30 @@ export const Route = createFileRoute('/login')({
 function LoginRoute() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [err, setErr] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    setErr(null)
 
     const formData = new FormData(e.currentTarget)
     const email = String(formData.get('email'))
     const password = String(formData.get('password'))
     try {
-      await signIn.email({
+      const { error } = await signIn.email({
         email,
         password,
       })
+      if (error) {
+        setErr(error.message ?? 'Login failed')
+        return
+      }
+      await router.invalidate()
       router.navigate({ to: '/readingroom' })
-    } catch (err) {
-      console.error('Login failed: ', err)
-      setError(err instanceof Error ? err.message : 'Login failed')
+    } catch (error) {
+      console.error('Login failed: ', error)
+      setErr(error instanceof Error ? error.message : 'Login failed')
     } finally {
       setLoading(false)
     }
@@ -50,9 +55,9 @@ function LoginRoute() {
           onSubmit={handleSubmit}
           className="bg-slate-900 rounded-xl shadow-2xl p-8 border border-gray-700"
         >
-          {error && (
+          {err && (
             <div className="bg-red-900/50 border border-red-700 text-red-200 px-4 py-3 rounded-lg mb-6">
-              {error}
+              {err}
             </div>
           )}
           <div className="mb-4">

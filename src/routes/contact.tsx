@@ -29,7 +29,7 @@ function ContactPage() {
       })
       setSent(true)
     } catch (error) {
-      console.error(`Error resetting password`)
+      console.error(`Error sending message`)
       setErr(error instanceof Error ? error.message : 'something went wrong')
     } finally {
       setLoading(false)
