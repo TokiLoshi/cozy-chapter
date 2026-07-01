@@ -9,7 +9,6 @@ import {
   createHousehold,
   createInvite,
   declineInviteByToken,
-  getHousehold,
   getHouseholdMembers,
   getInviteStatus,
   getMembershipByUser,
@@ -21,6 +20,39 @@ const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
   return session
 })
+
+export const getHouseholdState = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    const userId = session.user.id
+    const membership = await getMembershipByUser(userId)
+    if (!membership.data) {
+      return { status: 'solo' as const }
+    }
+    const householdId = membership.data.householdId
+    const members = await getHouseholdMembers(householdId)
+    const memberCount = members.members?.length ?? 0
+    if (memberCount === 2) {
+      const housemate = members.members?.find((user) => user.userId !== userId)
+      return {
+        status: 'shared' as const,
+        householdId,
+        role: membership.data.role,
+        housemate: housemate ? { name: housemate.name } : null,
+      }
+    }
+    const invite = await getInviteStatus(householdId)
+    if (invite.data && invite.data.status === 'pending') {
+      return {
+        status: 'pending' as const,
+        householdId,
+        invitedEmail: invite.data.email,
+      }
+    }
+    return { status: 'solo' as const, householdId }
+  },
+)
 
 export const inviteHousehold = createServerFn({ method: 'POST' })
   .inputValidator((data: { emailTo: string; householdName: string }) => data)

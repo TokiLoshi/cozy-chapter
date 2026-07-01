@@ -18,7 +18,7 @@ const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
 })
 
 // Resolve membership
-export const getCurrentHousehold = async (userId: string) => {
+const getCurrentHousehold = async (userId: string) => {
   const household = await getMembershipByUser(userId)
   return household.data?.householdId
 }
