@@ -9,6 +9,7 @@ import {
   createHousehold,
   createInvite,
   declineInviteByToken,
+  getHousehold,
   getHouseholdMembers,
   getInviteStatus,
   getMembershipByUser,
@@ -31,12 +32,15 @@ export const getHouseholdState = createServerFn({ method: 'GET' }).handler(
       return { status: 'solo' as const }
     }
     const householdId = membership.data.householdId
+    const householdName = (await getHousehold(householdId)).householdData?.name
     const members = await getHouseholdMembers(householdId)
+
     const memberCount = members.members?.length ?? 0
     if (memberCount === 2) {
       const housemate = members.members?.find((user) => user.userId !== userId)
       return {
         status: 'shared' as const,
+        name: householdName,
         householdId,
         role: membership.data.role,
         housemate: housemate ? { name: housemate.name } : null,
@@ -46,6 +50,7 @@ export const getHouseholdState = createServerFn({ method: 'GET' }).handler(
     if (invite.data && invite.data.status === 'pending') {
       return {
         status: 'pending' as const,
+        name: householdName,
         householdId,
         invitedEmail: invite.data.email,
       }

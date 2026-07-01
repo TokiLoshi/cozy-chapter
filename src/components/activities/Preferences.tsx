@@ -1,5 +1,5 @@
 import { toast } from 'sonner'
-import { XIcon } from 'lucide-react'
+import { LogOut, XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAppForm } from '@/hooks/form'
@@ -120,6 +120,16 @@ export default function EditUserPreferences({
       }
     },
   })
+  const handleRename = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('User would like to rename household')
+  }
+  const handleLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('User wants to leave the building')
+  }
   return (
     <>
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
@@ -141,12 +151,32 @@ export default function EditUserPreferences({
             </button>
           </div>
           <div>
-            <p className="text-md ms-3 p-2 font-semibold text-white">
-              You currently have the goal of reading {bookGoal} this year
-            </p>
-            <p className="text-md ms-3 p-2  text-white">
-              Houeshold Status: {household ? household.status : 'No household'}
-            </p>
+            {household?.status === 'shared' && (
+              <>
+                <p className="text-md ms-3 p-2  text-white">
+                  Sharing {household.name ?? 'your household'}{' '}
+                  {household.housemate
+                    ? `with ${household.housemate.name}`
+                    : ''}
+                </p>
+                <button onClick={(e) => handleLeave(e)}>
+                  <LogOut className="w-5 h-5" />
+                </button>
+                <button onClick={(e) => handleRename(e)}>Rename</button>
+              </>
+            )}
+            {household?.status === 'pending' && (
+              <p className="text-md ms-3 p-2 text-white">
+                Invite pending for {household.name ?? 'your household'}
+              </p>
+            )}
+
+            {household?.status === 'solo' && (
+              <p className="text-md ms-3 p-2 text-white">
+                You're flying solo. Would you like to invite someone to share
+                your plants with?
+              </p>
+            )}
           </div>
 
           {household && household.status === 'solo' && (
@@ -223,7 +253,7 @@ export default function EditUserPreferences({
             >
               {(field) => (
                 <field.NumberField
-                  label="Update Reading Goal"
+                  label="This year's reading goal"
                   min={0}
                   placeholder={bookGoal.toString()}
                 />
@@ -232,7 +262,7 @@ export default function EditUserPreferences({
             <div className="flex justify-end">
               <form.AppForm>
                 <form.SubmitButton
-                  label="Submit Edit"
+                  label="Update Goal"
                   className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                 />
               </form.AppForm>
