@@ -10,19 +10,27 @@ import {
   getUsersPlants,
   updatePlant,
 } from '@/db/queries/plants'
+import { getMembershipByUser } from '@/db/queries/household'
 
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
   return session
 })
 
+// Resolve membership
+const getCurrentHousehold = async (userId: string) => {
+  const household = await getMembershipByUser(userId)
+  return household.data?.householdId
+}
+
 // Get user's plants
 export const getUserPlants = createServerFn({ method: 'GET' }).handler(
   async () => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-
-    const result = await getUsersPlants(session.user.id)
+    const userId = session.user.id
+    const householdId = await getCurrentHousehold(userId)
+    const result = await getUsersPlants(userId, householdId)
     if (!result.success) {
       throw new Error('Failed to get plants')
     }
@@ -32,7 +40,6 @@ export const getUserPlants = createServerFn({ method: 'GET' }).handler(
 )
 
 // Create plants
-
 export const createPlantServer = createServerFn({ method: 'POST' })
   .inputValidator(
     (data: Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => data,
@@ -40,8 +47,9 @@ export const createPlantServer = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-
-    const result = await createPlant({ ...data, userId: session.user.id })
+    const userId = session.user.id
+    const householdId = await getCurrentHousehold(userId)
+    const result = await createPlant({ ...data, userId: userId, householdId })
     if (!result.success) {
       throw new Error('Failed to create plant')
     }
@@ -58,7 +66,10 @@ export const updatePlantServer = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-    const result = await updatePlant(data.id, session.user.id, data.updates)
+    const userId = session.user.id
+    const household = await getCurrentHousehold(userId)
+
+    const result = await updatePlant(data.id, userId, data.updates, household)
     if (!result.success) {
       throw new Error('Failed to update plant')
     }
