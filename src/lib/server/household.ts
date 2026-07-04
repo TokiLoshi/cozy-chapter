@@ -15,6 +15,7 @@ import {
   getMembershipByUser,
   getUserEmail,
   leaveHouseholdById,
+  renameHousehold,
 } from '@/db/queries/household'
 
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
@@ -58,6 +59,27 @@ export const getHouseholdState = createServerFn({ method: 'GET' }).handler(
     return { status: 'solo' as const, householdId }
   },
 )
+
+export const updateHousehold = createServerFn({ method: 'POST' })
+  .inputValidator((data: { householdName: string }) => data)
+  .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+
+    const membership = await getMembershipByUser(session.user.id)
+    if (!membership.data) {
+      throw new Error('Not in a household')
+    }
+    const renamed = await renameHousehold(
+      membership.data.householdId,
+      data.householdName,
+    )
+
+    if (!renamed.success) {
+      throw new Error('Failed to rename household')
+    }
+    return { success: true, data: renamed.data }
+  })
 
 export const inviteHousehold = createServerFn({ method: 'POST' })
   .inputValidator((data: { emailTo: string; householdName: string }) => data)

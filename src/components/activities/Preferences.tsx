@@ -1,10 +1,15 @@
 import { toast } from 'sonner'
-import { LogOut, XIcon } from 'lucide-react'
+import { LogOut, Pencil, XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useAppForm } from '@/hooks/form'
 import { updateUserPreferencesServer } from '@/lib/server/preferences'
-import { getHouseholdState, inviteHousehold } from '@/lib/server/household'
+import {
+  getHouseholdState,
+  inviteHousehold,
+  updateHousehold,
+} from '@/lib/server/household'
 
 type UserPreferencesModal = {
   bookGoal: number
@@ -34,6 +39,36 @@ export default function EditUserPreferences({
   })
 
   console.log(' Household data: ', household)
+  const [isEditing, setIsEditing] = useState(false)
+
+  const editHousholdForm = useAppForm({
+    defaultValues: {
+      householdName: household?.name ?? '',
+    },
+    onSubmit: async ({ value }) => {
+      const loadingToast = toast.loading('Updating houeshold name', {
+        classNames: {
+          toast: 'bg-slate-800 border-slate-700',
+          title: 'text-slate-100',
+        },
+      })
+      try {
+        await updateHousehold({ data: { householdName: value.householdName } })
+        queryClient.invalidateQueries({ queryKey: ['household-state'] })
+        toast.dismiss(loadingToast)
+        toast.success('Household renamed!', {
+          classNames: {
+            toast: 'bg-slate-800 border-slate-700',
+            title: 'text-slate-100',
+          },
+        })
+        setIsEditing(false)
+      } catch (error) {
+        console.error(`Error updating household ${(error as Error).message}`)
+        toast.error('Failed to rename household')
+      }
+    },
+  })
 
   const householdForm = useAppForm({
     defaultValues: {
@@ -124,6 +159,7 @@ export default function EditUserPreferences({
     e.preventDefault()
     e.stopPropagation()
     console.log('User would like to rename household')
+    setIsEditing(!isEditing)
   }
   const handleLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -152,18 +188,70 @@ export default function EditUserPreferences({
           </div>
           <div>
             {household?.status === 'shared' && (
-              <>
-                <p className="text-md ms-3 p-2  text-white">
-                  Sharing {household.name ?? 'your household'}{' '}
-                  {household.housemate
-                    ? `with ${household.housemate.name}`
-                    : ''}
-                </p>
-                <button onClick={(e) => handleLeave(e)}>
-                  <LogOut className="w-5 h-5" />
-                </button>
-                <button onClick={(e) => handleRename(e)}>Rename</button>
-              </>
+              <div className="p-6">
+                <div className="text-md text-white">
+                  <p className="text-md text-white">
+                    Sharing {household.name ?? 'your household'}{' '}
+                    {household.housemate
+                      ? `with ${household.housemate.name}`
+                      : ''}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleRename}
+                      aria-label="Rename household"
+                      title="Rename household"
+                      className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10-"
+                    >
+                      <Pencil className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={handleLeave}
+                      aria-label="Leave household"
+                      title="Leave household"
+                      className="cursor-pointer text-slate-400 hover:text-rose-400 p-2 rounded-md hover:bg-rose-300"
+                    >
+                      <LogOut className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+                {isEditing && (
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      editHousholdForm.handleSubmit()
+                    }}
+                    className="mt-4 space-y-4 text-gray-100"
+                  >
+                    <editHousholdForm.AppField
+                      name="householdName"
+                      validators={{
+                        onChange: ({ value }) => {
+                          if (value && value.length === 0)
+                            return 'please name your houshold'
+                          return undefined
+                        },
+                      }}
+                    >
+                      {(field) => (
+                        <field.TextField
+                          label="Household Name"
+                          placeholder="Name your household"
+                        />
+                      )}
+                    </editHousholdForm.AppField>
+                    <div className="flex justify-end">
+                      <editHousholdForm.AppForm>
+                        <editHousholdForm.SubmitButton
+                          label="Rename"
+                          className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                        />
+                      </editHousholdForm.AppForm>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
             {household?.status === 'pending' && (
               <p className="text-md ms-3 p-2 text-white">
