@@ -16,7 +16,6 @@ function SignupPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
     const formData = new FormData(e.target as HTMLFormElement)
     const email = String(formData.get('email'))
@@ -30,11 +29,20 @@ function SignupPage() {
         setLoading(false)
         return
       }
-      await signUp.email({
+      if (password.length <= 8) {
+        setError('Password is too short')
+        setLoading(false)
+        return
+      }
+      const { error: signUpError } = await signUp.email({
         email,
         password,
         name,
       })
+      if (signUpError) {
+        setError(signUpError.message ?? 'Failed to create account')
+      }
+      setError(null)
       router.navigate({ to: '/login' })
     } catch (err) {
       console.error('Error signing up user, ', err, error)
