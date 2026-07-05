@@ -47,6 +47,7 @@ export const getHouseholdState = createServerFn({ method: 'GET' }).handler(
         housemate: housemate ? { name: housemate.name } : null,
       }
     }
+
     const invite = await getInviteStatus(householdId)
     if (invite.data && invite.data.status === 'pending') {
       return {
@@ -56,6 +57,16 @@ export const getHouseholdState = createServerFn({ method: 'GET' }).handler(
         invitedEmail: invite.data.email,
       }
     }
+
+    if (memberCount === 1) {
+      return {
+        status: 'alone' as const,
+        name: householdName,
+        householdId,
+        role: membership.data.role,
+      }
+    }
+
     return { status: 'solo' as const, householdId }
   },
 )

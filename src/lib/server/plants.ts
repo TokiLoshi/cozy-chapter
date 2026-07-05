@@ -10,7 +10,10 @@ import {
   getUsersPlants,
   updatePlant,
 } from '@/db/queries/plants'
-import { getMembershipByUser } from '@/db/queries/household'
+import {
+  getHouseholdMembers,
+  getMembershipByUser,
+} from '@/db/queries/household'
 
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
@@ -30,12 +33,26 @@ export const getUserPlants = createServerFn({ method: 'GET' }).handler(
     if (!session) throw redirect({ to: '/login' })
     const userId = session.user.id
     const householdId = await getCurrentHousehold(userId)
+    const nameByUserId = new Map<string, string>()
+    if (householdId) {
+      const housemates = await getHouseholdMembers(householdId)
+      for (const housemate of housemates.members ?? []) {
+        nameByUserId.set(housemate.userId, housemate.name)
+      }
+    }
+
     const result = await getUsersPlants(userId, householdId)
     if (!result.success) {
       throw new Error('Failed to get plants')
     }
+    const plants = (result.data ?? []).map((plant) => ({
+      ...plant,
+      updatedByName: plant.updatedBy
+        ? (nameByUserId.get(plant.updatedBy) ?? null)
+        : null,
+    }))
 
-    return result.data
+    return plants
   },
 )
 

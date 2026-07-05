@@ -16,3 +16,4 @@ export type PlantType = {
 export type healthStatus = 'thriving' | 'ok' | 'needsAttention'
 
 export type Plant = typeof userPlants.$inferSelect
+export type EnrichedPlant = Plant & { updatedByName: string | null }
