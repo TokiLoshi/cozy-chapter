@@ -11,7 +11,7 @@ import {
 } from '../ExpandedCard'
 import SearchArea from '../SearchArea'
 import EditPlantModal from './EditPlantModal'
-import type { Plant } from '@/lib/types/Plant'
+import type { EnrichedPlant } from '@/lib/types/Plant'
 import {
   createPlantServer,
   deletePlantServer,
@@ -31,13 +31,13 @@ type PlantFormProps = {
 }
 
 type ExpandedPlantCardProps = {
-  item: Plant
+  item: EnrichedPlant
   onEdit: () => void
   onDelete: () => void
   onClose: () => void
 }
 
-const getHealthColor = (health: Plant['plantHealth']) => {
+const getHealthColor = (health: EnrichedPlant['plantHealth']) => {
   switch (health) {
     case 'thriving':
       return 'text-green-500'
@@ -50,7 +50,7 @@ const getHealthColor = (health: Plant['plantHealth']) => {
 
 const checkWaterNeeds = (
   lastWatered: Date | null,
-  recommendedWatering: Plant['recommendedWateringIntervalDays'],
+  recommendedWatering: EnrichedPlant['recommendedWateringIntervalDays'],
 ) => {
   if (!lastWatered || !recommendedWatering) return false
 
@@ -113,7 +113,8 @@ function ExpandedPlantCard({
             <p className="text-sm font-medium text-slate-200">
               {item.lastWatered
                 ? new Date(item.lastWatered).toLocaleDateString()
-                : 'data not available'}
+                : 'data not available'}{' '}
+              by {item.updatedByName}
             </p>
           </DetailItem>
           {/** recommendedWateringIntervalDays */}
@@ -172,7 +173,7 @@ function PlantCard({
   onEdit,
   onDelete,
 }: {
-  item: Plant
+  item: EnrichedPlant
   onEdit: () => void
   onDelete: () => void
 }) {
@@ -266,16 +267,16 @@ export default function PlantModal({
 }: PlantFormProps) {
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
-  const [plantToEdit, setPlantToEdit] = useState<Plant | null>(null)
+  const [plantToEdit, setPlantToEdit] = useState<EnrichedPlant | null>(null)
   const [plantSearch, setPlantSearch] = useState('')
-  const [expandedPlant, setExpandedPlant] = useState<Plant | null>(null)
+  const [expandedPlant, setExpandedPlant] = useState<EnrichedPlant | null>(null)
   const queryClient = useQueryClient()
 
   const { data: userPlants } = useQuery({
     queryKey: ['user-plants'],
     queryFn: async () => {
       const result = await getUserPlants()
-      return result ?? []
+      return result
     },
   })
 
@@ -311,13 +312,13 @@ export default function PlantModal({
     })
   }
 
-  const handleEdit = (item: Plant) => {
+  const handleEdit = (item: EnrichedPlant) => {
     setExpandedPlant(null)
     setPlantToEdit(item)
     setIsEditOpen(true)
   }
 
-  const handleCardClick = (item: Plant) => {
+  const handleCardClick = (item: EnrichedPlant) => {
     setExpandedPlant(item)
   }
 
@@ -443,7 +444,7 @@ export default function PlantModal({
               {filteredPlants.length === 0 && plantSearch ? (
                 <EmptyTabContent message="No plants match your search" />
               ) : (
-                filteredPlants.map((item: Plant) => (
+                filteredPlants.map((item: EnrichedPlant) => (
                   <div
                     key={item.id}
                     className="cursor-pointer"

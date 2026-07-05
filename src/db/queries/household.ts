@@ -250,6 +250,15 @@ export async function leaveHouseholdById(householdId: string, userId: string) {
       console.error('Left household but failed to detach plants')
     }
 
+    const remaining = await db
+      .select({ id: householdMember.id })
+      .from(householdMember)
+      .where(eq(householdMember.householdId, householdId))
+
+    if (remaining.length === 0) {
+      await db.delete(household).where(eq(household.id, householdId))
+    }
+
     return { success: true }
   } catch (error) {
     console.error(`Error leaving household ${(error as Error).message}`)
