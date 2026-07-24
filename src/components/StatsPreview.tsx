@@ -167,8 +167,8 @@ export default function StatsWidget({
         <button className="absolute top-3 right-3 text-amber-500/70 cursor-pointer hover:text-amber-500/60 ">
           <Settings onClick={handlePreferences} />
         </button>
-        <div className="mb-4">
-          <h2 className="text-lg font-bold text-white">
+        <div className="m-4">
+          <h2 className="text-lg mt-3 font-bold text-white">
             Welcome back, {username}!
           </h2>
 

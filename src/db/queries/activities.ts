@@ -150,6 +150,20 @@ export async function getRecentActivity(userId: string, days = 7) {
   }
 }
 
+export async function getAllActivity(userId: string) {
+  try {
+    const result = await db
+      .select()
+      .from(activityLog)
+      .where(eq(activityLog.userId, userId))
+      .orderBy(desc(activityLog.createdAt))
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(`Error getting all user activity`)
+    return { success: false, error }
+  }
+}
+
 export async function updateBookGoal(userId: string, goal: number) {
   try {
     const result = await db

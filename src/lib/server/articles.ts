@@ -52,7 +52,10 @@ export const getUserBlogs = createServerFn({ method: 'GET' }).handler(
     if (!session) throw redirect({ to: '/login' })
     const userId = session.user.id
     const blogs = await getArticlesbyId(userId)
-    return blogs
+    if (!blogs.success) {
+      throw new Error(`Error getting blogs: ${blogs.error}`)
+    }
+    return blogs.data
   },
 )
 
