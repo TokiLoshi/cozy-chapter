@@ -56,7 +56,7 @@ export const Route = createFileRoute('/readingroom')({
 
     return {
       session,
-      blogs,
+      blogs: blogs ?? [],
       plants,
       stats: stats ?? { currentStreak: 0, bestStreak: 0, booksGoal: 12 },
       recentActivity: recentActivity ?? [],
@@ -73,13 +73,8 @@ function ReadingRoomComponent() {
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
 
-  const {
-    open,
-    toggleWindow,
-    // openWindow,
-    closeWindow,
-    closeAll,
-  } = useWindowStore()
+  const { open, toggleWindow, openWindow, closeWindow, closeAll } =
+    useWindowStore()
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -127,7 +122,7 @@ function ReadingRoomComponent() {
 
   const { data: plants = [] } = useQuery({
     queryKey: ['user-plants'],
-    queryFn: async () => (await getUserPlants()) ?? [],
+    queryFn: async () => await getUserPlants(),
   })
   const plantAlert = useMemo(() => getPlantAlert(plants), [plants])
 
@@ -239,6 +234,7 @@ function ReadingRoomComponent() {
             blogs={blogs}
             onAddArticleClick={() => {
               closeModal()
+              openWindow('article')
             }}
           />
         )}

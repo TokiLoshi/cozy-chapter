@@ -133,7 +133,7 @@ export default function ReadingModal({
             <TabsContent value="articles">
               <button
                 onClick={onAddArticleClick}
-                className="bg-amber-600 hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
+                className="bg-amber-600 cursor-pointer hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
               >
                 + Add Article{' '}
               </button>
@@ -151,7 +151,7 @@ export default function ReadingModal({
                       <ArticleCard
                         key={blog.id}
                         item={blog}
-                        onDelete={() => deleteArticleMutation}
+                        onDelete={() => deleteArticleMutation(blog.id)}
                       />
                     ))}
                   </div>

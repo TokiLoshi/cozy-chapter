@@ -205,7 +205,9 @@ export default function StatsWidget({
               <span
                 className={`text-sm uppercase tracking wide ${plantAlert === 'needsAttention' ? 'text-rose-400' : 'text-amber-400'}`}
               >
-                {plantAlert === 'needsAttention' ? 'attention' : 'water'}
+                {plantAlert === 'needsAttention'
+                  ? 'needs attention'
+                  : 'needs water'}
               </span>
             </button>
           )}
