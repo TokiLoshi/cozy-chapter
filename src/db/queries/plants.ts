@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, isNotNull, sql } from 'drizzle-orm'
 import { UTApi } from 'uploadthing/server'
 import { userPlants } from '../schemas/plant-schema'
 import type { NewPlant } from '@/db/schemas/plant-schema'
@@ -75,6 +75,34 @@ export async function updatePlant(
     return { success: true, data: result[0] }
   } catch (error) {
     console.error('Error editing plant with id: ', id)
+    return { success: false, error }
+  }
+}
+
+export async function waterAllPlants(userId: string, householdId?: string) {
+  try {
+    const scope = householdId
+      ? eq(userPlants.householdId, householdId)
+      : eq(userPlants.userId, userId)
+    const watered = await db
+      .update(userPlants)
+      .set({
+        lastWatered: new Date(),
+        updatedBy: userId,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          scope,
+          isNotNull(userPlants.lastWatered),
+          isNotNull(userPlants.recommendedWateringIntervalDays),
+          sql`${userPlants.lastWatered} <= now() - (${userPlants.recommendedWateringIntervalDays} * interval '1 day')`,
+        ),
+      )
+      .returning({ id: userPlants.id })
+    return { success: true, data: watered }
+  } catch (error) {
+    console.error('Error watering all plants for: ', userId)
     return { success: false, error }
   }
 }

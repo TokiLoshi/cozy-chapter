@@ -17,6 +17,7 @@ import {
   deletePlantServer,
   deleteUploadedImageServer,
   getUserPlants,
+  waterAllPlantServer,
 } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
 import { UploadDropzone } from '@/lib/uploadthing'
@@ -299,6 +300,16 @@ export default function PlantModal({
     },
   })
 
+  // Water all mutation
+  const waterAllMutation = useMutation({
+    mutationFn: () => waterAllPlantServer(),
+    onSuccess: ({ count }) => {
+      queryClient.invalidateQueries({ queryKey: ['user-plants'] })
+      toast.success(`Watered ${count} plant${count === 1 ? '' : 's'} 💧`)
+    },
+    onError: () => toast.error('Failed to water plants'),
+  })
+
   const handleDelete = (id: string) => {
     toast('Are you sure you want to remove this plant', {
       action: {
@@ -368,6 +379,8 @@ export default function PlantModal({
     })
   }, [userPlants, plantSearch])
 
+  const overdueCount = filteredPlants.filter((p) => p.needsWater).length
+
   if (!isOpen) return null
 
   return (
@@ -427,11 +440,24 @@ export default function PlantModal({
               />
             )}
 
-            {/** Search */}
+            {/** Watering Section */}
             <div className="pt-4">
-              <h3 className="text-sm font-medium text-slate-400 mb-3">
-                Who needs watering today?
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-slate-400 mb-3">
+                  Who needs watering today?
+                </h3>
+                {overdueCount > 0 && (
+                  <button
+                    onClick={() => waterAllMutation.mutate()}
+                    disabled={waterAllMutation.isPending}
+                    className="cursor-pointer bg-amber-600/90 rounded-lg text-white hover:bg-amber-500/90 py-2 px-4 font-semibold disabled:opacity-50"
+                  >
+                    {waterAllMutation.isPending
+                      ? 'Watering...'
+                      : `💧 Water all (${overdueCount})`}
+                  </button>
+                )}
+              </div>
               {/** Empty State */}
               {filteredPlants.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
