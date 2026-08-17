@@ -161,7 +161,7 @@ export default function StatsWidget({
 
   return (
     <>
-      <div className="absolute top-6 left-6 z-10 min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
+      <div className="absolute top-6 left-6 z-[10] min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
         {/** Header */}
         <button className="absolute top-3 right-3 text-amber-500/70 cursor-pointer hover:text-amber-500/60 ">
           <Settings onClick={handlePreferences} />

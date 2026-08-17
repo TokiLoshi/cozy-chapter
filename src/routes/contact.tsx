@@ -53,7 +53,7 @@ function ContactPage() {
           </div>
           {/** Overlay */}
           <div className="absolute inset-0 backdrop-saturate-150 pointer-events-none" />
-          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <div className="relative z-[10] max-w-4xl mx-auto px-6 text-center">
             <h1 className="text-7xl md:text-8xl font-bold tracking-tight">
               <span className="text-slate-200">Contact Cozy</span>
               <br />

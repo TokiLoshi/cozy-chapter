@@ -11,10 +11,10 @@ export default function MediaModal({ isOpen, onClose }: MediaModalProps) {
   }
   return (
     <>
-      <div className="fixed inset-0 z-[50] flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={closeModal}
         />
         <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">

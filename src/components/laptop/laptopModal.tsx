@@ -83,13 +83,13 @@ export default function LaptopModal({
   if (!isOpen) return null
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-slate/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className="relative z-60 w-full max-w-4xl max-h-[80vh] overflow-hidden bg-black rounded-xl shadow-2xl border border-zinc-700 m-4 flex flex-col">
+        <div className="relative [z-60] w-full max-w-4xl max-h-[80vh] overflow-hidden bg-black rounded-xl shadow-2xl border border-zinc-700 m-4 flex flex-col">
           {/** Title Bar */}
           <TerminalTitleBar
             title={`${username} - ${username}@iCozy- ~ -- -zsh`}

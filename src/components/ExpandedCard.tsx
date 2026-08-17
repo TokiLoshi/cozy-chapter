@@ -94,13 +94,13 @@ export function DetailItem({ label, children }: DetailItemProps) {
 export function BaseModal({ onClose, children }: BaseModalProps) {
   return (
     <>
-      <div className="fixed inset-0 z-[70] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
         <div
           className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className="relative mb-2 z-10 w-full max-w-md max-h-[150] overflow-y-auto bg-slate-800 rounded-xl shadow-2xl border border-slate-600 m-4 p-6">
+        <div className="relative mb-2 z-[10] w-full max-w-md max-h-[80vh] overflow-y-auto bg-slate-800 rounded-xl shadow-2xl border border-slate-600 p-6">
           <button
             onClick={onClose}
             className="cursor-pointer absolute top-4 right-4 text-slate-400 hover:text-white"

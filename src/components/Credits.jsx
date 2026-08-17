@@ -104,7 +104,7 @@ export default function CreditsModal({ isOpen, onClose }) {
   if (!isOpen) return
   return (
     <>
-      <div className="absolute top-6 right-6 z-10 bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
+      <div className="absolute top-6 right-6 z-[10] bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <h2 className="text-2xl font-bold text-white mb-1">Asset Credits</h2>
           <button

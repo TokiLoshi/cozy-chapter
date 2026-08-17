@@ -170,7 +170,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
         Edit
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
           {/** Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -178,7 +178,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
           />
           {/** Modal */}
           <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-10">
+            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-[10]">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
