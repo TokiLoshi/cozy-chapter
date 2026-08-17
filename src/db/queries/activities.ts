@@ -43,6 +43,19 @@ export async function createActivityLog(
   }
 }
 
+export async function deleteActivityLog(userId: string) {
+  try {
+    const result = await db
+      .delete(activityLog)
+      .where(eq(activityLog.userId, userId))
+      .returning()
+    return { success: true, data: result[0] }
+  } catch (error) {
+    console.error(`Error deleting activity for ${userId}`)
+    return { success: false, error }
+  }
+}
+
 export async function updateStreak(userId: string, timeZone: string) {
   const { today, yesterday } = getYesterdayAndToday(timeZone)
 
@@ -84,6 +97,19 @@ export async function updateStreak(userId: string, timeZone: string) {
     return { success: true, data: updatedData }
   } catch (error) {
     console.error(`Error updating streak ${(error as Error).message}`)
+    return { success: false, error }
+  }
+}
+
+export async function deleteUserStreak(userId: string) {
+  try {
+    const result = await db
+      .delete(userStats)
+      .where(eq(userStats.userId, userId))
+      .returning()
+    return { success: true, data: result[0] }
+  } catch (error) {
+    console.error(`Error deleting user streak for user: ${userId}`)
     return { success: false, error }
   }
 }

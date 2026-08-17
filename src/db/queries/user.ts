@@ -16,3 +16,13 @@ export async function getUser(userId: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteUser(userId: string) {
+  try {
+    await db.delete(user).where(eq(user.id, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting user: ${userId}`)
+    return { success: false, error }
+  }
+}

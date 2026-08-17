@@ -104,3 +104,13 @@ export async function deleteUserAudiobook(userId: string, id: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteAllUserAudiobooks(userId: string) {
+  try {
+    await db.delete(userAudioBooks).where(eq(userAudioBooks.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting audiobooks for user: ${userId}`)
+    return { success: false, error }
+  }
+}

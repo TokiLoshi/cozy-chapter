@@ -108,3 +108,13 @@ export async function deleteUserMovie(id: string, userId: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteAllUserMovies(userId: string) {
+  try {
+    await db.delete(userMovies).where(eq(userMovies.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting all movies for user: ${userId}`)
+    return { success: false, error }
+  }
+}

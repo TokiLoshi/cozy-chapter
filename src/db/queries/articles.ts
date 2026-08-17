@@ -68,3 +68,13 @@ export async function deleteArticle(id: string) {
   const result = await db.delete(userBlogs).where(eq(userBlogs.id, id))
   return result
 }
+
+export async function deleteAllUserArticles(userId: string) {
+  try {
+    await db.delete(userBlogs).where(eq(userBlogs.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting articles for user: ${userId}`)
+    return { success: false, error }
+  }
+}

@@ -178,3 +178,13 @@ export async function deletePlant(userId: string, id: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteAllUserPlants(userId: string) {
+  try {
+    await db.delete(userPlants).where(eq(userPlants.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting plants for user`)
+    return { success: false, error }
+  }
+}
