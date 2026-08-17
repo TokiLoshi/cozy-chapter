@@ -52,7 +52,13 @@ export const commands: Array<Command> = [
   {
     action: 'sudo',
     description:
-      'Run the command with the security privileges of the super user. This might also cause chaos...',
+      'Run the command with the security privileges of the super user. This might also cause chaos... For extra chaos you can try asking CozyOS to make you a sandwich.',
+    category: 'terminal',
+  },
+  {
+    action: '🎵',
+    description:
+      'Know some fred again.. lyrics? CozyOS does too. Try out: "If you don\'t know don\'t worry"',
     category: 'terminal',
   },
   {
