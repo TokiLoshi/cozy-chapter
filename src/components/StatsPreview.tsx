@@ -46,17 +46,16 @@ function MiniWeekBar({
   const pct = pages > 0 ? Math.max((pages / Math.max(maxMin, 1)) * 100, 10) : 0
   return (
     <>
-      <div className="flex flex-col items-center gap-1">
+      <div
+        title={`${pages} page${pages === 1 ? '' : 's'}`}
+        className={`w-2 h-7 rounded-sm overflow-hidden flex items-end bg-slate-800/60 ${isToday ? 'ring-1 ring-amber-500/40' : ''}`}
+      >
         <div
-          className={`w-2 h-7 rounded-sm overflow-hidden flex items-end bg-slate-800/60 ${isToday ? 'ring-1 ring-amber-500/40' : ''}`}
-        >
-          <div
-            className="w-full rounded-sm bg-gradient-to-t from-amber-700 to-amber-500 transition-all duration-500"
-            style={{
-              height: `${pct}%`,
-            }}
-          ></div>
-        </div>
+          className="w-full rounded-sm bg-gradient-to-t from-amber-700 to-amber-500 transition-all duration-500"
+          style={{
+            height: `${pct}%`,
+          }}
+        ></div>
       </div>
     </>
   )
@@ -162,13 +161,13 @@ export default function StatsWidget({
 
   return (
     <>
-      <div className="absolute top-6 left-6 z-10 min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
+      <div className="absolute top-6 left-6 z-[10] min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
         {/** Header */}
         <button className="absolute top-3 right-3 text-amber-500/70 cursor-pointer hover:text-amber-500/60 ">
           <Settings onClick={handlePreferences} />
         </button>
-        <div className="mb-4">
-          <h2 className="text-lg font-bold text-white">
+        <div className="m-4">
+          <h2 className="text-lg mt-3 font-bold text-white">
             Welcome back, {username}!
           </h2>
 
@@ -203,9 +202,11 @@ export default function StatsWidget({
                 }
               />
               <span
-                className={`text-sm uppercase tracking wide ${plantAlert === 'needsAttention' ? 'text-rose-400' : 'text-amber-400'}`}
+                className={`text-sm uppercase ${plantAlert === 'needsAttention' ? 'text-rose-400' : 'text-amber-400'}`}
               >
-                {plantAlert === 'needsAttention' ? 'attention' : 'water'}
+                {plantAlert === 'needsAttention'
+                  ? 'needs attention'
+                  : 'needs water'}
               </span>
             </button>
           )}
@@ -225,24 +226,28 @@ export default function StatsWidget({
             >
               {currentStreak}
             </span>
-            <span className="text-[9px] uppercase tracking-wide text-slate-500">
-              streak
-            </span>
+            <span className="text-[9px] uppercase  text-slate-500">streak</span>
           </div>
 
           {/** Yearly Goal */}
-          <div className="flex flex-1 items-center gap-2">
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-700">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-700"
-                style={{ width: `${goalPct}%` }}
-              />
+          <div className="flex flex-1 flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-700">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-700"
+                  style={{ width: `${goalPct}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold tabular-nums text-white">
+                {booksFinishedThisYear}/{yearlyGoal}
+              </span>
             </div>
-            <span className="text-xs font-semibold tabular-nums text-white">
-              {booksFinishedThisYear}/{yearlyGoal}
+            <span className="text-[9px] uppercase text-slate-500 text-right">
+              2026 book goal
             </span>
           </div>
         </div>
+
         {/** Currently Reading */}
         {currentlyReadingTitle && (
           <div className="mb-4 flex items-center gap-2 rounded-lg bg-slate-800/50 px-3 py-2">
@@ -255,8 +260,8 @@ export default function StatsWidget({
         )}
         {/** Week Activity */}
         <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">
-            This week
+          <p className="mb-2 text-xs font-semibold text-slate-500">
+            Pages read this week
           </p>
           <div className="flex items-end justify-between gap-1.5">
             {weekData.map((day) => (

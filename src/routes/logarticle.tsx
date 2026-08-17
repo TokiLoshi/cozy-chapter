@@ -100,9 +100,9 @@ function ArticleForm() {
   return (
     <>
       {open && (
-        <div className="mt-5 inset-0 z-0 flex items-center justify-center">
+        <div className="mt-5 inset-0 z-[10] flex items-center justify-center">
           <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-10">
+            <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-[10]">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">

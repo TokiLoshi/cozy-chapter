@@ -9,6 +9,7 @@ import {
   deletePlant,
   getUsersPlants,
   updatePlant,
+  waterAllPlants,
 } from '@/db/queries/plants'
 import {
   getHouseholdMembers,
@@ -92,6 +93,21 @@ export const updatePlantServer = createServerFn({ method: 'POST' })
     }
     return result.data
   })
+
+// Water all plants
+export const waterAllPlantServer = createServerFn({ method: 'POST' }).handler(
+  async () => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    const userId = session.user.id
+    const householdId = await getCurrentHousehold(userId)
+    const result = await waterAllPlants(userId, householdId)
+    if (!result.success) {
+      throw new Error('Failed to water all plants')
+    }
+    return { count: result.data?.length ?? 0 }
+  },
+)
 
 export const deletePlantServer = createServerFn({ method: 'POST' })
   .inputValidator((data: string) => data)

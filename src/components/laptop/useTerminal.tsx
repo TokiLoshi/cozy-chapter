@@ -22,7 +22,7 @@ export default function useTerminal(
   const [inputValue, setInputValue] = useState('')
   const [commandHistory, setCommandHistory] = useState<Array<string>>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
-  const [currentDir, setCurrentDir] = useState(`~/${username}`)
+  const [currentDir] = useState(`~/${username}`)
   const lineIdRef = useRef(2)
 
   const addLine = (
@@ -136,17 +136,13 @@ export default function useTerminal(
       case 'whoami':
         addLine('system', username)
         break
-      // Easter eggs
-      case 'youtube':
-        addLine('system', 'Launching movies...')
-        break
       case 'podcasts':
         addLine('system', 'Launching podcasts...')
         onLaunchApp('podcasts')
         break
       case 'cd':
-        setCurrentDir('placeholder')
-        addLine('output', `cd ${args}`)
+        // setCurrentDir('')
+        addLine('output', `cd: this room is cozy enough`)
         break
       case 'date': {
         const today = new Date()
@@ -190,7 +186,7 @@ export default function useTerminal(
         break
       case 'play':
         if (args.join(' ') === 'that shit fred') {
-          addLine('system', 'I need you to see me, we danced so,, sooo hard')
+          addLine('system', 'I need you to see me, we danced so, sooo hard')
         } else {
           addLine('error', `zsh: command not found: ${args.join()}`)
         }

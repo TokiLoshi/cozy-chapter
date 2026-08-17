@@ -12,7 +12,7 @@ export function CozyHero({ children }: { children: React.ReactNode }) {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-900/60 to-slate-950" />
         </div>
         <div className="absolute inset-0 backdrop-saturate-150 pointer-events-none " />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+        <div className="relative z-[10] max-w-4xl mx-auto px-6 text-center">
           {children}
         </div>
       </section>

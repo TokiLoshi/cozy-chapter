@@ -17,6 +17,7 @@ import {
   deletePlantServer,
   deleteUploadedImageServer,
   getUserPlants,
+  waterAllPlantServer,
 } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
 import { UploadDropzone } from '@/lib/uploadthing'
@@ -299,6 +300,16 @@ export default function PlantModal({
     },
   })
 
+  // Water all mutation
+  const waterAllMutation = useMutation({
+    mutationFn: () => waterAllPlantServer(),
+    onSuccess: ({ count }) => {
+      queryClient.invalidateQueries({ queryKey: ['user-plants'] })
+      toast.success(`Watered ${count} plant${count === 1 ? '' : 's'} 💧`)
+    },
+    onError: () => toast.error('Failed to water plants'),
+  })
+
   const handleDelete = (id: string) => {
     toast('Are you sure you want to remove this plant', {
       action: {
@@ -368,11 +379,13 @@ export default function PlantModal({
     })
   }, [userPlants, plantSearch])
 
+  const overdueCount = filteredPlants.filter((p) => p.needsWater).length
+
   if (!isOpen) return null
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
         <div
           className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
@@ -427,11 +440,24 @@ export default function PlantModal({
               />
             )}
 
-            {/** Search */}
+            {/** Watering Section */}
             <div className="pt-4">
-              <h3 className="text-sm font-medium text-slate-400 mb-3">
-                Who needs watering today?
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-slate-400 mb-3">
+                  Who needs watering today?
+                </h3>
+                {overdueCount > 0 && (
+                  <button
+                    onClick={() => waterAllMutation.mutate()}
+                    disabled={waterAllMutation.isPending}
+                    className="cursor-pointer bg-amber-600/90 rounded-lg text-white hover:bg-amber-500/90 py-2 px-4 font-semibold disabled:opacity-50"
+                  >
+                    {waterAllMutation.isPending
+                      ? 'Watering...'
+                      : `💧 Water all (${overdueCount})`}
+                  </button>
+                )}
+              </div>
               {/** Empty State */}
               {filteredPlants.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
@@ -546,13 +572,13 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         />
         <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-10">
+          <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-[10]">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">

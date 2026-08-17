@@ -10,11 +10,16 @@ export async function createArticle(blog: UserBlogs) {
 }
 
 export async function getArticlesbyId(id: string) {
-  const result = await db
-    .select()
-    .from(userBlogs)
-    .where(eq(userBlogs.userId, id))
-  return result
+  try {
+    const result = await db
+      .select()
+      .from(userBlogs)
+      .where(eq(userBlogs.userId, id))
+    return { success: true, data: result }
+  } catch (error) {
+    console.error(`Error fetching articles`)
+    return { success: false, error }
+  }
 }
 
 export async function getArticleByStatus(id: string, readStatus: ReadStatus) {

@@ -128,7 +128,7 @@ export default function EditAudioBookModal({
         {/** Modal */}
         <div className="relative w-full max-w-2xl max-h-[90h] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
           {/** Header with audiobook info */}
-          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-10">
+          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-[10]">
             <div className="flex items-center justify-between gap-4">
               <div className="flex gap-4">
                 {audioBook.coverImageUrl && (

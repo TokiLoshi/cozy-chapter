@@ -76,7 +76,7 @@ function ExpandedCourseCard({
         )}
 
         {/** progressCurrent */}
-        {item.progressCurrent && (
+        {item.progressCurrent > 0 && (
           <DetailItem label="Current Progress">
             <p className="text-sm font-medium text-slate-200">
               {item.progressCurrent}
@@ -387,7 +387,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
         <div
           className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
@@ -593,13 +593,13 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
   if (!isOpen) return null
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center">
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         />
         <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-10">
+          <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-[10]">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">

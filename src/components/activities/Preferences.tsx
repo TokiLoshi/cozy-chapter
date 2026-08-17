@@ -1,7 +1,7 @@
 import { toast } from 'sonner'
 import { LogOut, Pencil, XIcon } from 'lucide-react'
 import { z } from 'zod'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useAppForm } from '@/hooks/form'
 import { updateUserPreferencesServer } from '@/lib/server/preferences'
@@ -11,6 +11,7 @@ import {
   leaveHousehold,
   updateHousehold,
 } from '@/lib/server/household'
+import { exportData } from '@/lib/server/exportData'
 
 type UserPreferencesModal = {
   bookGoal: number
@@ -69,6 +70,36 @@ export default function EditUserPreferences({
         console.error(`Error updating household ${(error as Error).message}`)
         toast.error('Failed to rename household')
       }
+    },
+  })
+
+  const exportMutation = useMutation({
+    mutationFn: async () => await exportData(),
+    onSuccess: (data) => {
+      const json = JSON.stringify(data, null, 2)
+      const blob = new Blob([json], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'cozy-chapter-export.json'
+      a.click()
+      URL.revokeObjectURL(url)
+      toast.success('Your data has been exported!', {
+        classNames: {
+          toast: 'bg-slate-800 border-slate-700',
+          title: 'text-slate-100',
+        },
+      })
+    },
+    onError: (error) => {
+      console.error(`Export failed: ${error}`)
+      toast.error('Error exporting datina', {
+        classNames: {
+          toast: 'bg-slate-800 border-slate-700',
+          title: 'text-slate-100',
+          description: 'text-slate-400',
+        },
+      })
     },
   })
 
@@ -214,6 +245,14 @@ export default function EditUserPreferences({
         },
       },
     )
+  }
+
+  const handleExport = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Handling export...')
+    exportMutation.mutate()
+    console.log('Mutation finished')
   }
   return (
     <>
@@ -422,7 +461,13 @@ export default function EditUserPreferences({
               </p>
             )}
           </div>
-
+          <button
+            onClick={handleExport}
+            aria-label="export data"
+            className="cursor-pointer ms-5 text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
+          >
+            Export My Data
+          </button>
           {household && household.status === 'solo' && (
             <form
               onSubmit={(e) => {
