@@ -1,5 +1,5 @@
-import { user } from 'auth-schema'
 import { eq } from 'drizzle-orm'
+import { user } from '../schemas/auth-schema'
 import { db } from '@/db'
 
 export async function getUser(userId: string) {
@@ -13,6 +13,16 @@ export async function getUser(userId: string) {
     return { success: true, data: returnedUser }
   } catch (error) {
     console.error(`Error getting user information`)
+    return { success: false, error }
+  }
+}
+
+export async function deleteUser(userId: string) {
+  try {
+    await db.delete(user).where(eq(user.id, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting user: ${userId}`)
     return { success: false, error }
   }
 }

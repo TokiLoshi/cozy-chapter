@@ -85,3 +85,13 @@ export async function deleteCourse(userId: string, courseId: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteAllUserCourses(userId: string) {
+  try {
+    await db.delete(courses).where(eq(courses.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting all courses for user: ${userId}`)
+    return { success: false, error }
+  }
+}

@@ -11,7 +11,8 @@ import {
   leaveHousehold,
   updateHousehold,
 } from '@/lib/server/household'
-import { exportData } from '@/lib/server/exportData'
+import { deleteAccountServer, exportData } from '@/lib/server/exportData'
+import { signOut } from '@/lib/auth-client'
 
 type UserPreferencesModal = {
   bookGoal: number
@@ -43,6 +44,9 @@ export default function EditUserPreferences({
   console.log(' Household data: ', household)
   const [isEditing, setIsEditing] = useState(false)
   const [isInviting, setIsInviting] = useState(false)
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
+  const [confirmText, setConfirmText] = useState('')
+  const CONFIRM_PHRASE = 'DELETE MY COZY ROOM'
 
   const editHousholdForm = useAppForm({
     defaultValues: {
@@ -93,13 +97,26 @@ export default function EditUserPreferences({
     },
     onError: (error) => {
       console.error(`Export failed: ${error}`)
-      toast.error('Error exporting datina', {
+      toast.error('Error exporting data', {
         classNames: {
           toast: 'bg-slate-800 border-slate-700',
           title: 'text-slate-100',
           description: 'text-slate-400',
         },
       })
+    },
+  })
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => deleteAccountServer(),
+    onSuccess: async () => {
+      // explosion hook here later
+      console.log('Deleting cozy room!')
+      await signOut()
+      window.location.href = '/'
+    },
+    onError: () => {
+      toast.error('Deletion failed - nothing was removed. You can try again')
     },
   })
 
@@ -461,102 +478,167 @@ export default function EditUserPreferences({
               </p>
             )}
           </div>
-          <button
-            onClick={handleExport}
-            aria-label="export data"
-            className="cursor-pointer ms-5 text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
-          >
-            Export My Data
-          </button>
-          {household && household.status === 'solo' && (
+          <div className="p-6 border-t border-slate-700/50">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
+              Your Data
+            </h3>
+            <div className="flex gap-3">
+              <button
+                onClick={handleExport}
+                disabled={exportMutation.isPending}
+                className="cursor-pointer py-2 px-4 rounded-lg border border-slate-600 text-slate-300 hover:bg-white/10 disabled:opacity-50"
+              >
+                {exportMutation.isPending ? 'Exporting..' : 'Export my Data'}
+              </button>
+              {!isConfirmingDelete && (
+                <button
+                  onClick={() => setIsConfirmingDelete(true)}
+                  className="cursor-pointer py-2 px-4 rounded-lg border border-rose-500/30 text-rose-400 hover:bg-rose-500/10"
+                >
+                  Delete my account
+                </button>
+              )}
+            </div>
+            {isConfirmingDelete && (
+              <div className="mt-4 p-4 bg-rose-500/5 border border-rose-500/30 rounded-lg space-y-3">
+                <p className="text-sm text-slate-300">
+                  This permanently deletes your room and all your data. It's
+                  recommended to export your data first if you want a copy. Type{' '}
+                  <span className="font-mono font-bold text-rose-400">
+                    {CONFIRM_PHRASE}
+                  </span>{' '}
+                  below to confirm.
+                </p>
+                <input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={CONFIRM_PHRASE}
+                  className="cursor-pointer w-75 p-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setIsConfirmingDelete(false)
+                      setConfirmText('')
+                    }}
+                    className="cursor-pointer py-2 px-4 rounded-lg text-slate-300 hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    disabled={
+                      confirmText !== CONFIRM_PHRASE ||
+                      deleteAccountMutation.isPending
+                    }
+                    onClick={() => deleteAccountMutation.mutate()}
+                    className="cursor-pointer py-2 px-4 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {deleteAccountMutation.isPending
+                      ? 'Deleting...'
+                      : 'Delete forever'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="p-6 border-t border-slate-700/50">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
+              Your Household
+            </h3>
+            {household && household.status === 'solo' && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  householdForm.handleSubmit()
+                }}
+                className="p-6 space-y-6 text-gray-100"
+              >
+                <householdForm.AppField
+                  name="householdName"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (value && value.length === 0)
+                        return 'please name your houshold'
+                      return undefined
+                    },
+                  }}
+                >
+                  {(field) => (
+                    <field.TextField
+                      label="Household Name"
+                      placeholder="Name your household"
+                    />
+                  )}
+                </householdForm.AppField>
+                <householdForm.AppField
+                  name="email"
+                  validators={{
+                    onChange: ({ value }) => {
+                      if (value && value.length === 0)
+                        return 'please enter a valid email address'
+                      return undefined
+                    },
+                  }}
+                >
+                  {(field) => (
+                    <field.TextField
+                      label="Housemate's email address"
+                      placeholder="e.g housemate@cozy.com"
+                    />
+                  )}
+                </householdForm.AppField>
+                <div className="flex justify-end">
+                  <householdForm.AppForm>
+                    <householdForm.SubmitButton
+                      label="Send Invite"
+                      className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                    />
+                  </householdForm.AppForm>
+                </div>
+              </form>
+            )}
+          </div>
+          {/** Reading Form */}
+          <div className="p-6 border-t border-slate-700/50">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
+              Your Reading Goal
+            </h3>
             <form
               onSubmit={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                householdForm.handleSubmit()
+                form.handleSubmit()
               }}
               className="p-6 space-y-6 text-gray-100"
             >
-              <householdForm.AppField
-                name="householdName"
+              <form.AppField
+                name="booksGoal"
                 validators={{
                   onChange: ({ value }) => {
-                    if (value && value.length === 0)
-                      return 'please name your houshold'
+                    if (value && value < 0) return 'invalid goal'
                     return undefined
                   },
                 }}
               >
                 {(field) => (
-                  <field.TextField
-                    label="Household Name"
-                    placeholder="Name your household"
+                  <field.NumberField
+                    label={`Goal for ${new Date().getFullYear()}`}
+                    min={0}
+                    placeholder={bookGoal.toString()}
                   />
                 )}
-              </householdForm.AppField>
-              <householdForm.AppField
-                name="email"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (value && value.length === 0)
-                      return 'please enter a valid email address'
-                    return undefined
-                  },
-                }}
-              >
-                {(field) => (
-                  <field.TextField
-                    label="Housemate's email address"
-                    placeholder="e.g housemate@cozy.com"
-                  />
-                )}
-              </householdForm.AppField>
+              </form.AppField>
               <div className="flex justify-end">
-                <householdForm.AppForm>
-                  <householdForm.SubmitButton
-                    label="Send Invite"
+                <form.AppForm>
+                  <form.SubmitButton
+                    label="Update Goal"
                     className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                   />
-                </householdForm.AppForm>
+                </form.AppForm>
               </div>
             </form>
-          )}
-
-          {/** Form */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
-            className="p-6 space-y-6 text-gray-100"
-          >
-            <form.AppField
-              name="booksGoal"
-              validators={{
-                onChange: ({ value }) => {
-                  if (value && value < 0) return 'invalid goal'
-                  return undefined
-                },
-              }}
-            >
-              {(field) => (
-                <field.NumberField
-                  label="This year's reading goal"
-                  min={0}
-                  placeholder={bookGoal.toString()}
-                />
-              )}
-            </form.AppField>
-            <div className="flex justify-end">
-              <form.AppForm>
-                <form.SubmitButton
-                  label="Update Goal"
-                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
-                />
-              </form.AppForm>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </>

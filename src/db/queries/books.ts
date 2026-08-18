@@ -172,3 +172,13 @@ export async function deleteUserBook(userId: string, id: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteAllUserBooks(userId: string) {
+  try {
+    await db.delete(userBooks).where(eq(userBooks.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting books for user: ${userId}`)
+    return { success: false, error }
+  }
+}

@@ -107,3 +107,13 @@ export async function deleteUserPodcast(id: string, userId: string) {
     return { success: false, error }
   }
 }
+
+export async function deleteAllUserPodcasts(userId: string) {
+  try {
+    await db.delete(userPodcasts).where(eq(userPodcasts.userId, userId))
+    return { success: true }
+  } catch (error) {
+    console.error(`Error deleting all user podcasts: ${userId}`)
+    return { success: false, error }
+  }
+}
