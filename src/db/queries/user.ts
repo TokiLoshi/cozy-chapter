@@ -1,5 +1,5 @@
-import { user } from 'auth-schema'
 import { eq } from 'drizzle-orm'
+import { user } from '../schemas/auth-schema'
 import { db } from '@/db'
 
 export async function getUser(userId: string) {

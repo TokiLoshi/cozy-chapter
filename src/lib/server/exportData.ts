@@ -2,17 +2,29 @@ import { createServerFn } from '@tanstack/react-start'
 import { redirect } from '@tanstack/react-router'
 import { getRequest } from '@tanstack/react-start/server'
 import { auth } from '../auth'
-import { getAllActivity } from '@/db/queries/activities'
-import { getArticlesbyId } from '@/db/queries/articles'
-import { getUserAudiobooks } from '@/db/queries/audibooks'
-import { getUserBooks } from '@/db/queries/books'
-import { getCourses } from '@/db/queries/courses'
-import { getMembershipByUser } from '@/db/queries/household'
-import { getUserMovies } from '@/db/queries/movies'
-import { getUsersPlants } from '@/db/queries/plants'
-import { getUserPodcast } from '@/db/queries/podcasts'
-import { getUserSeries } from '@/db/queries/series'
-import { getUser } from '@/db/queries/user'
+import sendEmail from '../email'
+import {
+  deleteActivityLog,
+  deleteUserStreak,
+  getAllActivity,
+} from '@/db/queries/activities'
+import { deleteAllUserArticles, getArticlesbyId } from '@/db/queries/articles'
+import {
+  deleteAllUserAudiobooks,
+  getUserAudiobooks,
+} from '@/db/queries/audibooks'
+import { deleteAllUserBooks, getUserBooks } from '@/db/queries/books'
+import { deleteAllUserCourses, getCourses } from '@/db/queries/courses'
+import {
+  getHousehold,
+  getMembershipByUser,
+  leaveHouseholdById,
+} from '@/db/queries/household'
+import { deleteAllUserMovies, getUserMovies } from '@/db/queries/movies'
+import { deleteAllUserPlants, getUsersPlants } from '@/db/queries/plants'
+import { deleteAllUserPodcasts, getUserPodcast } from '@/db/queries/podcasts'
+import { deleteAllUserSeries, getUserSeries } from '@/db/queries/series'
+import { deleteUser, getUser } from '@/db/queries/user'
 
 const getSessionServer = createServerFn({ method: 'GET' }).handler(async () => {
   const session = await auth.api.getSession({ headers: getRequest().headers })
@@ -119,6 +131,109 @@ export const exportData = createServerFn({ method: 'GET' }).handler(
   },
 )
 
-export const leaveCozyChapter = createServerFn({ method: 'POST' }).handler(
-  async () => {},
+export const deleteAccountServer = createServerFn({ method: 'POST' }).handler(
+  async () => {
+    // check for session
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
+    const userId = session.user.id
+
+    // leave household
+    const household = await getHousehold(userId)
+    const householdId = household.householdData?.id
+
+    if (householdId) {
+      const leaveHouseholdResult = await leaveHouseholdById(householdId, userId)
+      if (!leaveHouseholdResult.success) {
+        throw new Error('Error leaving household')
+      }
+    }
+    // delete activities
+    const activityLogResult = await deleteActivityLog(userId)
+    if (!activityLogResult.success) {
+      throw new Error('Error deleting activityLog')
+    }
+    const activityStreakResult = await deleteUserStreak(userId)
+    if (!activityStreakResult.success) {
+      throw new Error('Error deleting activityStreak')
+    }
+
+    // delete articles
+    const articleResult = await deleteAllUserArticles(userId)
+    if (!articleResult.success) {
+      throw new Error('Error deleting articles')
+    }
+
+    // delte audiobooks
+    const audiobookResult = await deleteAllUserAudiobooks(userId)
+    if (!audiobookResult.success) {
+      throw new Error('Error deleting audiobooks')
+    }
+
+    // delete books,
+    const bookResult = await deleteAllUserBooks(userId)
+    if (!bookResult.success) {
+      throw new Error('Error deleting books')
+    }
+
+    // delete coures
+    const courseResult = await deleteAllUserCourses(userId)
+    if (!courseResult.success) {
+      throw new Error('Error deleting courses')
+    }
+
+    // delete movies
+    const moviesResult = await deleteAllUserMovies(userId)
+    if (!moviesResult.success) {
+      throw new Error('Error deleting movies')
+    }
+
+    // delete plants
+    const plantResult = await deleteAllUserPlants(userId)
+    if (!plantResult.success) {
+      throw new Error('Error deleting plants')
+    }
+
+    // delete podcasts
+    const podcastResult = await deleteAllUserPodcasts(userId)
+    if (!podcastResult.success) {
+      throw new Error('Error deleting podcasts')
+    }
+
+    // series
+    const seriesResult = await deleteAllUserSeries(userId)
+    if (!seriesResult.success) {
+      throw new Error('Error deleting series')
+    }
+
+    // delete user
+    const userResult = await deleteUser(userId)
+    if (!userResult.success) {
+      throw new Error('Error deleting user')
+    }
+
+    // send resend email to let them know they've been deleted
+
+    await sendDeletionEmail(session.user.email, session.user.name)
+
+    // return success true.
+    return { success: true }
+  },
 )
+
+const sendDeletionEmail = async (email: string, name: string) => {
+  try {
+    await sendEmail({
+      to: email,
+      subject: `Cozy Chapter - Your cozy room has been successfully deleted`,
+      html: `
+      <p>Goodbye ${name}</p>
+      <p>You have successfully destroyed your cozy room and all the data associated with it has been permanently deleted.</p>
+      <p>Thank you for trying it out! 📚</p>
+    `,
+    })
+    return { success: true }
+  } catch (error) {
+    console.error(`Error sending delete email`)
+  }
+}

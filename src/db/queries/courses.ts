@@ -86,7 +86,7 @@ export async function deleteCourse(userId: string, courseId: string) {
   }
 }
 
-export async function deleteAllUserCourse(userId: string) {
+export async function deleteAllUserCourses(userId: string) {
   try {
     await db.delete(courses).where(eq(courses.userId, userId))
     return { success: true }

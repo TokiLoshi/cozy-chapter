@@ -11,7 +11,8 @@ import {
   leaveHousehold,
   updateHousehold,
 } from '@/lib/server/household'
-import { exportData } from '@/lib/server/exportData'
+import { deleteAccountServer, exportData } from '@/lib/server/exportData'
+import { signOut } from '@/lib/auth-client'
 
 type UserPreferencesModal = {
   bookGoal: number
@@ -43,6 +44,9 @@ export default function EditUserPreferences({
   console.log(' Household data: ', household)
   const [isEditing, setIsEditing] = useState(false)
   const [isInviting, setIsInviting] = useState(false)
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
+  const [confirmText, setConfirmText] = useState('')
+  const CONFIRM_PHRASE = 'DELETE MY COZY ROOM'
 
   const editHousholdForm = useAppForm({
     defaultValues: {
@@ -93,13 +97,26 @@ export default function EditUserPreferences({
     },
     onError: (error) => {
       console.error(`Export failed: ${error}`)
-      toast.error('Error exporting datina', {
+      toast.error('Error exporting data', {
         classNames: {
           toast: 'bg-slate-800 border-slate-700',
           title: 'text-slate-100',
           description: 'text-slate-400',
         },
       })
+    },
+  })
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => deleteAccountServer(),
+    onSuccess: async () => {
+      // explosion hook here later
+      console.log('Deleting cozy room!')
+      await signOut()
+      window.location.href = '/'
+    },
+    onError: () => {
+      toast.error('Deletion failed - nothing was removed. You can try again')
     },
   })
 
@@ -520,6 +537,54 @@ export default function EditUserPreferences({
                 </householdForm.AppForm>
               </div>
             </form>
+          )}
+          {!isConfirmingDelete ? (
+            <button
+              onClick={() => setIsConfirmingDelete(true)}
+              className="cursor-pointer text-rose-400"
+            >
+              Delete my account
+            </button>
+          ) : (
+            <div className="p-4 border-rose-500/39 rounded-lg space-y-3">
+              <p className="text-sm text-slate-300">
+                This permanently deletes your room and all your data. It's
+                recommended to export your data first if you still want to
+                access it. To avoid potential chaos please enter{' '}
+                <span className="font-mono font-bold text-rose-400">
+                  {CONFIRM_PHRASE}
+                </span>
+              </p>
+              <input
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder={CONFIRM_PHRASE}
+                className="cursor-pointer bg-gray-100 rounded border-xl p-2 w-75"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setIsConfirmingDelete(false)
+                    setConfirmText('')
+                  }}
+                  className="cursor-pointer text-white bg-slate-800 p-2 rounded-lg"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={
+                    confirmText !== CONFIRM_PHRASE ||
+                    deleteAccountMutation.isPending
+                  }
+                  onClick={() => deleteAccountMutation.mutate()}
+                  className="bg-red-700 cursor-pointer rounded-lg p-2 disabled: opacity-50 text-gray-50"
+                >
+                  {deleteAccountMutation.isPending
+                    ? 'Deleting...'
+                    : 'Delete forever'}
+                </button>
+              </div>
+            </div>
           )}
 
           {/** Form */}
