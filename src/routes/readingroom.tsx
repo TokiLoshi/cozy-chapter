@@ -73,7 +73,7 @@ function ReadingRoomComponent() {
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
 
-  const { open, toggleWindow, openWindow, closeWindow, closeAll } =
+  const { open, toggleWindow, openWindow, closeWindow, closeAll, fadeToBlack } =
     useWindowStore()
 
   useEffect(() => {
@@ -150,6 +150,9 @@ function ReadingRoomComponent() {
     <>
       {/** Audio Overlay top right */}
       <div className="relative w-full h-screen">
+        <div
+          className={`fixed inset-0 z-[200] bg-black pointer-events-none transition-opacity duration-1000 ${fadeToBlack ? 'opacity-100' : 'opacity-0'}`}
+        />
         <div className="absolute top-6 right-6 z-[10] items-center bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
           <AudioComponent />
         </div>

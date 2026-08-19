@@ -16,6 +16,10 @@ type WindowState = {
   closeWindow: (id: WindowId) => void
   toggleWindow: (id: WindowId) => void
   closeAll: () => void
+  selfDestruct: boolean
+  fadeToBlack: boolean
+  startSelfDestruct: () => void
+  startFade: () => void
 }
 
 const initialOpen: Record<WindowId, boolean> = {
@@ -36,4 +40,12 @@ export const useWindowStore = create<WindowState>((set) => ({
   toggleWindow: (id) =>
     set((s) => ({ open: { ...s.open, [id]: !s.open[id] } })),
   closeAll: () => set({ open: initialOpen }),
+  selfDestruct: false,
+  fadeToBlack: false,
+  startSelfDestruct: () =>
+    set(() => ({
+      selfDestruct: true,
+      open: { ...initialOpen, laptop: true },
+    })),
+  startFade: () => set({ fadeToBlack: true }),
 }))

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { commands } from '@/db/commands'
 
 type TerminalLine = {
@@ -10,6 +10,7 @@ type TerminalLine = {
 export default function useTerminal(
   username: string,
   onLaunchApp: (app: string | null) => void,
+  selfDestruct = false,
 ) {
   const [history, setHistory] = useState<Array<TerminalLine>>([
     { id: 0, type: 'system', content: 'Welcome to CozyOS v1.0.0' },
@@ -24,6 +25,29 @@ export default function useTerminal(
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [currentDir] = useState(`~/${username}`)
   const lineIdRef = useRef(2)
+
+  useEffect(() => {
+    if (!selfDestruct) return
+    const script: Array<[number, TerminalLine['type'], string]> = [
+      [500, 'input', `~/${username} $ sudo rm -rf /cozyroom`],
+      [1200, 'system', 'Password accepted. This time, you have root access.'],
+      [1800, 'error', 'Erasing cozy room...'],
+      [2400, 'output', '5.....'],
+      [3000, 'output', '4....'],
+      [3600, 'output', '3...'],
+      [4200, 'output', '2..'],
+      [4800, 'output', '1.'],
+      [
+        5400,
+        'output',
+        'CozyRoom has been erased. Thank you for visiting. Goodbye 👋',
+      ],
+    ]
+    const timers = script.map(([ms, type, content]) =>
+      setTimeout(() => addLine(type, content), ms),
+    )
+    return () => timers.forEach(clearTimeout)
+  }, [selfDestruct])
 
   const addLine = (
     type: TerminalLine['type'],

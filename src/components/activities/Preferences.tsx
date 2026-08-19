@@ -3,6 +3,7 @@ import { LogOut, Pencil, XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useWindowStore } from '../ui/windowStore'
 import { useAppForm } from '@/hooks/form'
 import { updateUserPreferencesServer } from '@/lib/server/preferences'
 import {
@@ -107,11 +108,16 @@ export default function EditUserPreferences({
     },
   })
 
+  const { startSelfDestruct, startFade } = useWindowStore()
+
   const deleteAccountMutation = useMutation({
     mutationFn: () => deleteAccountServer(),
     onSuccess: async () => {
-      // explosion hook here later
-      console.log('Deleting cozy room!')
+      onClose()
+      startSelfDestruct()
+      await new Promise((r) => setTimeout(r, 6500))
+      startFade()
+      await new Promise((r) => setTimeout(r, 1200))
       await signOut()
       window.location.href = '/'
     },

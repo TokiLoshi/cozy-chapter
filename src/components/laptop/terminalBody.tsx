@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useWindowStore } from '../ui/windowStore'
 import useTerminal from './useTerminal'
 
 export default function TerminalBody({
@@ -8,8 +9,9 @@ export default function TerminalBody({
   username: string
   onLaunchApp: (app: string | null) => void
 }) {
+  const { selfDestruct } = useWindowStore()
   const { history, inputValue, setInputValue, currentDir, handleKeyDown } =
-    useTerminal(username, onLaunchApp)
+    useTerminal(username, onLaunchApp, selfDestruct)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -46,17 +48,19 @@ export default function TerminalBody({
       {/** Active prompt */}
       <div className="flex items-center gap-2 mt-1">
         <span className="text-blue-400">{currentDir}</span>
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="flex-1 bg-transparent text-white outline-none border-none caret-white"
-          autoFocus
-          spellCheck={false}
-          autoComplete="off"
-        />
+        {!selfDestruct && (
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="flex-1 bg-transparent text-white outline-none border-none caret-white"
+            autoFocus
+            spellCheck={false}
+            autoComplete="off"
+          />
+        )}
       </div>
       <div ref={bottomRef} />
     </div>
