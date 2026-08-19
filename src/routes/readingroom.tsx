@@ -68,7 +68,13 @@ export const Route = createFileRoute('/readingroom')({
 
 // Reading Room with modal
 function ReadingRoomComponent() {
-  const { session, blogs, userBooks } = Route.useLoaderData()
+  const { session, userBooks } = Route.useLoaderData()
+
+  const { data: blogsData = [] } = useQuery({
+    queryKey: ['user-blogs'],
+    queryFn: async () => (await getUserBlogs()) ?? [],
+    initialData: Route.useLoaderData().blogs,
+  })
 
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
@@ -234,7 +240,7 @@ function ReadingRoomComponent() {
             isOpen={!!selectedStatus}
             onClose={closeModal}
             selectedStatus={selectedStatus}
-            blogs={blogs}
+            blogs={blogsData}
             onAddArticleClick={() => {
               closeModal()
               openWindow('article')

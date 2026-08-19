@@ -1,5 +1,6 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { XIcon } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAppForm } from '@/hooks/form'
 import { submitArticle } from '@/lib/server/articles'
 import { getSessionServer } from '@/lib/utils'
@@ -18,12 +19,8 @@ type ArticleFormProps = {
   refreshPath: string
 }
 
-export default function ArticleForm({
-  isOpen,
-  onClose,
-  refreshPath,
-}: ArticleFormProps) {
-  const navigate = useNavigate()
+export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
+  const queryClient = useQueryClient()
 
   const form = useAppForm({
     defaultValues: {
@@ -64,9 +61,9 @@ export default function ArticleForm({
     onSubmit: async ({ value }) => {
       try {
         await submitArticle({ data: value })
+        queryClient.invalidateQueries({ queryKey: ['user-blogs'] })
         form.reset()
         onClose()
-        navigate({ to: refreshPath })
       } catch (error) {
         console.error(`Error submitting article: ${error}`)
       }
