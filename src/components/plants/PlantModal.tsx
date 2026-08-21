@@ -69,6 +69,7 @@ function ExpandedPlantCard({
   onDelete,
   onClose,
 }: ExpandedPlantCardProps) {
+  console.log('updatedByName:', JSON.stringify(item.updatedByName))
   return (
     <>
       <BaseModal onClose={onClose}>
@@ -113,9 +114,9 @@ function ExpandedPlantCard({
           <DetailItem label="Last Watered">
             <p className="text-sm font-medium text-slate-200">
               {item.lastWatered
-                ? new Date(item.lastWatered).toLocaleDateString()
+                ? new Date(item.lastWatered).toLocaleDateString() +
+                  (item.updatedByName ? ` by ${item.updatedByName}` : '')
                 : 'data not available'}{' '}
-              by {item.updatedByName}
             </p>
           </DetailItem>
           {/** recommendedWateringIntervalDays */}
@@ -216,8 +217,9 @@ function PlantCard({
             <span className="text-xs text-slate-300">
               Last watered:{' '}
               {item.lastWatered
-                ? new Date(item.lastWatered).toLocaleDateString()
-                : 'data not available'}
+                ? new Date(item.lastWatered).toLocaleDateString() +
+                  (item.updatedByName ? ` by ${item.updatedByName}` : '')
+                : 'data not available'}{' '}
             </span>
             <span className="text-xs text-slate-300">
               Light preferences:{' '}
