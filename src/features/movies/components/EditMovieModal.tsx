@@ -178,7 +178,7 @@ export default function EditMovieModal({
                             placeholder={
                               userMovie.startedAt
                                 ? userMovie.startedAt.toLocaleDateString()
-                                : new Date().toLocaleDateString()
+                                : 'No start date yet'
                             }
                           />
                         )}
@@ -195,7 +195,7 @@ export default function EditMovieModal({
                             placeholder={
                               userMovie.finishedAt
                                 ? userMovie.finishedAt.toLocaleDateString()
-                                : new Date().toLocaleDateString()
+                                : 'No finish date yet'
                             }
                           />
                         )}

@@ -247,7 +247,7 @@ export default function EditPodcastModal({
                               placeholder={
                                 userPodcast.startedAt
                                   ? userPodcast.startedAt.toLocaleDateString()
-                                  : new Date().toLocaleDateString()
+                                  : 'No start date yet'
                               }
                             />
                           )}
@@ -265,7 +265,7 @@ export default function EditPodcastModal({
                               placeholder={
                                 userPodcast.finishedAt
                                   ? userPodcast.finishedAt.toLocaleDateString()
-                                  : new Date().toLocaleDateString()
+                                  : 'No finish date yet'
                               }
                             />
                           )}

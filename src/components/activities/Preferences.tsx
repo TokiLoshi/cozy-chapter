@@ -297,193 +297,7 @@ export default function EditUserPreferences({
               <XIcon className="w-5 h-5" />
             </button>
           </div>
-          <div>
-            {household?.status === 'shared' && (
-              <div className="p-6">
-                <div className="text-md text-white">
-                  <p className="text-md text-white">
-                    Sharing {household.name ?? 'your household'}{' '}
-                    {household.housemate
-                      ? `with ${household.housemate.name}`
-                      : ''}
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleRename}
-                      aria-label="Rename household"
-                      title="Rename household"
-                      className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10-"
-                    >
-                      <Pencil className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={handleLeave}
-                      aria-label="Leave household"
-                      title="Leave household"
-                      className="cursor-pointer text-slate-400 hover:text-rose-400 p-2 rounded-md hover:bg-rose-300"
-                    >
-                      <LogOut className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-                {isEditing && (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      editHousholdForm.handleSubmit()
-                    }}
-                    className="mt-4 space-y-4 text-gray-100"
-                  >
-                    <editHousholdForm.AppField
-                      name="householdName"
-                      validators={{
-                        onChange: ({ value }) => {
-                          if (value && value.length === 0)
-                            return 'please name your houshold'
-                          return undefined
-                        },
-                      }}
-                    >
-                      {(field) => (
-                        <field.TextField
-                          label="Household Name"
-                          placeholder="Name your household"
-                        />
-                      )}
-                    </editHousholdForm.AppField>
-                    <div className="flex justify-end">
-                      <editHousholdForm.AppForm>
-                        <editHousholdForm.SubmitButton
-                          label="Rename"
-                          className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
-                        />
-                      </editHousholdForm.AppForm>
-                    </div>
-                  </form>
-                )}
-              </div>
-            )}
-            {household?.status === 'alone' && (
-              <div className="p-6">
-                <div className="text-md text-white">
-                  <p className="text-md text-white">
-                    You're not sharing {household.name ?? 'your household'} with
-                    anyone, would you like to invite someone?
-                  </p>
-                  <button
-                    onClick={() => setIsInviting(!isInviting)}
-                    aria-label="Send Invitation"
-                    className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
-                  >
-                    Send Invite
-                  </button>
-                  {isInviting && (
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        householdForm.handleSubmit()
-                      }}
-                      className="p-6 space-y-6 text-gray-100"
-                    >
-                      <householdForm.AppField
-                        name="email"
-                        validators={{
-                          onChange: ({ value }) => {
-                            if (value && value.length === 0)
-                              return 'please enter a valid email address'
-                            return undefined
-                          },
-                        }}
-                      >
-                        {(field) => (
-                          <field.TextField
-                            label="Housemate's email address"
-                            placeholder="e.g housemate@cozy.com"
-                          />
-                        )}
-                      </householdForm.AppField>
-                      <div className="flex justify-end">
-                        <householdForm.AppForm>
-                          <householdForm.SubmitButton
-                            label="Send Invite"
-                            className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
-                          />
-                        </householdForm.AppForm>
-                      </div>
-                    </form>
-                  )}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleRename}
-                      aria-label="Rename household"
-                      title="Rename household"
-                      className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
-                    >
-                      <Pencil className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={handleLeave}
-                      aria-label="Leave household"
-                      title="Leave household"
-                      className="cursor-pointer text-slate-400 hover:text-rose-400 p-2 rounded-md hover:bg-rose-300"
-                    >
-                      <LogOut className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-                {isEditing && (
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      editHousholdForm.handleSubmit()
-                    }}
-                    className="mt-4 space-y-4 text-gray-100"
-                  >
-                    <editHousholdForm.AppField
-                      name="householdName"
-                      validators={{
-                        onChange: ({ value }) => {
-                          if (value && value.length === 0)
-                            return 'please name your houshold'
-                          return undefined
-                        },
-                      }}
-                    >
-                      {(field) => (
-                        <field.TextField
-                          label="Household Name"
-                          placeholder="Name your household"
-                        />
-                      )}
-                    </editHousholdForm.AppField>
-                    <div className="flex justify-end">
-                      <editHousholdForm.AppForm>
-                        <editHousholdForm.SubmitButton
-                          label="Rename"
-                          className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
-                        />
-                      </editHousholdForm.AppForm>
-                    </div>
-                  </form>
-                )}
-              </div>
-            )}
-            {household?.status === 'pending' && (
-              <p className="text-md ms-3 p-2 text-white">
-                Invite pending for {household.name ?? 'your household'}
-              </p>
-            )}
 
-            {household?.status === 'solo' && (
-              <p className="text-md ms-3 p-2 text-white">
-                You're flying solo. Would you like to invite someone to share
-                your plants with
-              </p>
-            )}
-          </div>
           <div className="p-6 border-t border-slate-700/50">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
               Your Data
@@ -551,6 +365,193 @@ export default function EditUserPreferences({
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
               Your Household
             </h3>
+            <div>
+              {household?.status === 'shared' && (
+                <div className="p-6">
+                  <div className="text-md text-white">
+                    <p className="text-md text-white">
+                      Sharing {household.name ?? 'your household'}{' '}
+                      {household.housemate
+                        ? `with ${household.housemate.name}`
+                        : ''}
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleRename}
+                        aria-label="Rename household"
+                        title="Rename household"
+                        className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
+                      >
+                        <Pencil className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={handleLeave}
+                        aria-label="Leave household"
+                        title="Leave household"
+                        className="cursor-pointer border-rose-500/30 text-rose-400 hover:bg-rose-500/10 p-2 rounded-md"
+                      >
+                        <LogOut className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                  {isEditing && (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        editHousholdForm.handleSubmit()
+                      }}
+                      className="mt-4 space-y-4 text-gray-100"
+                    >
+                      <editHousholdForm.AppField
+                        name="householdName"
+                        validators={{
+                          onChange: ({ value }) => {
+                            if (value && value.length === 0)
+                              return 'please name your houshold'
+                            return undefined
+                          },
+                        }}
+                      >
+                        {(field) => (
+                          <field.TextField
+                            label="Household Name"
+                            placeholder="Name your household"
+                          />
+                        )}
+                      </editHousholdForm.AppField>
+                      <div className="flex justify-end">
+                        <editHousholdForm.AppForm>
+                          <editHousholdForm.SubmitButton
+                            label="Rename"
+                            className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                          />
+                        </editHousholdForm.AppForm>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              )}
+              {household?.status === 'alone' && (
+                <div className="p-6">
+                  <div className="text-md text-white">
+                    <p className="text-md text-white">
+                      You're not sharing {household.name ?? 'your household'}{' '}
+                      with anyone, would you like to invite someone?
+                    </p>
+                    <button
+                      onClick={() => setIsInviting(!isInviting)}
+                      aria-label="Send Invitation"
+                      className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
+                    >
+                      Send Invite
+                    </button>
+                    {isInviting && (
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          householdForm.handleSubmit()
+                        }}
+                        className="p-6 space-y-6 text-gray-100"
+                      >
+                        <householdForm.AppField
+                          name="email"
+                          validators={{
+                            onChange: ({ value }) => {
+                              if (value && value.length === 0)
+                                return 'please enter a valid email address'
+                              return undefined
+                            },
+                          }}
+                        >
+                          {(field) => (
+                            <field.TextField
+                              label="Housemate's email address"
+                              placeholder="e.g housemate@cozy.com"
+                            />
+                          )}
+                        </householdForm.AppField>
+                        <div className="flex justify-end">
+                          <householdForm.AppForm>
+                            <householdForm.SubmitButton
+                              label="Send Invite"
+                              className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                            />
+                          </householdForm.AppForm>
+                        </div>
+                      </form>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleRename}
+                        aria-label="Rename household"
+                        title="Rename household"
+                        className="cursor-pointer text-slate-400 hover:text-white p-2 rounded-md hover:bg-white/10"
+                      >
+                        <Pencil className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={handleLeave}
+                        aria-label="Leave household"
+                        title="Leave household"
+                        className="cursor-pointer text-slate-400 border-rose-500/30 hover:bg-rose-500/10 p-2 rounded-md"
+                      >
+                        <LogOut className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                  {isEditing && (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        editHousholdForm.handleSubmit()
+                      }}
+                      className="mt-4 space-y-4 text-gray-100"
+                    >
+                      <editHousholdForm.AppField
+                        name="householdName"
+                        validators={{
+                          onChange: ({ value }) => {
+                            if (value && value.length === 0)
+                              return 'please name your houshold'
+                            return undefined
+                          },
+                        }}
+                      >
+                        {(field) => (
+                          <field.TextField
+                            label="Household Name"
+                            placeholder="Name your household"
+                          />
+                        )}
+                      </editHousholdForm.AppField>
+                      <div className="flex justify-end">
+                        <editHousholdForm.AppForm>
+                          <editHousholdForm.SubmitButton
+                            label="Rename"
+                            className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                          />
+                        </editHousholdForm.AppForm>
+                      </div>
+                    </form>
+                  )}
+                </div>
+              )}
+              {household?.status === 'pending' && (
+                <p className="text-md ms-3 p-2 text-white">
+                  Invite pending for {household.name ?? 'your household'}
+                </p>
+              )}
+
+              {household?.status === 'solo' && (
+                <p className="text-md ms-3 p-2 text-white">
+                  You're flying solo. Would you like to invite someone to share
+                  your plants with
+                </p>
+              )}
+            </div>
             {household && household.status === 'solo' && (
               <form
                 onSubmit={(e) => {

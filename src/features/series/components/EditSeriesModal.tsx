@@ -202,7 +202,7 @@ export default function EditSeriesModal({
                             placeholder={
                               userSeries.startedAt
                                 ? userSeries.startedAt.toLocaleDateString()
-                                : new Date().toLocaleDateString()
+                                : 'No start date yet'
                             }
                           />
                         )}
@@ -237,7 +237,7 @@ export default function EditSeriesModal({
                             placeholder={
                               userSeries.finishedAt
                                 ? userSeries.finishedAt.toLocaleDateString()
-                                : new Date().toLocaleDateString()
+                                : 'No finish date yet'
                             }
                           />
                         )}

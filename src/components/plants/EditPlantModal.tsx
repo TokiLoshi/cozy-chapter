@@ -172,7 +172,7 @@ export default function EditPlantModal({
                   placeholder={
                     plant.lastWatered
                       ? plant.lastWatered.toLocaleDateString()
-                      : new Date().toLocaleDateString()
+                      : 'Not watered yet'
                   }
                 />
               )}

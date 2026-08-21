@@ -41,6 +41,12 @@ function ExpandedSeriesCard({
   onDelete: () => void
   onClose: () => void
 }) {
+  const statusLabels: Record<UserSeries['status'], string> = {
+    toWatch: 'To Watch',
+    watching: 'Watching',
+    watched: 'Watched',
+  }
+
   return (
     <BaseModal onClose={onClose}>
       {/** Header */}
@@ -69,7 +75,7 @@ function ExpandedSeriesCard({
         {/** Status */}
         <DetailItem label="Status">
           <p className="text-sm font-medium text-slate-200">
-            {item.userSeries.status}
+            {statusLabels[item.userSeries.status]}
           </p>
         </DetailItem>
 
@@ -443,244 +449,247 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
         )}
 
         {/** Main modal */}
-        <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-white">Series</h2>
-            <button
-              className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-              onClick={() => closeModal()}
-            >
-              <XIcon />
-            </button>
-          </div>
-          {/** Search */}
-          <div className="p-4 border-b border-slate-700">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Search Series..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-              />
+        {!isEditOpen && !expandedSeries && (
+          <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold text-white">Series</h2>
+              <button
+                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                onClick={() => closeModal()}
+              >
+                <XIcon />
+              </button>
             </div>
-          </div>
-          {/** Search Results */}
-          <div className="flex flex-col overflow-y-auto p-4">
-            {debouncedQuery.length > 2 && (
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-slate-400">
-                    Search Results
-                  </h3>
-                  <button
-                    className="cursor-pointer text-slate-400 hover:text-white"
-                    onClick={() => {
-                      setSearchQuery('')
-                      setDebouncedQuery('')
-                    }}
-                  >
-                    <XIcon />
-                  </button>
-                </div>
-                {isSearching ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
-                  </div>
-                ) : searchError ? (
-                  <p className="text-red-400 text-sm">
-                    Failed to search. Please Try again
-                  </p>
-                ) : searchResults?.length === 0 ? (
-                  <p className="text-slate-400 text-sm">No Series found</p>
-                ) : (
-                  <div className="space-y-3">
-                    {searchResults?.map(
-                      (series: Omit<TvSeries, 'createdAt' | 'updatedAt'>) => (
-                        <div
-                          key={series.id}
-                          className="flex items-center gap-3"
-                        >
-                          {series.posterPath && (
-                            <img
-                              src={series.posterPath}
-                              alt={series.title}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-slate-100">
-                              {series.title}
-                            </h4>
-                            <p className="text-sm text-slate-400">
-                              {series.tagline}
-                            </p>
-                            <button
-                              onClick={() => handleAdd(series)}
-                              disabled={
-                                isInLibrary(series.id) || addMutation.isPending
-                              }
-                              className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
-                            >
-                              {addMutation.isPending ? (
-                                <Loader2 className="w-4 h-4" />
-                              ) : isInLibrary(series.id) ? (
-                                <span className="text-xs text-slate-300">
-                                  Added
-                                </span>
-                              ) : (
-                                <Plus className="cursor-pointer text-white bg-amber-500 hover:bg-amber-500 disabled:cursor-not-allowed rounded-lg transition-colors" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-                      ),
-                    )}
-                  </div>
-                )}
+            {/** Search */}
+            <div className="p-4 border-b border-slate-700">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search Series..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
               </div>
-            )}
-          </div>
-          {/** User's library  */}
-          <div className="pt-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-md font-medium text-slate-400">
-                Your Watchlist
-              </h3>
             </div>
-            {userSeries?.length === 0 ? (
-              <p className="text-slate-400 text-sm">
-                No series yet. Search to add series to your watchlist
-              </p>
-            ) : (
-              <Tabs defaultValue="watching" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-slate-800">
-                  <TabsTrigger
-                    value="toWatch"
-                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                  >
-                    To Watch ({seriesToWatch.length})
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="watching"
-                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                  >
-                    Watching ({seriesWatching.length})
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="watched"
-                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                  >
-                    Watched ({seriesWatched.length})
-                  </TabsTrigger>
-                </TabsList>
-
-                {/** To Watch */}
-                <TabsContent value="toWatch" className="mt-4">
-                  <SearchArea
-                    value={librarySearch}
-                    onChange={setLibrarySearch}
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {seriesToWatch.length === 0 ? (
-                      <EmptyTabContent
-                        message={
-                          librarySearch
-                            ? 'No series match your filters'
-                            : 'No series on your watchlist yet'
-                        }
-                      />
-                    ) : (
-                      seriesToWatch.map((item) => (
-                        <div
-                          className="cursor-pointer"
-                          key={item.series.id}
-                          onClick={() => handleCardClick(item)}
-                        >
-                          <SeriesCard
-                            item={item.series}
-                            onClose={() => closeModal()}
-                            onEdit={() => handleEdit(item)}
-                            onDelete={() => handleDelete(item.userSeries.id)}
-                          />
-                        </div>
-                      ))
-                    )}
+            {/** Search Results */}
+            <div className="flex flex-col overflow-y-auto p-4">
+              {debouncedQuery.length > 2 && (
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-slate-400">
+                      Search Results
+                    </h3>
+                    <button
+                      className="cursor-pointer text-slate-400 hover:text-white"
+                      onClick={() => {
+                        setSearchQuery('')
+                        setDebouncedQuery('')
+                      }}
+                    >
+                      <XIcon />
+                    </button>
                   </div>
-                </TabsContent>
+                  {isSearching ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                    </div>
+                  ) : searchError ? (
+                    <p className="text-red-400 text-sm">
+                      Failed to search. Please Try again
+                    </p>
+                  ) : searchResults?.length === 0 ? (
+                    <p className="text-slate-400 text-sm">No Series found</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {searchResults?.map(
+                        (series: Omit<TvSeries, 'createdAt' | 'updatedAt'>) => (
+                          <div
+                            key={series.id}
+                            className="flex items-center gap-3"
+                          >
+                            {series.posterPath && (
+                              <img
+                                src={series.posterPath}
+                                alt={series.title}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-slate-100">
+                                {series.title}
+                              </h4>
+                              <p className="text-sm text-slate-400">
+                                {series.tagline}
+                              </p>
+                              <button
+                                onClick={() => handleAdd(series)}
+                                disabled={
+                                  isInLibrary(series.id) ||
+                                  addMutation.isPending
+                                }
+                                className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+                              >
+                                {addMutation.isPending ? (
+                                  <Loader2 className="w-4 h-4" />
+                                ) : isInLibrary(series.id) ? (
+                                  <span className="text-xs text-slate-300">
+                                    Added
+                                  </span>
+                                ) : (
+                                  <Plus className="cursor-pointer text-white bg-amber-500 hover:bg-amber-500 disabled:cursor-not-allowed rounded-lg transition-colors" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {/** User's library  */}
+            <div className="pt-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-md font-medium text-slate-400">
+                  Your Watchlist
+                </h3>
+              </div>
+              {userSeries?.length === 0 ? (
+                <p className="text-slate-400 text-sm">
+                  No series yet. Search to add series to your watchlist
+                </p>
+              ) : (
+                <Tabs defaultValue="watching" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+                    <TabsTrigger
+                      value="toWatch"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                    >
+                      To Watch ({seriesToWatch.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="watching"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                    >
+                      Watching ({seriesWatching.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="watched"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                    >
+                      Watched ({seriesWatched.length})
+                    </TabsTrigger>
+                  </TabsList>
 
-                {/** Watching  */}
-                <TabsContent value="watching" className="mt-4">
-                  <SearchArea
-                    value={librarySearch}
-                    onChange={setLibrarySearch}
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {seriesWatching.length === 0 ? (
-                      <EmptyTabContent
-                        message={
-                          librarySearch
-                            ? 'No series match your filters'
-                            : 'No series on your watching list yet'
-                        }
-                      />
-                    ) : (
-                      seriesWatching.map((item) => (
-                        <div
-                          className="cursor-pointer"
-                          key={item.series.id}
-                          onClick={() => handleCardClick(item)}
-                        >
-                          <SeriesCard
-                            item={item.series}
-                            onEdit={() => handleEdit(item)}
-                            onDelete={() => handleDelete(item.userSeries.id)}
-                            onClose={() => closeModal()}
-                          />
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </TabsContent>
+                  {/** To Watch */}
+                  <TabsContent value="toWatch" className="mt-4">
+                    <SearchArea
+                      value={librarySearch}
+                      onChange={setLibrarySearch}
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {seriesToWatch.length === 0 ? (
+                        <EmptyTabContent
+                          message={
+                            librarySearch
+                              ? 'No series match your filters'
+                              : 'No series on your watchlist yet'
+                          }
+                        />
+                      ) : (
+                        seriesToWatch.map((item) => (
+                          <div
+                            className="cursor-pointer"
+                            key={item.series.id}
+                            onClick={() => handleCardClick(item)}
+                          >
+                            <SeriesCard
+                              item={item.series}
+                              onClose={() => closeModal()}
+                              onEdit={() => handleEdit(item)}
+                              onDelete={() => handleDelete(item.userSeries.id)}
+                            />
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </TabsContent>
 
-                {/** Watched */}
-                <TabsContent value="watched" className="mt-4">
-                  <SearchArea
-                    value={librarySearch}
-                    onChange={setLibrarySearch}
-                  />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {seriesWatched.length === 0 ? (
-                      <EmptyTabContent
-                        message={
-                          librarySearch
-                            ? 'No series match your filter'
-                            : 'No series on your watchlist yet'
-                        }
-                      />
-                    ) : (
-                      seriesWatched.map((item) => (
-                        <div
-                          key={item.series.id}
-                          className="cursor-pointer"
-                          onClick={() => handleCardClick(item)}
-                        >
-                          <SeriesCard
-                            item={item.series}
-                            onEdit={() => handleEdit(item)}
-                            onDelete={() => handleDelete(item.userSeries.id)}
-                            onClose={() => onClose()}
-                          />
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            )}
+                  {/** Watching  */}
+                  <TabsContent value="watching" className="mt-4">
+                    <SearchArea
+                      value={librarySearch}
+                      onChange={setLibrarySearch}
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {seriesWatching.length === 0 ? (
+                        <EmptyTabContent
+                          message={
+                            librarySearch
+                              ? 'No series match your filters'
+                              : 'No series on your watching list yet'
+                          }
+                        />
+                      ) : (
+                        seriesWatching.map((item) => (
+                          <div
+                            className="cursor-pointer"
+                            key={item.series.id}
+                            onClick={() => handleCardClick(item)}
+                          >
+                            <SeriesCard
+                              item={item.series}
+                              onEdit={() => handleEdit(item)}
+                              onDelete={() => handleDelete(item.userSeries.id)}
+                              onClose={() => closeModal()}
+                            />
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </TabsContent>
+
+                  {/** Watched */}
+                  <TabsContent value="watched" className="mt-4">
+                    <SearchArea
+                      value={librarySearch}
+                      onChange={setLibrarySearch}
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {seriesWatched.length === 0 ? (
+                        <EmptyTabContent
+                          message={
+                            librarySearch
+                              ? 'No series match your filter'
+                              : 'No series on your watchlist yet'
+                          }
+                        />
+                      ) : (
+                        seriesWatched.map((item) => (
+                          <div
+                            key={item.series.id}
+                            className="cursor-pointer"
+                            onClick={() => handleCardClick(item)}
+                          >
+                            <SeriesCard
+                              item={item.series}
+                              onEdit={() => handleEdit(item)}
+                              onDelete={() => handleDelete(item.userSeries.id)}
+                              onClose={() => onClose()}
+                            />
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   )
