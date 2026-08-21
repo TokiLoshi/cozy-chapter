@@ -16,6 +16,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+
+const labelStyles = 'text-sm font-medium text-slate-300 mb-2 ms-2'
+const inputStyles =
+  'border-slate-700 bg-slate-900/50' +
+  'focus-visible:ring-1 focus-visible:ring-amber-500/50 focus-visible:border-amber-500/50'
 
 export function DateField({
   label,
@@ -30,15 +36,19 @@ export function DateField({
 
   return (
     <div>
-      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+      <Label
+        htmlFor={label}
+        className={labelStyles}
+        // className="mb-2 text-xl font-bold"
+      >
         {label}
       </Label>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild className={inputStyles}>
           <Button
             variant="outline"
             id={label}
-            className="w-full justify-between font-normal bg-slate-900 text-white"
+            className="w-full justify-between font-normal bg-slat-900 text-white"
             type="button"
           >
             {field.state.value
@@ -47,10 +57,19 @@ export function DateField({
             <ChevronDownIcon className="w-5 h-5" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto overflow-hidden p-0 " align="start">
+        <PopoverContent
+          className="z-[100] w-auto overflow-hidden p-0 bg-slate-900 text-white"
+          align="start"
+        >
           <Calendar
             mode="single"
+            classNames={{
+              today: 'bg-slate-800 text-slate-100 rounded-md',
+              day_button:
+                'data-[selected-single=true]:bg-amber-600 data-[selected-single=true]:text-white',
+            }}
             selected={field.state.value || undefined}
+            className={labelStyles}
             captionLayout="dropdown"
             disabled={{ after: new Date() }}
             onSelect={(date) => {
@@ -94,7 +113,7 @@ function ErrorMessages({
       {errors.map((error) => (
         <div
           key={typeof error === 'string' ? error : error.message}
-          className="text-red-500 mt-1 font-bold"
+          className="text-red-400 mt-1 text-center text-sm font-mono"
         >
           {typeof error === 'string' ? error : error.message}
         </div>
@@ -115,7 +134,11 @@ export function TextField({
 
   return (
     <div>
-      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+      <Label
+        htmlFor={label}
+        className={labelStyles}
+        // className="mb-2 text-xl font-bold"
+      >
         {label}
       </Label>
       <Input
@@ -123,6 +146,7 @@ export function TextField({
         placeholder={placeholder}
         onBlur={field.handleBlur}
         onChange={(e) => field.handleChange(e.target.value)}
+        className={inputStyles}
       />
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
     </div>
@@ -151,6 +175,7 @@ export function NumberField({
       <Input
         id={label}
         type="number"
+        className={inputStyles}
         value={field.state.value ?? ''}
         placeholder={placeholder}
         min={min}
@@ -191,7 +216,11 @@ export function TextArea({
 
   return (
     <div>
-      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+      <Label
+        htmlFor={label}
+        className={labelStyles}
+        // className="mb-2 text-xl font-bold"
+      >
         {label}
       </Label>
       <ShadcnTextarea
@@ -200,6 +229,7 @@ export function TextArea({
         onBlur={field.handleBlur}
         rows={rows}
         onChange={(e) => field.handleChange(e.target.value)}
+        className={inputStyles}
       />
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
     </div>
@@ -222,7 +252,9 @@ export function Select({
     <div>
       <label
         htmlFor={field.name}
-        className="block text-lg font-bold text-slate-100 mb-2"
+        // className="block text-lg font-bold text-slate-100 mb-2"
+        // className="mb-1.5 block text-sm font-medium text-slate-300"
+        className={labelStyles}
       >
         {label}
       </label>
@@ -231,14 +263,20 @@ export function Select({
         value={field.state.value}
         onValueChange={(value) => field.handleChange(value)}
       >
-        <ShadcnSelect.SelectTrigger className="w-full p-3">
+        <ShadcnSelect.SelectTrigger className={cn(inputStyles, 'w-full p-3')}>
           <ShadcnSelect.SelectValue placeholder={placeholder} />
         </ShadcnSelect.SelectTrigger>
         <ShadcnSelect.SelectContent className="z-[100] bg-slate-900 text-white">
           <ShadcnSelect.SelectGroup>
-            <ShadcnSelect.SelectLabel>{label}</ShadcnSelect.SelectLabel>
+            <ShadcnSelect.SelectLabel className={labelStyles}>
+              {label}
+            </ShadcnSelect.SelectLabel>
             {values.map((value) => (
-              <ShadcnSelect.SelectItem key={value.value} value={value.value}>
+              <ShadcnSelect.SelectItem
+                key={value.value}
+                value={value.value}
+                className="focus:bg-slate-800 focus:text-slate-100"
+              >
                 {value.label}
               </ShadcnSelect.SelectItem>
             ))}
@@ -256,7 +294,11 @@ export function Slider({ label }: { label: string }) {
 
   return (
     <div>
-      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+      <Label
+        htmlFor={label}
+        // className="mb-2 text-xl font-bold"
+        className="mb-1.5 block text-sm font-medium text-slate-300"
+      >
         {label}
       </Label>
       <ShadcnSlider
