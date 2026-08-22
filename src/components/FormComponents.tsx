@@ -169,7 +169,7 @@ export function NumberField({
 
   return (
     <div>
-      <Label htmlFor={label} className="mb-2 text-xl font-bold">
+      <Label htmlFor={label} className={labelStyles}>
         {label}
       </Label>
       <Input

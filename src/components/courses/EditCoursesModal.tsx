@@ -49,7 +49,7 @@ export default function EditCoursesModal({
       },
     },
     onSubmit: async ({ value }) => {
-      const loadingToast = toast.loading('Updating course..., ', {
+      const loadingToast = toast.loading('Updating course...', {
         classNames: {
           toast: 'bg-slate-800 border-slate-700',
           title: 'text-slate-100',
@@ -217,7 +217,15 @@ export default function EditCoursesModal({
             {/** ProgressUnit */}
             <form.AppField name="progressUnit">
               {(field) => (
-                <field.TextField label="Progress Unit (lessons / videos)" />
+                <field.Select
+                  label="Progress Unit"
+                  values={[
+                    { label: 'Videos', value: 'videos' },
+                    { label: 'Lessons', value: 'lessons' },
+                    { label: 'Chapters', value: 'chapters' },
+                  ]}
+                  placeholder="How is progess measured?"
+                />
               )}
             </form.AppField>
 
@@ -225,7 +233,7 @@ export default function EditCoursesModal({
             <form.AppField name="progressTotal">
               {(field) => (
                 <field.NumberField
-                  label="ProgressTotal"
+                  label="Total Progress"
                   placeholder={'Course Progress Total'}
                 />
               )}
@@ -235,7 +243,7 @@ export default function EditCoursesModal({
             <form.AppField name="estimatedMinutesRemaining">
               {(field) => (
                 <field.NumberField
-                  label="EstimatedMinutesRemaining"
+                  label="Estimated Minutes Remaining"
                   placeholder={'Course Estimated Minues Remaining'}
                 />
               )}
@@ -245,7 +253,7 @@ export default function EditCoursesModal({
             <form.AppField name="startedAt">
               {(field) => (
                 <field.DateField
-                  label="date course started"
+                  label="Date Course Started"
                   placeholder={'Started At'}
                 />
               )}
@@ -257,7 +265,7 @@ export default function EditCoursesModal({
                 <div className="flex items-end gap-2">
                   <div className="flex-1">
                     <field.DateField
-                      label="date course finished"
+                      label="Date Course Finished"
                       placeholder={'Finished At'}
                     />
                     {field.state.value && (
@@ -278,7 +286,7 @@ export default function EditCoursesModal({
             <form.AppField name="notes">
               {(field) => (
                 <field.TextField
-                  label="notes"
+                  label="Notes"
                   placeholder={'Add your thoughts here'}
                 />
               )}

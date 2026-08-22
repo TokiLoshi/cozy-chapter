@@ -257,7 +257,7 @@ export default function EditAudioBookModal({
                               placeholder={
                                 userAudioBook.startedAt
                                   ? userAudioBook.startedAt.toLocaleDateString()
-                                  : new Date().toLocaleDateString()
+                                  : 'No start date yet'
                               }
                             />
                           )}
@@ -274,7 +274,7 @@ export default function EditAudioBookModal({
                               placeholder={
                                 userAudioBook.finishedAt
                                   ? userAudioBook.finishedAt.toLocaleDateString()
-                                  : new Date().toLocaleDateString()
+                                  : 'No finish date yet'
                               }
                             />
                           )}

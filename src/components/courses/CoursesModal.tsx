@@ -79,16 +79,16 @@ function ExpandedCourseCard({
         {item.progressCurrent > 0 && (
           <DetailItem label="Current Progress">
             <p className="text-sm font-medium text-slate-200">
-              {item.progressCurrent}
+              {item.progressCurrent} {item.progressUnit}
             </p>
           </DetailItem>
         )}
 
         {/** progressTotal */}
         {item.progressTotal && (
-          <DetailItem label="Total Volume">
+          <DetailItem label="Total Progress">
             <p className="text-sm font-medium text-slate-200">
-              {item.progressTotal}
+              {item.progressTotal} {item.progressUnit}
             </p>
           </DetailItem>
         )}
@@ -106,7 +106,7 @@ function ExpandedCourseCard({
         {item.estimatedMinutesRemaining && (
           <DetailItem label="Estimated Time Remaining">
             <p className="text-sm font-medium text-slate-200">
-              {item.estimatedMinutesRemaining}
+              {item.estimatedMinutesRemaining} min
             </p>
           </DetailItem>
         )}
@@ -115,7 +115,7 @@ function ExpandedCourseCard({
         {item.startedAt && (
           <DetailItem label="Started learning at">
             <p className="text-sm font-medium text-slate-200">
-              {item.startedAt.toLocaleString()}
+              {item.startedAt.toLocaleDateString()}
             </p>
           </DetailItem>
         )}
@@ -191,7 +191,7 @@ function CourseCard({
 
             {/** Priority */}
             <span
-              className={`text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border ${priorityColor}`}
+              className={`text-[10px] uppercase tracking-wide px-2 py-0.5 rounded-full border ${priorityColor[item.priority]}`}
             >
               {item.priority}
             </span>
@@ -231,7 +231,7 @@ function CourseCard({
             </div>
           ) : (
             <p className="text-xs text-slate-500 mt-1">
-              {item.progressCurrent} / {item.progressTotal ?? '-'}
+              {item.progressCurrent} / {item.progressTotal ?? 'unknown'}
             </p>
           )}
         </div>
@@ -250,7 +250,7 @@ function CourseCard({
               e.stopPropagation()
               onDelete()
             }}
-            className="cursor-pointer bg-red-500 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-red-500/80 hover:bg-red-400 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Trash className="w-4 h-4" />
           </button>
@@ -415,7 +415,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
         {/** Modal */}
         {!isEditOpen && !expandedCourse && (
-          <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border-slate-700 m-4 p-6">
+          <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-white">Courses</h2>
               <button
@@ -426,7 +426,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
               </button>
             </div>
             <button
-              className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-cyan-600 hover:bg-cyan text-white font-medium transition-colors"
+              className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-white font-medium transition-colors"
               onClick={() => {
                 setisAddOpen(true)
               }}
@@ -538,7 +538,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
         }
         // progress unit required
         if (value.progressUnit.length === 0) {
-          errors.fields.progressUnite =
+          errors.fields.progressUnit =
             'progess units required, please select video or text or lessons'
         }
         return errors
@@ -697,7 +697,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             <form.AppField name="progressCurrent">
               {(field) => (
                 <field.NumberField
-                  label="progressCurrent"
+                  label="Current Progress"
                   placeholder="Course ProgressCurrent"
                 />
               )}
@@ -706,9 +706,14 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             {/** ProgressUnit */}
             <form.AppField name="progressUnit">
               {(field) => (
-                <field.TextField
-                  label="ProgressUnit"
-                  placeholder="Course ProgressUnit"
+                <field.Select
+                  label="Progress Unit"
+                  values={[
+                    { label: 'Videos', value: 'videos' },
+                    { label: 'Lessons', value: 'lessons' },
+                    { label: 'Chapters', value: 'chapters' },
+                  ]}
+                  placeholder="How is progess measured?"
                 />
               )}
             </form.AppField>
@@ -717,7 +722,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             <form.AppField name="progressTotal">
               {(field) => (
                 <field.NumberField
-                  label="ProgressTotal"
+                  label="Progress Total"
                   placeholder="Course Progress Total"
                 />
               )}
@@ -727,7 +732,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             <form.AppField name="estimatedMinutesRemaining">
               {(field) => (
                 <field.NumberField
-                  label="EstimatedMinutesRemaining"
+                  label="Estimated Minutes Remaining"
                   placeholder="Course Estimated Minues Remaining"
                 />
               )}
@@ -737,7 +742,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             <form.AppField name="startedAt">
               {(field) => (
                 <field.DateField
-                  label="date course started"
+                  label="Date Course Started"
                   placeholder="today"
                 />
               )}
@@ -747,7 +752,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             <form.AppField name="notes">
               {(field) => (
                 <field.TextField
-                  label="notes"
+                  label="Notes"
                   placeholder="add your thoughts here"
                 />
               )}
