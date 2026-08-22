@@ -15,9 +15,9 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     requireEmailVerification: false,
-    // eslint-disable-next-line @typescript-eslint/require-await
+
     sendResetPassword: async ({ user, url }, _request) => {
-      void sendEmail({
+      await sendEmail({
         to: user.email,
         subject: 'Reset your Cozy Chapter password',
         html: `
@@ -41,9 +41,8 @@ export const auth = betterAuth({
   ],
   plugins: [
     magicLink({
-      // eslint-disable-next-line @typescript-eslint/require-await
       sendMagicLink: async ({ email, url }, _ctx) => {
-        void sendEmail({
+        await sendEmail({
           to: email,
           subject: 'Your Cozy chapter magic link',
           html: `

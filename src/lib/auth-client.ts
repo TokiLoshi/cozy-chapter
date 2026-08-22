@@ -11,7 +11,6 @@ export const {
   resetPassword,
   magicLink,
 } = createAuthClient({
-  baseURL: import.meta.env.VITE_BETTER_AUTH_URL,
   redirectTo: '/',
   plugins: [magicLinkClient()],
 })
