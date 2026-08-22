@@ -28,13 +28,14 @@ function RouteComponent() {
               <p>
                 Your email address and display name when you create an account,
                 the content you save in the app (media lists, plant logs,
-                notes), and basic technical info like IP address and device type
-                that comes standard with any web request. I also use simple,
-                privacy-friendly, third-party analytics to see how the app is
-                used and to alert me to bugs. Email addresses are not verified —
-                if you sign up with an address that isn't really yours, password
-                recovery won't work and I won't be able to act on data requests
-                for that account (see below).
+                notes), the email address of anyone you invite to join your
+                household, and basic technical info like IP address and device
+                type that comes standard with any web request. I also use
+                simple, privacy-friendly, third-party analytics to see how the
+                app is used and to alert me to bugs. Email addresses are not
+                verified — if you sign up with an address that isn't really
+                yours, password recovery won't work and I won't be able to act
+                on data requests for that account (see below).
               </p>
             </div>
             <div>
@@ -66,6 +67,20 @@ function RouteComponent() {
                 and I'll take care of it, usually within a few days. I only view
                 individual account data when needed to debug a problem and I
                 prefer to filter for my own data, or if you have requested it.
+              </p>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-slate-100 mb-2">
+                House rules
+              </h2>
+              <p>
+                Cozy Chapter is a free space made for fun. Please treat it that
+                way. Don't upload anything illegal, harmful, or hateful, or
+                harass anyone, and don't use the app to store content that
+                doesn't belong to you or the usage therof would violate basic
+                copyright beyond the api. If I find content that breaks these
+                rule I may delete the content and the accout without warning. Be
+                a nice human and we'll never have to think about this paragraph.
               </p>
             </div>
             <div>
