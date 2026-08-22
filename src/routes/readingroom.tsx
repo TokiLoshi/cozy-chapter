@@ -242,7 +242,7 @@ function ReadingRoomComponent() {
             selectedStatus={selectedStatus}
             blogs={blogsData}
             onAddArticleClick={() => {
-              closeModal()
+              // closeModal()
               openWindow('article')
             }}
           />

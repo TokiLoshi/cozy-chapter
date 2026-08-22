@@ -42,10 +42,11 @@ function RouteComponent() {
                 Who I share it with
               </h2>
               <p>
-                Nobody, except the service providers that make the app work -
-                hosting providers including Neon which is the database provider,
-                and analytics - PostHog, who process data on my behalf. I will
-                never sell your data or share it with advertisers.
+                Nobody, except the service providers that make the app work.
+                This includes hosting providers including Neon which is the
+                database provider, and the analytics and error processor,
+                PostHog, who process data on my behalf. I will never sell your
+                data or share it with advertisers.
               </p>
             </div>
             <div>
@@ -53,16 +54,18 @@ function RouteComponent() {
                 Your data, your call
               </h2>
               <p>
-                You can view and edit your information in the app. For anything
-                else — corrections you can't make yourself, a data export, or
-                deleting your account entirely — please{' '}
+                You can view, edit, delete and export your information in the
+                app. You also have the option to delete your entire account and
+                permanently erase all your data. For anything else — please{' '}
                 <Link
                   to="/contact"
-                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                  className=" hover:text-cyan-500 underline underline-offset-2"
                 >
                   reach out{' '}
                 </Link>
-                and I'll take care of it, usually within a few days.
+                and I'll take care of it, usually within a few days. I only view
+                individual account data when needed to debug a problem and I
+                prefer to filter for my own data, or if you have requested it.
               </p>
             </div>
             <div>
@@ -78,10 +81,9 @@ function RouteComponent() {
                 This is to stop anyone from deleting or accessing your data. One
                 exception: if someone signed up using <em>your</em> email
                 address without your permission, contact me from that address
-                and I will remove the account. Anyone who does this does so
-                knowingly that all data uploaded with an email they didn't have
-                the right to use is eligible to have their data removed without
-                warning.
+                and I will remove the account. Anyone who signs up with an email
+                they don't have the right to use may have their data and account
+                deleted without warning.
               </p>
             </div>
             <div>
@@ -103,13 +105,15 @@ function RouteComponent() {
               Questions? Please feel free to{' '}
               <Link
                 to="/contact"
-                className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2"
+                className=" hover:text-cyan-500 underline underline-offset-2"
               >
-                reach out
+                contact me.
               </Link>
             </p>
           </div>
-          <p>Thanks for being here, and I hope you enjoy the cozy space 🫶</p>
+          <p className="mt-8 text-slate-300">
+            Thanks for being here, and I hope you enjoy your cozy space 🫶
+          </p>
         </section>
       </div>
       <Footer />

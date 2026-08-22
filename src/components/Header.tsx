@@ -114,6 +114,19 @@ export default function Header({
                 <UserPlus size={20} />
                 <span className="font-medium">Sign up</span>
               </Link>
+              {/** About */}
+              <Link
+                to="/about"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800/900 transition-colors mb-2"
+                activeProps={{
+                  className:
+                    'flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-slate-800 transition-colors mb-2',
+                }}
+              >
+                <FileQuestionMark size={20} />
+                <span className="font-medium">About</span>
+              </Link>
             </>
           )}
           {isAuthenticated && (
@@ -157,7 +170,7 @@ export default function Header({
                 <Contact size={20} />
                 <span className="font-medium">Contact</span>
               </Link>
-
+              {/** About */}
               <Link
                 to="/about"
                 onClick={() => setIsOpen(false)}
@@ -170,6 +183,7 @@ export default function Header({
                 <FileQuestionMark size={20} />
                 <span className="font-medium">About</span>
               </Link>
+
               {/** Divider */}
               <div className="my-4 border-t border-gray-700"></div>
               <button
