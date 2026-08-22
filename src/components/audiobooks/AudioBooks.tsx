@@ -37,12 +37,27 @@ type ExpandedAudioCardProps = {
   onClose: () => void
 }
 
+const formatedProgress = (
+  lastChapter: number | null | undefined,
+  totalChapters: number | null | undefined,
+) => {
+  if (!lastChapter) return 'Not started'
+  if (!totalChapters) return `Chapter ${lastChapter}`
+  return `Chapter ${lastChapter} / ${totalChapters}`
+}
+
 function ExpandedAudioCard({
   item,
   onEdit,
   onDelete,
   onClose,
 }: ExpandedAudioCardProps) {
+  const statusLabels: Record<NonNullable<UserAudioBooks['status']>, string> = {
+    toListen: 'To Listen to',
+    listening: 'Listening to',
+    listened: 'Listened to',
+  }
+
   return (
     <BaseModal onClose={onClose}>
       {/** Header */}
@@ -73,15 +88,19 @@ function ExpandedAudioCard({
       <div className="grid grid-cols-2 gap-3 mb-4">
         <DetailItem label="Status">
           <p className="text-sm font-medium text-slate-200">
-            {item.userAudioBook.status}
+            {item.userAudioBook.status
+              ? statusLabels[item.userAudioBook.status]
+              : 'No status'}
           </p>
         </DetailItem>
 
         {/** Last Chapter */}
         <DetailItem label="Progress">
           <p className="text-sm font-medium text-slate-200">
-            Chapter {item.userAudioBook.lastChapter || 0} /{''}
-            {item.audioBook.totalChapters ?? 'chapters'}
+            {formatedProgress(
+              item.userAudioBook.lastChapter,
+              item.audioBook.totalChapters,
+            )}
           </p>
         </DetailItem>
 
@@ -168,8 +187,10 @@ function AudioBookCard({
 
           <div className="flex items-center gap-2 mt-1">
             <span className="text-xs text-slate-300">
-              Chapter {item.userAudioBook.lastChapter} /{' '}
-              {item.audioBook.totalChapters}
+              {formatedProgress(
+                item.userAudioBook.lastChapter,
+                item.audioBook.totalChapters,
+              )}
             </span>
           </div>
         </div>
