@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import BooksModal from './books/BookModal'
-import { ArticleCardModal } from './articles/ArticleModal'
+import { ArticleCardModal, ExpandedArticleCard } from './articles/ArticleModal'
 import SearchArea from './SearchArea'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { deleteBlogs, getUserBlogs } from '@/lib/server/articles'
@@ -27,6 +27,9 @@ export default function ReadingModal({
 }: ReadingModalProps) {
   const [librarySearch, setLibrarySearch] = useState('')
   const queryClient = useQueryClient()
+  const [expandedArticleId, setExpandedArticleId] = useState<string | null>(
+    null,
+  )
 
   const { data: blogs } = useQuery({
     queryKey: ['user-blogs'],
@@ -96,6 +99,10 @@ export default function ReadingModal({
     })
   }
 
+  const expandedArticle = expandedArticleId
+    ? (blogs?.find((b) => b.id === expandedArticleId) ?? null)
+    : null
+
   if (!isOpen) return null
 
   return (
@@ -124,13 +131,13 @@ export default function ReadingModal({
             <TabsList className="grid w-full grid-cols-2 mb-4 bg-slate-800">
               <TabsTrigger
                 value="articles"
-                className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                className="cursor-pointer data-[state=active]:bg-amber-500 text-slate-200"
               >
                 Articles ({filteredBlogs.length})
               </TabsTrigger>
               <TabsTrigger
                 value="books"
-                className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                className="cursor-pointer data-[state=active]:bg-amber-500 text-slate-200"
               >
                 Books ({filteredBooks ? filteredBooks.length : 0})
               </TabsTrigger>
@@ -140,11 +147,18 @@ export default function ReadingModal({
             <TabsContent value="articles">
               <button
                 onClick={onAddArticleClick}
-                className="bg-amber-600 cursor-pointer hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
+                className="bg-amber-500 cursor-pointer hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
               >
                 + Add Article{' '}
               </button>
               <SearchArea value={librarySearch} onChange={setLibrarySearch} />
+              {expandedArticle && (
+                <ExpandedArticleCard
+                  item={expandedArticle}
+                  onDelete={() => handleDeleteArticle(expandedArticle.id)}
+                  onClose={() => setExpandedArticleId(null)}
+                />
+              )}
               {filteredBlogs.length === 0 ? (
                 <p className="text-center text-gray-400 py-8">
                   {librarySearch
@@ -155,12 +169,17 @@ export default function ReadingModal({
                 <ScrollArea className="h-[400px]">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredBlogs.map((blog: Blog) => (
-                      <ArticleCardModal
+                      <div
                         key={blog.id}
-                        item={blog}
-                        onEdit={() => -{}}
-                        onDelete={() => handleDeleteArticle(blog.id)}
-                      />
+                        className="cursor-pointer"
+                        onClick={() => setExpandedArticleId(blog.id)}
+                      >
+                        <ArticleCardModal
+                          key={blog.id}
+                          item={blog}
+                          onDelete={() => handleDeleteArticle(blog.id)}
+                        />
+                      </div>
                     ))}
                   </div>
                 </ScrollArea>

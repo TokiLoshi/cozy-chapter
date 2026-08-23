@@ -6,12 +6,7 @@ import type { Blog } from '@/lib/types/Blog'
 import { useAppForm } from '@/hooks/form'
 import { updateBlog } from '@/lib/server/articles'
 
-export default function EditArticleModal({
-  blog,
-}: {
-  blog: Blog
-  refreshPath: string
-}) {
+export default function EditArticleModal({ blog }: { blog: Blog }) {
   const [open, setOpen] = useState(false)
 
   const queryClient = useQueryClient()
@@ -103,7 +98,7 @@ export default function EditArticleModal({
           />
           {/** Modal */}
           <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
-            <div className="sticky top-0 bg-gradient-to-r from-slate-80/95 to-slate-800/80 backdrop-blur-md border-b border-amber500/10 p-6 z-[10]">
+            <div className="sticky top-0 bg-gradient-to-r from-slate-80/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">

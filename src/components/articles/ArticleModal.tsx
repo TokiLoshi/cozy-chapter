@@ -2,6 +2,12 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { FileText, Link, Trash, XIcon } from 'lucide-react'
+import {
+  BaseModal,
+  DetailItem,
+  DisplayDescription,
+  DisplayNotes,
+} from '../ExpandedCard'
 import EditArticleModal from './EditArticleModal'
 import type { Blog } from '@/lib/types/Blog'
 import { useAppForm } from '@/hooks/form'
@@ -16,19 +22,116 @@ export const Route = createFileRoute('/logarticle')({
   },
 })
 
+type ExpandedArticleProps = {
+  item: Blog
+  onDelete: () => void
+  onClose: () => void
+}
+
+const labelMap: Record<Blog['status'], string> = {
+  toRead: 'To Read',
+  reading: 'Reading',
+  read: 'Read',
+}
+
+export function ExpandedArticleCard({
+  item,
+  onDelete,
+  onClose,
+}: ExpandedArticleProps) {
+  return (
+    <BaseModal onClose={onClose}>
+      {/** Header */}
+      <div className="flex gap-4 mb-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-xl font-bold text-slate-100 mb-1">
+            {item.title}
+          </h3>
+          {item.author && (
+            <p className="text-sm text-slate-300">Author(s): {item.author}</p>
+          )}
+          {item.description && (
+            <DisplayDescription description={item.description} />
+          )}
+        </div>
+        <div>
+          {/** Details Grid */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <DetailItem label="Status">
+              <p className="text-sm font-medium text-slate-200">
+                {labelMap[item.status]}
+              </p>
+            </DetailItem>
+
+            {item.wordCount && (
+              <DetailItem label="Word Count">
+                <p className="text-sm font-medium text-slate-200">
+                  ReadingTIme {item.wordCount}
+                </p>
+              </DetailItem>
+            )}
+
+            {item.estimatedReadingTime && (
+              <DetailItem label="Estimate Reading Time">
+                <p className="text-sm font-medium text-slate-200">
+                  ReadingTIme {item.estimatedReadingTime}
+                </p>
+              </DetailItem>
+            )}
+          </div>
+
+          {/** External URL */}
+          {item.url && (
+            <div className="mb-4">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-amber-500 hover:text-amber-400 underline"
+              >
+                <Link className="w-4 h-4" />
+                View
+              </a>
+            </div>
+          )}
+          {/** Actions  */}
+          <div className="flex gap-3 pt-4 border-t border-slate-700">
+            <EditArticleModal blog={item} />
+            <button
+              onClick={() => {
+                onDelete()
+                onClose()
+              }}
+              className="cursor-pointer bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-lg transition-all duration-200"
+            >
+              <Trash className="w-4 h-4" />
+            </button>
+          </div>
+
+          {item.notes && <DisplayNotes description={item.notes} />}
+        </div>
+      </div>
+    </BaseModal>
+  )
+}
+
 export function ArticleCardModal({
   item,
   onDelete,
 }: {
   item: Blog
-  onEdit: () => void
   onDelete: () => void
 }) {
   return (
     <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
       <div className="w-16 h-16 bg-slate-600 rounded flex items-center justify-center flex-shrink-0">
         {item.url ? (
-          <a href={item.url} target="_blank" rel="noopener noreferrer">
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Link className="w-6 h-6 text-amber-500/80 hover:text-amber-400 transition-colors cursor-pointer" />
           </a>
         ) : (
@@ -41,30 +144,13 @@ export function ArticleCardModal({
         <p className="text-sm text-slate-200 ">
           {item.author ? `by: ${item.author}` : 'author unknown'}
         </p>
-        <span>
-          {item.description && (
-            <p className="text-sm text-slate-400">
-              Description: {item.description}
-            </p>
-          )}
-          {item.estimatedReadingTime && (
-            <p className="text-sm text-slate-400">
-              Estimated Reading Time: {item.estimatedReadingTime}
-            </p>
-          )}
-          {item.wordCount && (
-            <p className="text-sm text-slaate-400">
-              Word Count: {item.wordCount}
-            </p>
-          )}
-          {item.notes && (
-            <p className="text-sm text-slate-400">Notes: {item.notes}</p>
-          )}
-        </span>
       </div>
 
-      <div className="flex gap-2 items-center">
-        <EditArticleModal blog={item} refreshPath="/readingroom" />
+      <div
+        className="flex gap-2 items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <EditArticleModal blog={item} />
 
         <button
           onClick={onDelete}
@@ -158,7 +244,7 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
           onClick={onClose}
         />
         <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
-          <div className="sticky top-0 bg-gradient-to-r from-slate-80/95 to-slate-800/80 backdrop-blur-md border-b border-amber500/10 p-6 z-[10]">
+          <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">
