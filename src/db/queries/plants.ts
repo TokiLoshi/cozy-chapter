@@ -37,18 +37,19 @@ export async function getUsersPlants(userId: string, householdId?: string) {
   }
 }
 
-type PlantUpdates = Partial<
-  Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
->
+// type PlantUpdates = Partial<
+//   Omit<NewPlant, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+// >
 
 // Update plant
 export async function updatePlant(
   id: string,
   userId: string,
-  updates: PlantUpdates,
+  updates: Partial<NewPlant>,
   householdId?: string,
 ) {
   try {
+    const { id: _id, userId: _userId, createdAt: _createdAt, ...safe } = updates
     let householdCondition
     if (householdId) {
       householdCondition = and(
@@ -61,9 +62,10 @@ export async function updatePlant(
         eq(userPlants.userId, userId),
       )
     }
+
     const result = await db
       .update(userPlants)
-      .set({ ...updates, updatedBy: userId, updatedAt: new Date() })
+      .set({ ...safe, updatedBy: userId, updatedAt: new Date() })
       .where(householdCondition)
       .returning()
     if (!result[0]) {

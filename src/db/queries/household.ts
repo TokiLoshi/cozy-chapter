@@ -210,6 +210,11 @@ export async function renameHousehold(householdId: string, name: string) {
   }
 }
 
+{
+  /** User belongs to at most one household - although not currently enforced
+  by membership checks in the createHousehold/ addHouseholdMember. 
+  Queries below rely on this. If households ever become many-per-user this will need revisiting */
+}
 export async function leaveHouseholdById(householdId: string, userId: string) {
   try {
     const memberships = await db
@@ -327,6 +332,10 @@ export async function createInvite(
   }
 }
 
+{
+  /**  known: invited codes are bearer tokens set to expire rather than having
+  a user manually/purposefully decline */
+}
 export async function declineInviteByToken(token: string) {
   try {
     const [updatedInvite] = await db
