@@ -105,7 +105,7 @@ export function SubmitButton({
             'disabled:opacity-50 disabled:cursor-not-allowed',
           )}
         >
-          {isSubmitting ? `${label.replace(/^Add/, 'Adding')}...` : label}
+          {isSubmitting ? `Adding...` : label}
         </Button>
       )}
     </form.Subscribe>

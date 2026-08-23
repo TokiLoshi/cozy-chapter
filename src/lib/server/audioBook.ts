@@ -137,7 +137,6 @@ export const updateUserAudiobookServer = createServerFn({ method: 'POST' })
   .handler(async ({ data }) => {
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
-
     const result = await updateUserAudiobook(
       data.id,
       session.user.id,

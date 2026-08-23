@@ -126,6 +126,8 @@ const utapi = new UTApi()
 export const deleteUploadedImageServer = createServerFn({ method: 'POST' })
   .inputValidator((data: string) => data)
   .handler(async ({ data }) => {
+    const session = await getSessionServer()
+    if (!session) throw redirect({ to: '/login' })
     try {
       const result = await utapi.deleteFiles(data)
       return { success: result.success, deletedCount: result.deletedCount }

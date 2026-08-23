@@ -81,10 +81,11 @@ export async function updateUserMovie(
   updates: Partial<NewUserMovie>,
 ) {
   try {
+    const { userId: _userId, id: _id, createdAt: _createdAt, ...safe } = updates
     const result = await db
       .update(userMovies)
       .set({
-        ...updates,
+        ...safe,
         updatedAt: new Date(),
       })
       .where(and(eq(userMovies.id, id), eq(userMovies.userId, userId)))

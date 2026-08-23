@@ -43,21 +43,18 @@ export async function getCourseById(userId: string, id: string) {
   }
 }
 
-type CourseUpdates = Partial<
-  Omit<NewCourse, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
->
-
 // update user course
 export async function updateCourse(
   userId: string,
   courseId: string,
-  updates: CourseUpdates,
+  updates: Partial<NewCourse>,
 ) {
   try {
+    const { id: _id, userId: _userId, createdAt: _createdAt, ...safe } = updates
     const result = await db
       .update(courses)
       .set({
-        ...updates,
+        ...safe,
         updatedAt: new Date(),
       })
       .where(and(eq(courses.id, courseId), eq(courses.userId, userId)))

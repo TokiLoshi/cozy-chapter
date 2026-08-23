@@ -132,7 +132,7 @@ function ExpandedBookCard({
             href={item.book.previewLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-amber-500 hover:text-amber-400 underline mb-4 block"
+            className="text-sm text-amber-600 hover:text-amber-500 underline mb-4 block"
           >
             <Link />
             View
@@ -190,7 +190,7 @@ export function BookCard({
               e.stopPropagation()
               onEdit()
             }}
-            className="cursor-pointer bg-amber-500/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-amber-600/80 hover:bg-amber-600 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -349,7 +349,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
           {!showBookSearch ? (
             <button
               onClick={() => setShowBookSearch(true)}
-              className="cursor-pointer bg-amber-500 hover:bg-amber-500/80 mb-4 py-2 px-4 text-white rounded-lg"
+              className="cursor-pointer bg-amber-600 hover:bg-amber-500/80 mb-4 py-2 px-4 text-white rounded-lg"
             >
               + Add Book
             </button>
@@ -417,7 +417,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
                           <button
                             onClick={() => addBookMutation.mutate(book)}
                             disabled={isInLibrary(book.id)}
-                            className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 rounded-lg"
+                            className="p-2 bg-amber-600 hover:bg-amber-600 disabled:bg-slate-600 rounded-lg"
                           >
                             {isInLibrary(book.id) ? (
                               <span className="text-xs text-slate-300">
@@ -437,8 +437,9 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
           )}
 
           {/** Users books */}
+
+          <SearchArea value={librarySearch} onChange={setLibrarySearch} />
           <ScrollArea className="h-[400px]">
-            <SearchArea value={librarySearch} onChange={setLibrarySearch} />
             {filteredBooks.length === 0 ? (
               <p className="text-center text-gray-400 py-8">
                 {' '}

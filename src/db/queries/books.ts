@@ -104,8 +104,9 @@ export async function updateUserBook(
     if (!current[0]) return { success: false, error: 'Book not found ' }
 
     const currentBook = current[0]
+    const { id: _id, userId: _userId, createdAt: _createdAt, ...safe } = updates
     const finalUpdates: Partial<UserBooks> & { updatedAt: Date } = {
-      ...updates,
+      ...safe,
       updatedAt: new Date(),
     }
 

@@ -83,10 +83,11 @@ export async function updateUserSeries(
   updates: Partial<NewUserSeries>,
 ) {
   try {
+    const { userId: _userId, id: _id, createdAt: _createdAt, ...safe } = updates
     const result = await db
       .update(userSeries)
       .set({
-        ...updates,
+        ...safe,
         updatedAt: new Date(),
       })
       .where(and(eq(userSeries.id, id), eq(userSeries.userId, userId)))
