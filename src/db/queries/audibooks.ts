@@ -80,9 +80,10 @@ export async function updateUserAudiobook(
   updates: Partial<UserAudioBooks>,
 ) {
   try {
+    const { userId: _userId, id: _id, createdAt: _createdAt, ...safe } = updates
     const result = await db
       .update(userAudioBooks)
-      .set({ ...updates, updatedAt: new Date() })
+      .set({ ...safe, updatedAt: new Date() })
       .where(and(eq(userAudioBooks.id, id), eq(userAudioBooks.userId, userId)))
       .returning()
 

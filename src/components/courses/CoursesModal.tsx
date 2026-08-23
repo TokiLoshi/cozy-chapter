@@ -526,7 +526,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
       finishedAt: null as Date | null,
     },
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -762,7 +762,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
               <form.AppForm>
                 <form.SubmitButton
                   label="Add Course"
-                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                  className="cursor-pointer bg-amber-600/90 ps-2 pe-2 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                 />
               </form.AppForm>
             </div>
