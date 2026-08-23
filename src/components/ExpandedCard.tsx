@@ -38,6 +38,20 @@ export function DisplayDescription({ description }: { description: string }) {
   )
 }
 
+export function DisplayNotes({ description }: { description: string }) {
+  return (
+    <div className="mb-2 mt-2">
+      <p className="text-xs text-slate-400 mb-1">Notes</p>
+      <ScrollArea className="max-h-[120px] mb-2">
+        <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
+          {description}
+        </p>
+        <div className="p-2" />
+      </ScrollArea>
+    </div>
+  )
+}
+
 export function DisplayActions({ onClose, onEdit, onDelete }: ActionsProps) {
   return (
     <>
@@ -84,7 +98,7 @@ export function DisplayStarRating({ rating, maxStars = 5 }: StarRatingProps) {
 
 export function DetailItem({ label, children }: DetailItemProps) {
   return (
-    <div className="bg-slate-700/50 rounded-lg p-3">
+    <div className="bg-slate-950/40 border border-slate-700/50 rounded-lg p-3">
       <p className="text-xs text-slate-400 mb-1">{label}</p>
       {children}
     </div>
@@ -100,7 +114,7 @@ export function BaseModal({ onClose, children }: BaseModalProps) {
           className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className="relative mb-2 z-[10] w-full max-w-md max-h-[80vh] overflow-y-auto bg-slate-800 rounded-xl shadow-2xl border border-slate-600 p-6">
+        <div className="relative mb-2 z-[10] w-full max-w-md max-h-[80vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl shadow-2xl border border-amber-500/10 shadow-900/20 p-6">
           <button
             onClick={onClose}
             className="cursor-pointer absolute top-4 right-4 text-slate-400 hover:text-white"

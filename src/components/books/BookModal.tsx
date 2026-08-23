@@ -349,7 +349,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
           {!showBookSearch ? (
             <button
               onClick={() => setShowBookSearch(true)}
-              className="cursor-pointer bg-amber-600 hover:bg-amber-500 mb-4 py-2 px-4 text-white rounded-lg"
+              className="cursor-pointer bg-amber-500 hover:bg-amber-500/80 mb-4 py-2 px-4 text-white rounded-lg"
             >
               + Add Book
             </button>

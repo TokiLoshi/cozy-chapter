@@ -20,8 +20,10 @@ import { cn } from '@/lib/utils'
 
 const labelStyles = 'text-sm font-medium text-slate-300 mb-2 ms-2'
 const inputStyles =
-  'border-slate-700 bg-slate-900/50' +
-  'focus-visible:ring-1 focus-visible:ring-amber-500/50 focus-visible:border-amber-500/50'
+  'border-slate-700/80 bg-slate-950/40 ' +
+  'hover:border-slate-600 ' +
+  'focus-visible:ring-1 focus-visible:ring-amber-500/40 focus-visible:border-amber-500/60 ' +
+  'transition-colors'
 
 export function DateField({
   label,
@@ -95,8 +97,15 @@ export function SubmitButton({
   return (
     <form.Subscribe selector={(state) => state.isSubmitting}>
       {(isSubmitting) => (
-        <Button type="submit" disabled={isSubmitting} className={className}>
-          {label}
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className={cn(
+            className,
+            'disabled:opacity-50 disabled:cursor-not-allowed',
+          )}
+        >
+          {isSubmitting ? `${label.replace(/^Add/, 'Adding')}...` : label}
         </Button>
       )}
     </form.Subscribe>
