@@ -85,7 +85,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="cursor-pointer px-3 py-3 bg-amber-500/80 hover:bg-amber-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        className="cursor-pointer px-3 py-3 bg-amber-600/80 hover:bg-amber-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
       >
         <Edit className="w-4 h-4" />
       </button>
