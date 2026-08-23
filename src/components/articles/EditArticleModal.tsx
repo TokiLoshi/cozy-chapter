@@ -1,33 +1,21 @@
-import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { createServerFn } from '@tanstack/react-start'
+import { useQueryClient } from '@tanstack/react-query'
 import { Edit, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Blog } from '@/lib/types/Blog'
 import { useAppForm } from '@/hooks/form'
-import { updateArticle } from '@/db/queries/articles'
-
-export const updateBlog = createServerFn({ method: 'POST' })
-  .inputValidator((data: { id: string; updates: Partial<Blog> }) => data)
-  .handler(async ({ data }) => {
-    try {
-      await updateArticle(data.id, data.updates)
-      return { success: true, id: data.id }
-    } catch (error) {
-      console.error('Error updating blog: ', data.id, data.updates)
-    }
-    throw new Error('Something bad happened')
-  })
+import { updateBlog } from '@/lib/server/articles'
 
 export default function EditArticleModal({
   blog,
-  refreshPath,
 }: {
   blog: Blog
   refreshPath: string
 }) {
   const [open, setOpen] = useState(false)
-  const navigate = useNavigate()
+
+  const queryClient = useQueryClient()
+
   const form = useAppForm({
     defaultValues: {
       title: blog.title,
@@ -82,10 +70,10 @@ export default function EditArticleModal({
             title: 'text-slate-100',
           },
         })
-        navigate({ to: refreshPath })
+        queryClient.invalidateQueries({ queryKey: ['user-blogs'] })
         setOpen(false)
       } catch (error) {
-        toast.error('Failed to update plant', {
+        toast.error('Failed to update article', {
           description: 'Please try again',
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
@@ -107,15 +95,15 @@ export default function EditArticleModal({
         <Edit className="w-4 h-4" />
       </button>
       {open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center">
           {/** Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
           {/** Modal */}
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-            <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md  border-slate-700/50 p-6 z-[10]">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
+            <div className="sticky top-0 bg-gradient-to-r from-slate-80/95 to-slate-800/80 backdrop-blur-md border-b border-amber500/10 p-6 z-[10]">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">

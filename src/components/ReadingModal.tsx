@@ -1,13 +1,12 @@
 import { XIcon } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
-import { toast } from 'sonner'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import BooksModal from './books/BookModal'
-import ArticleCard from './articles/BlogsModal'
+import { ArticleCardModal } from './articles/ArticleModal'
 import SearchArea from './SearchArea'
 import type { Blog, ReadStatus } from '@/lib/types/Blog'
-import { deleteBlogs } from '@/lib/server/articles'
+import { deleteBlogs, getUserBlogs } from '@/lib/server/articles'
 import { getUserBookServer } from '@/lib/server/books'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -24,20 +23,24 @@ export default function ReadingModal({
   isOpen,
   onClose,
   selectedStatus,
-  blogs,
   onAddArticleClick,
 }: ReadingModalProps) {
-  const navigate = useNavigate()
   const [librarySearch, setLibrarySearch] = useState('')
+  const queryClient = useQueryClient()
 
+  const { data: blogs } = useQuery({
+    queryKey: ['user-blogs'],
+    queryFn: () => getUserBlogs(),
+  })
   // Searchable blogs
   const filteredBlogs = useMemo(() => {
+    if (!blogs) return []
     const filtered = blogs.filter((item) => item.status === selectedStatus)
     if (!librarySearch.trim()) return filtered
     const searchTerm = librarySearch.toLowerCase()
-    return filtered.filter((blog) => {
-      const titleMatch = blog.title.toLowerCase().includes(searchTerm)
-      const authorMatch = blog.author?.toLowerCase().includes(searchTerm)
+    return filtered.filter((item) => {
+      const titleMatch = item.title.toLowerCase().includes(searchTerm)
+      const authorMatch = item.author?.toLowerCase().includes(searchTerm)
       return titleMatch || authorMatch
     })
   }, [blogs, librarySearch, selectedStatus])
@@ -47,6 +50,7 @@ export default function ReadingModal({
     queryKey: ['user-books'],
     queryFn: () => getUserBookServer(),
   })
+
   const statusMap: Record<ReadStatus, string> = {
     toRead: 'toRead',
     reading: 'reading',
@@ -56,25 +60,6 @@ export default function ReadingModal({
   const filteredBooks = userBooks?.filter(
     (item) => item.userBook.status === statusMap[selectedStatus],
   )
-
-  const deleteArticleMutation = (id: string) => {
-    toast('Are you sure you want to delete this article?', {
-      action: {
-        label: 'Delete',
-        onClick: async () => {
-          try {
-            await deleteBlogs({ data: id })
-            toast.success('Article deleted')
-            navigate({ to: '/readingroom' })
-          } catch (error) {
-            console.error(`Error deleting article ${(error as Error).message}`)
-            toast.error('Failed to delete article, please try again')
-          }
-        },
-      },
-      cancel: { label: 'Cancel', onClick: () => {} },
-    })
-  }
 
   const getModalTitle = () => {
     switch (selectedStatus) {
@@ -89,6 +74,28 @@ export default function ReadingModal({
     }
   }
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteBlogs({ data: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-blogs'] })
+      toast.success('Article deleted')
+    },
+    onError: () => toast.error('Failed to delete article, please try again'),
+  })
+
+  const handleDeleteArticle = (id: string) => {
+    toast('Are you sure you want to delete this article?', {
+      action: {
+        label: 'Delete',
+        onClick: () => deleteMutation.mutate(id),
+      },
+      cancel: {
+        label: 'cancel',
+        onClick: () => {},
+      },
+    })
+  }
+
   if (!isOpen) return null
 
   return (
@@ -101,7 +108,7 @@ export default function ReadingModal({
         />
 
         {/** Modal */}
-        <div className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+        <div className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 border border-amber-500/10 rounded-xl shadow-2xl shadow-amber-900/20 m-4 p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-white">{getModalTitle()}</h2>
             <button
@@ -148,10 +155,11 @@ export default function ReadingModal({
                 <ScrollArea className="h-[400px]">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredBlogs.map((blog: Blog) => (
-                      <ArticleCard
+                      <ArticleCardModal
                         key={blog.id}
                         item={blog}
-                        onDelete={() => deleteArticleMutation(blog.id)}
+                        onEdit={() => -{}}
+                        onDelete={() => handleDeleteArticle(blog.id)}
                       />
                     ))}
                   </div>

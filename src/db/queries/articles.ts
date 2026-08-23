@@ -41,6 +41,7 @@ export async function getSingleBlog(blogId: string) {
 // Edit or Update
 export async function updateArticle(
   id: string,
+  userId: string,
   updates: Partial<{
     title?: string
     url?: string | null
@@ -56,7 +57,7 @@ export async function updateArticle(
     const result = await db
       .update(userBlogs)
       .set(updates)
-      .where(eq(userBlogs.id, id))
+      .where(and(eq(userBlogs.id, id), eq(userBlogs.userId, userId)))
       .returning()
     return { success: true, blog: result[0] }
   } catch (error) {
@@ -64,8 +65,10 @@ export async function updateArticle(
   }
 }
 
-export async function deleteArticle(id: string) {
-  const result = await db.delete(userBlogs).where(eq(userBlogs.id, id))
+export async function deleteArticle(id: string, userId: string) {
+  const result = await db
+    .delete(userBlogs)
+    .where(and(eq(userBlogs.id, id), eq(userBlogs.userId, userId)))
   return result
 }
 
