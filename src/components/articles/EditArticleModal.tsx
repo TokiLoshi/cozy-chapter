@@ -18,8 +18,8 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
       author: blog.author || '',
       description: blog.description || '',
       status: blog.status,
-      estimatedReadingTime: blog.estimatedReadingTime || undefined,
-      wordCount: blog.wordCount || undefined,
+      estimatedReadingTime: blog.estimatedReadingTime || 0,
+      wordCount: blog.wordCount || 0,
       notes: blog.notes || '',
     },
     validators: {
@@ -137,7 +137,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
                 {(field) => (
                   <field.TextField
                     label="url"
-                    placeholder={blog.url ? blog.url : 'https://....'}
+                    placeholder="http://www.example.com"
                   />
                 )}
               </form.AppField>
@@ -147,7 +147,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
                 {(field) => (
                   <field.TextField
                     label="author"
-                    placeholder={blog.author ? blog.author : 'who wrote it?'}
+                    placeholder="article author"
                   />
                 )}
               </form.AppField>
@@ -155,20 +155,41 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
               {/** Description */}
               <form.AppField name="description">
                 {(field) => (
-                  <field.TextField
+                  <field.TextArea
                     label="description"
-                    placeholder={
-                      blog.description
-                        ? blog.description
-                        : "description, what's it about?"
-                    }
+                    placeholder="What is it about?"
+                  />
+                )}
+              </form.AppField>
+
+              {/** Estimated Reading Time */}
+              <form.AppField name="estimatedReadingTime">
+                {(field) => (
+                  <field.NumberField
+                    label="Reading time in minutes"
+                    placeholder="Estimated reading time"
+                  />
+                )}
+              </form.AppField>
+
+              {/** Word count */}
+              <form.AppField name="wordCount">
+                {(field) => (
+                  <field.NumberField
+                    label="Word count"
+                    placeholder="Approximate word count"
                   />
                 )}
               </form.AppField>
 
               {/** Notes field */}
               <form.AppField name="notes">
-                {(field) => <field.TextArea label="Notes" />}
+                {(field) => (
+                  <field.TextArea
+                    label="Notes"
+                    placeholder="What do you think?"
+                  />
+                )}
               </form.AppField>
 
               {/** Status */}

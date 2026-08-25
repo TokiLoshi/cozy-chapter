@@ -253,7 +253,12 @@ export default function EditBookModal({
 
             {/** Notes field */}
             <form.AppField name="notes">
-              {(field) => <field.TextArea label="Notes" />}
+              {(field) => (
+                <field.TextArea
+                  label="Notes"
+                  placeholder="What do you think?"
+                />
+              )}
             </form.AppField>
 
             <div className="flex jusity-end">

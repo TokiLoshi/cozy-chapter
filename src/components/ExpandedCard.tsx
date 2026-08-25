@@ -1,7 +1,5 @@
-// TODO: this probably needs to be abstracted so podcasts, books, and audiobooks can use it
-
-import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Edit, Star, Trash, XIcon } from 'lucide-react'
+import { ScrollArea } from './ui/scroll-area'
 import type { ReactNode } from 'react'
 import { panelStyles } from '@/lib/panelStyles'
 
@@ -30,7 +28,7 @@ export function DisplayDescription({ description }: { description: string }) {
   return (
     <div className="mb-2">
       <p className="text-xs text-slate-400 mb-1">Description</p>
-      <ScrollArea className="max-h-[120px] mb-2">
+      <ScrollArea className="max-h-[120px] overflow-y-auto mb-2">
         <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
           {description}
         </p>
@@ -44,7 +42,7 @@ export function DisplayNotes({ description }: { description: string }) {
   return (
     <div className="mb-2 mt-2">
       <p className="text-xs text-slate-400 mb-1">Notes</p>
-      <ScrollArea className="max-h-[120px] mb-2">
+      <ScrollArea className="max-h-[120px] overflow-y-auto mb-2">
         <p className="text-sm mb-3 font-medium text-slate-300 pr-3">
           {description}
         </p>
