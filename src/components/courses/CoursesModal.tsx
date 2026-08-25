@@ -18,6 +18,7 @@ import {
   deleteCourseServer,
   getUserCoursesServer,
 } from '@/lib/server/courses'
+import { panelStyles } from '@/lib/panelStyles'
 
 import { useAppForm } from '@/hooks/form'
 
@@ -387,10 +388,10 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+          className="absolute inset-0  bg-slate-500/30 backdrop-blur-sm"
           onClick={closeModal}
         />
         {/** Edit Modal */}
@@ -415,8 +416,8 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
         {/** Modal */}
         {!isEditOpen && !expandedCourse && (
-          <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
-            <div className="flex items-center justify-between mb-6">
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
+            <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
               <h2 className="text-3xl font-bold text-white">Courses</h2>
               <button
                 className="cursor-pointer text-gray-400 hover:text-white text-2xl"
@@ -594,10 +595,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
   return (
     <>
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className={panelStyles['backdrop']} onClick={onClose} />
         <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
           <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-[10]">
             <div className="flex items-center justify-between">

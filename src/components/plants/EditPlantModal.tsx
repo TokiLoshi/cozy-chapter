@@ -10,6 +10,7 @@ import {
   updatePlantServer,
 } from '@/lib/server/plants'
 import { UploadDropzone } from '@/lib/uploadthing'
+import { panelStyles } from '@/lib/panelStyles'
 
 export default function EditPlantModal({
   plant,
@@ -24,6 +25,8 @@ export default function EditPlantModal({
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
     plant.plantImageUrl ?? null,
   )
+  const [imagesToDelete, setImagesToDelete] = useState<Array<string>>([])
+
   const queryClient = useQueryClient()
 
   const form = useAppForm({
@@ -35,10 +38,11 @@ export default function EditPlantModal({
       group: plant.group || '',
       lastWatered: plant.lastWatered || null,
       plantHealth: plant.plantHealth,
+      lightPreferences: plant.lightPreferences || null,
       notes: plant.notes || '',
     },
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -75,6 +79,13 @@ export default function EditPlantModal({
             title: 'text-slate-100',
           },
         })
+        for (const key of imagesToDelete) {
+          try {
+            await deleteUploadedImageServer({ data: key })
+          } catch (error) {
+            console.error(`Error deleting image(s)`)
+          }
+        }
         navigate({ to: refreshPath })
         onClose()
       } catch (error) {
@@ -94,13 +105,12 @@ export default function EditPlantModal({
     <>
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className={`${panelStyles.backdrop}`} onClick={onClose} />
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-[10]">
+        <div
+          className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 ${panelStyles.container}`}
+        >
+          <div className={`${panelStyles.header}`}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">Edit Plant</h2>
@@ -110,7 +120,7 @@ export default function EditPlantModal({
               </div>
               <button
                 onClick={() => onClose()}
-                className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
               >
                 <XIcon className="w-5 h-5" />
               </button>
@@ -127,7 +137,7 @@ export default function EditPlantModal({
             {/** Species Field */}
             <form.AppField name="species">
               {(field) => (
-                <field.TextField label="Title" placeholder={plant.species} />
+                <field.TextField label="Species" placeholder={plant.species} />
               )}
             </form.AppField>
             {/** Name */}
@@ -144,7 +154,7 @@ export default function EditPlantModal({
             <form.AppField name="recommendedWateringIntervalDays">
               {(field) => (
                 <field.NumberField
-                  label="Recommended Days between waterings"
+                  label="Recommended days between waterings"
                   placeholder={
                     plant.recommendedWateringIntervalDays
                       ? String(plant.recommendedWateringIntervalDays)
@@ -158,8 +168,8 @@ export default function EditPlantModal({
             <form.AppField name="group">
               {(field) => (
                 <field.TextField
-                  label="group"
-                  placeholder={plant.group ? plant.group : ''}
+                  label="Group"
+                  placeholder={plant.group ? plant.group : 'e.g lounge plants'}
                 />
               )}
             </form.AppField>
@@ -168,7 +178,7 @@ export default function EditPlantModal({
             <form.AppField name="lastWatered">
               {(field) => (
                 <field.DateField
-                  label="date last watered"
+                  label="Date last watered"
                   placeholder={
                     plant.lastWatered
                       ? plant.lastWatered.toLocaleDateString()
@@ -193,11 +203,30 @@ export default function EditPlantModal({
               )}
             </form.AppField>
 
+            {/** Light Preferences */}
+            <form.AppField name="lightPreferences">
+              {(field) => (
+                <field.Select
+                  label="Plant Light Preferences"
+                  values={[
+                    { label: 'Low light', value: 'low' },
+                    { label: 'Medium light', value: 'medium' },
+                    { label: 'Bright Indirect', value: 'brightIndirect' },
+                    { label: 'Bright Direct', value: 'brightDirect' },
+                  ]}
+                  placeholder={
+                    plant.lightPreferences ||
+                    'Tends to do better in which lighting?'
+                  }
+                />
+              )}
+            </form.AppField>
+
             {/** Notes field */}
             <form.AppField name="notes">
               {(field) => (
                 <field.TextField
-                  label="notes"
+                  label="Notes"
                   placeholder={
                     plant.notes ? plant.notes : 'add your thoughts here'
                   }
@@ -218,17 +247,12 @@ export default function EditPlantModal({
                   />
                   <button
                     type="button"
-                    onClick={async () => {
-                      try {
-                        const fileKey = currentImageUrl.split('/').pop()
-                        if (fileKey) {
-                          await deleteUploadedImageServer({ data: fileKey })
-                        }
-                        setCurrentImageUrl(null)
-                      } catch (error) {
-                        console.error('Error removing image: ', error)
-                        setCurrentImageUrl(null)
+                    onClick={() => {
+                      const fileKey = currentImageUrl.split('/').pop()
+                      if (fileKey) {
+                        setImagesToDelete((prev) => [...prev, fileKey])
                       }
+                      setCurrentImageUrl(null)
                     }}
                     className="cursor-pointer absolute -top-2 -right-2 bg-red-500 rounded-full p-1"
                   >
@@ -244,11 +268,11 @@ export default function EditPlantModal({
                       if (plant.plantImageUrl) {
                         const oldKey = plant.plantImageUrl.split('/').pop()
                         if (oldKey) {
-                          deleteUploadedImageServer({ data: oldKey })
+                          setImagesToDelete((prev) => [...prev, oldKey])
                         }
                       }
                       setCurrentImageUrl(res[0].ufsUrl)
-                      toast.success('Image updated')
+                      toast.success('Image ready - save edits to apply')
                     }
                   }}
                   onUploadError={(error: Error) => {
@@ -262,7 +286,7 @@ export default function EditPlantModal({
               <form.AppForm>
                 <form.SubmitButton
                   label="Update Plant"
-                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 min-w-25 px-4 font-semibold"
                 />
               </form.AppForm>
             </div>

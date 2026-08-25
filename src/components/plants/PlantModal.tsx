@@ -21,6 +21,7 @@ import {
 } from '@/lib/server/plants'
 import { useAppForm } from '@/hooks/form'
 import { UploadDropzone } from '@/lib/uploadthing'
+import { panelStyles } from '@/lib/panelStyles'
 
 type LightPreferences = 'low' | 'medium' | 'brightDirect' | 'brightIndirect'
 
@@ -69,7 +70,6 @@ function ExpandedPlantCard({
   onDelete,
   onClose,
 }: ExpandedPlantCardProps) {
-  console.log('updatedByName:', JSON.stringify(item.updatedByName))
   return (
     <>
       <BaseModal onClose={onClose}>
@@ -158,11 +158,11 @@ function ExpandedPlantCard({
 const formatLightPreference = (pref: LightPreferences): string => {
   switch (pref) {
     case 'low':
-      return 'LowLight'
+      return 'Low Light'
     case 'medium':
       return 'Medium Light'
     case 'brightIndirect':
-      return 'Bringt Indirect Light'
+      return 'Bright Indirect Light'
     case 'brightDirect':
       return 'Bright Direct Light'
     default:
@@ -185,7 +185,7 @@ function PlantCard({
         {item.plantImageUrl ? (
           <img
             src={item.plantImageUrl}
-            alt={item.name ?? 'plant image name unkown'}
+            alt={item.name ?? item.species}
             className="w-16 h-16 object-cover rounded"
           />
         ) : (
@@ -239,7 +239,7 @@ function PlantCard({
               e.stopPropagation()
               onEdit()
             }}
-            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transitioon-all duration-200"
+            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -389,10 +389,7 @@ export default function PlantModal({
     <>
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
-          onClick={closeModal}
-        />
+        <div className={panelStyles['backdrop']} onClick={closeModal} />
         {/** Edit modal */}
         {isEditOpen && plantToEdit && (
           <EditPlantModal
@@ -415,77 +412,83 @@ export default function PlantModal({
         )}
         {/** Modal */}
         {!isEditOpen && !expandedPlant && (
-          <div className="relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border-slate-700 m-4 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-white">Plants</h2>
-              <button
-                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-                onClick={closeModal}
-              >
-                <XIcon />
-              </button>
+          <div
+            className={`relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto m-4 ${panelStyles.container}`}
+          >
+            <div className={panelStyles.header}>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-white">Plants</h2>
+                <button
+                  className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                  onClick={closeModal}
+                >
+                  <XIcon />
+                </button>
+              </div>
             </div>
-            <button
-              className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
-              onClick={() => {
-                setisAddFormOpen(true)
-              }}
-            >
-              + Add Plant
-            </button>
-            {/** Plant Form */}
-            {isAddFormOpen && (
-              <PlantForm
-                isOpen={true}
-                onClose={() => setisAddFormOpen(false)}
-                refreshPath={refreshPath}
-              />
-            )}
+            <div className="p-6">
+              <button
+                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
+                onClick={() => {
+                  setisAddFormOpen(true)
+                }}
+              >
+                + Add Plant
+              </button>
+              {/** Plant Form */}
+              {isAddFormOpen && (
+                <PlantForm
+                  isOpen={true}
+                  onClose={() => setisAddFormOpen(false)}
+                  refreshPath={refreshPath}
+                />
+              )}
 
-            {/** Watering Section */}
-            <div className="pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-slate-400 mb-3">
-                  Who needs watering today?
-                </h3>
-                {overdueCount > 0 && (
-                  <button
-                    onClick={() => waterAllMutation.mutate()}
-                    disabled={waterAllMutation.isPending}
-                    className="cursor-pointer bg-amber-600/90 rounded-lg text-white hover:bg-amber-500/90 py-2 px-4 font-semibold disabled:opacity-50"
-                  >
-                    {waterAllMutation.isPending
-                      ? 'Watering...'
-                      : `💧 Water all (${overdueCount})`}
-                  </button>
+              {/** Watering Section */}
+              <div className="pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-medium text-slate-400 mb-3">
+                    Who needs watering today?
+                  </h3>
+                  {overdueCount > 0 && (
+                    <button
+                      onClick={() => waterAllMutation.mutate()}
+                      disabled={waterAllMutation.isPending}
+                      className="cursor-pointer bg-amber-600/90 rounded-lg text-white hover:bg-amber-500/90 py-2 px-4 font-semibold disabled:opacity-50"
+                    >
+                      {waterAllMutation.isPending
+                        ? 'Watering...'
+                        : `💧 Water all (${overdueCount})`}
+                    </button>
+                  )}
+                </div>
+                {/** Empty State */}
+                {filteredPlants.length === 0 && (
+                  <div className="text-center text-gray-400 py-8">
+                    No plants added to inventory yet
+                  </div>
+                )}
+                <SearchArea value={plantSearch} onChange={setPlantSearch} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                {filteredPlants.length === 0 && plantSearch ? (
+                  <EmptyTabContent message="No plants match your search" />
+                ) : (
+                  filteredPlants.map((item: EnrichedPlant) => (
+                    <div
+                      key={item.id}
+                      className="cursor-pointer"
+                      onClick={() => handleCardClick(item)}
+                    >
+                      <PlantCard
+                        item={item}
+                        onEdit={() => handleEdit(item)}
+                        onDelete={() => handleDelete(item.id)}
+                      />
+                    </div>
+                  ))
                 )}
               </div>
-              {/** Empty State */}
-              {filteredPlants.length === 0 && (
-                <div className="text-center text-gray-400 py-8">
-                  No plants added to inventory yet
-                </div>
-              )}
-              <SearchArea value={plantSearch} onChange={setPlantSearch} />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              {filteredPlants.length === 0 && plantSearch ? (
-                <EmptyTabContent message="No plants match your search" />
-              ) : (
-                filteredPlants.map((item: EnrichedPlant) => (
-                  <div
-                    key={item.id}
-                    className="cursor-pointer"
-                    onClick={() => handleCardClick(item)}
-                  >
-                    <PlantCard
-                      item={item}
-                      onEdit={() => handleEdit(item)}
-                      onDelete={() => handleDelete(item.id)}
-                    />
-                  </div>
-                ))
-              )}
             </div>
           </div>
         )}
@@ -511,7 +514,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
       notes: '',
     },
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -576,18 +579,21 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
     <>
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
         <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          // className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className={panelStyles.backdrop}
           onClick={onClose}
         />
-        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-[10]">
+        <div
+          className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 ${panelStyles.container}`}
+        >
+          <div className={`${panelStyles.header}`}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">
-                  Water your plants
+                  Add a new plant
                 </h2>
                 <p className="text-sm text-gray-400 mt-1">
-                  Here is the status report
+                  Your plant friend will thank you
                 </p>
               </div>
               <button
@@ -632,7 +638,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
               {(field) => (
                 <field.NumberField
                   label="Recommended days between waterings"
-                  placeholder="7"
+                  placeholder="e.g 7"
                 />
               )}
             </form.AppField>
@@ -640,7 +646,10 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             {/** group */}
             <form.AppField name="group">
               {(field) => (
-                <field.TextField label="group" placeholder="lounge plants" />
+                <field.TextField
+                  label="Group"
+                  placeholder="e.g lounge plants"
+                />
               )}
             </form.AppField>
 
@@ -648,8 +657,8 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             <form.AppField name="lastWatered">
               {(field) => (
                 <field.DateField
-                  label="date last watered"
-                  placeholder="last week"
+                  label="Date last watered"
+                  placeholder="today's date"
                 />
               )}
             </form.AppField>
@@ -658,7 +667,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             <form.AppField name="plantHealth">
               {(field) => (
                 <field.Select
-                  label="Plant Health"
+                  label="Plant health"
                   values={[
                     { label: 'Thriving', value: 'thriving' },
                     { label: 'Ok', value: 'ok' },
@@ -676,14 +685,14 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             <form.AppField name="lightPreferences">
               {(field) => (
                 <field.Select
-                  label="Plant Light Preferences"
+                  label="Plant light preferences"
                   values={[
                     { label: 'Low light', value: 'low' },
                     { label: 'Medium light', value: 'medium' },
                     { label: 'Bright Indirect', value: 'brightIndirect' },
                     { label: 'Bright Direct', value: 'brightDirect' },
                   ]}
-                  placeholder="Select Plant's preferred light"
+                  placeholder="Tends to do better in which lighting?"
                 />
               )}
             </form.AppField>
@@ -692,7 +701,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
             <form.AppField name="notes">
               {(field) => (
                 <field.TextField
-                  label="notes"
+                  label="Notes"
                   placeholder="add your thoughts here"
                 />
               )}
@@ -725,6 +734,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                         console.error('Delete failed: ', error)
                       }
                     }}
+                    className="cursor-pointer absolute -top-2 -right bg-red-500 rounded-full p-1"
                   >
                     <XIcon className="w-3 h-3 text-white" />
                   </button>
@@ -732,6 +742,14 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
               ) : (
                 <UploadDropzone
                   endpoint="imageUploader"
+                  appearance={{
+                    container:
+                      'border-2 border-dashed border-slate-700/50 bg-slate-950/40 rounded-lg',
+                    button:
+                      'bg-amber-600/90 text-white font-semibold rounded-lg',
+                    label: 'text-slate-300',
+                    allowedContent: 'text-slate-500',
+                  }}
                   onClientUploadComplete={(res) => {
                     if (res[0].ufsUrl) {
                       setUploadedImageUrl(res[0].ufsUrl)

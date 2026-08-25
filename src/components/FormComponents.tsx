@@ -269,7 +269,7 @@ export function Select({
       </label>
       <ShadcnSelect.Select
         name={field.name}
-        value={field.state.value}
+        value={field.state.value || undefined}
         onValueChange={(value) => field.handleChange(value)}
       >
         <ShadcnSelect.SelectTrigger className={cn(inputStyles, 'w-full p-3')}>

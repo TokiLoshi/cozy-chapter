@@ -1,4 +1,5 @@
 // TODO: this probably needs to be abstracted so podcasts, books, and audiobooks can use it
+import { panelStyles } from '@/lib/panelStyles'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Edit, Star, Trash, XIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -108,13 +109,12 @@ export function DetailItem({ label, children }: DetailItemProps) {
 export function BaseModal({ onClose, children }: BaseModalProps) {
   return (
     <>
-      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 min-h-[320px]">
         {/** Backdrop */}
+        <div className={panelStyles.backdrop} onClick={onClose} />
         <div
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
-          onClick={onClose}
-        />
-        <div className="relative mb-2 z-[10] w-full max-w-md max-h-[80vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl shadow-2xl border border-amber-500/10 shadow-900/20 p-6">
+          className={`relative z-[10] w-full max-w-md max-h-[80vh] overflow-y-auto p-6 ${panelStyles.container}`}
+        >
           <button
             onClick={onClose}
             className="cursor-pointer absolute top-4 right-4 text-slate-400 hover:text-white"

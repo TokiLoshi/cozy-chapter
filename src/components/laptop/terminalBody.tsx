@@ -25,7 +25,7 @@ export default function TerminalBody({
 
   return (
     <div
-      className="flex-1 overflow-y-auto p-4 min-h-[400px] font-mono text-sm cursor-text"
+      className="flex-1 overflow-y-auto p-4 min-h-[360px] font-mono text-sm cursor-text"
       onClick={handleContainerClick}
     >
       {/** History */}
