@@ -1,8 +1,9 @@
 // TODO: this probably needs to be abstracted so podcasts, books, and audiobooks can use it
-import { panelStyles } from '@/lib/panelStyles'
+
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Edit, Star, Trash, XIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { panelStyles } from '@/lib/panelStyles'
 
 type BaseModalProps = {
   onClose: () => void

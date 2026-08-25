@@ -262,6 +262,14 @@ export default function EditPlantModal({
               ) : (
                 <UploadDropzone
                   endpoint="imageUploader"
+                  appearance={{
+                    container:
+                      'border-2 border-dashed border-slate-700/50 bg-slate-950/40 rounded-lg',
+                    button:
+                      '!bg-amber-600/90 hover:!bg-amber-500/90 text-white font-semibold rounded-lg',
+                    label: 'text-slate-300 cursor-pointer',
+                    allowedContent: 'text-slate-500',
+                  }}
                   onClientUploadComplete={(res) => {
                     if (res[0].ufsUrl) {
                       // delete old existing image

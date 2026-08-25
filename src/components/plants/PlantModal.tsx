@@ -7,7 +7,7 @@ import {
   BaseModal,
   DetailItem,
   DisplayActions,
-  DisplayDescription,
+  DisplayNotes,
 } from '../ExpandedCard'
 import SearchArea from '../SearchArea'
 import EditPlantModal from './EditPlantModal'
@@ -149,7 +149,7 @@ function ExpandedPlantCard({
         <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
 
         {/** Notes */}
-        {item.notes && <DisplayDescription description={item.notes} />}
+        {item.notes && <DisplayNotes description={item.notes} />}
       </BaseModal>
     </>
   )
@@ -213,21 +213,17 @@ function PlantCard({
             </span>
           )}
 
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-slate-300">
-              Last watered:{' '}
+          <div className="flex flex-col gap-0.5 mt-1">
+            <span className="text-sm text-slate-300">
+              <span className="font-semibold">Last watered: </span>
               {item.lastWatered
                 ? new Date(item.lastWatered).toLocaleDateString() +
                   (item.updatedByName ? ` by ${item.updatedByName}` : '')
                 : 'data not available'}{' '}
             </span>
-            <span className="text-xs text-slate-300">
-              Light preferences:{' '}
-              {item.lightPreferences
-                ? formatLightPreference(item.lightPreferences)
-                : 'unknown'}
-            </span>
-            <span className={`${getHealthColor(item.plantHealth)} text-xs`}>
+
+            <span className={`${getHealthColor(item.plantHealth)} text-sm`}>
+              <span className="text-slate-300 font-semibold">Health: </span>
               {item.plantHealth}
             </span>
           </div>
@@ -416,7 +412,7 @@ export default function PlantModal({
             className={`relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto m-4 ${panelStyles.container}`}
           >
             <div className={panelStyles.header}>
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-1">
                 <h2 className="text-3xl font-bold text-white">Plants</h2>
                 <button
                   className="cursor-pointer text-gray-400 hover:text-white text-2xl"
@@ -425,43 +421,44 @@ export default function PlantModal({
                   <XIcon />
                 </button>
               </div>
+              <h3 className="text-sm font-medium text-slate-400 mb-3">
+                Who needs watering today?
+              </h3>
             </div>
             <div className="p-6">
-              <button
-                className="bg-white mb-3 py-2 text-indigo-800/90 hover:text-indigo-700 hover:bg-gray-100 cursor-pointer rounded-lg px-6"
-                onClick={() => {
-                  setisAddFormOpen(true)
-                }}
-              >
-                + Add Plant
-              </button>
-              {/** Plant Form */}
-              {isAddFormOpen && (
-                <PlantForm
-                  isOpen={true}
-                  onClose={() => setisAddFormOpen(false)}
-                  refreshPath={refreshPath}
-                />
-              )}
-
               {/** Watering Section */}
               <div className="pt-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-slate-400 mb-3">
-                    Who needs watering today?
-                  </h3>
-                  {overdueCount > 0 && (
+                  <div className="flex items-center gap-3">
                     <button
-                      onClick={() => waterAllMutation.mutate()}
-                      disabled={waterAllMutation.isPending}
-                      className="cursor-pointer bg-amber-600/90 rounded-lg text-white hover:bg-amber-500/90 py-2 px-4 font-semibold disabled:opacity-50"
+                      className="bg-amber-600/90 hover:bg-amber-500/90 text-white font-semibold rounded-lg py-2 px-6 cursor-pointer"
+                      onClick={() => {
+                        setisAddFormOpen(true)
+                      }}
                     >
-                      {waterAllMutation.isPending
-                        ? 'Watering...'
-                        : `💧 Water all (${overdueCount})`}
+                      + Add Plant
                     </button>
-                  )}
+                    {overdueCount > 0 && (
+                      <button
+                        onClick={() => waterAllMutation.mutate()}
+                        disabled={waterAllMutation.isPending}
+                        className="cursor-pointer bg-amber-600/90 rounded-lg text-white hover:bg-amber-500/90 py-2 px-4 font-semibold disabled:opacity-50"
+                      >
+                        {waterAllMutation.isPending
+                          ? 'Watering...'
+                          : `💧 Quick water (${overdueCount})`}
+                      </button>
+                    )}
+                  </div>
                 </div>
+                {/** Plant Form */}
+                {isAddFormOpen && (
+                  <PlantForm
+                    isOpen={true}
+                    onClose={() => setisAddFormOpen(false)}
+                    refreshPath={refreshPath}
+                  />
+                )}
                 {/** Empty State */}
                 {filteredPlants.length === 0 && (
                   <div className="text-center text-gray-400 py-8">
@@ -658,7 +655,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
               {(field) => (
                 <field.DateField
                   label="Date last watered"
-                  placeholder="today's date"
+                  placeholder="e.g today's date"
                 />
               )}
             </form.AppField>
@@ -746,8 +743,8 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                     container:
                       'border-2 border-dashed border-slate-700/50 bg-slate-950/40 rounded-lg',
                     button:
-                      'bg-amber-600/90 text-white font-semibold rounded-lg',
-                    label: 'text-slate-300',
+                      '!bg-amber-600/90 hover:!bg-amber-500/90 text-white font-semibold rounded-lg',
+                    label: 'text-slate-300 cursor-pointer',
                     allowedContent: 'text-slate-500',
                   }}
                   onClientUploadComplete={(res) => {
