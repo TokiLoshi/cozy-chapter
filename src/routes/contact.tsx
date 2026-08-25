@@ -40,7 +40,7 @@ function ContactPage() {
     <>
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
         {/** Hero */}
-        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-[85dvh] flex items-center justify-center overflow-hidden">
           {/** Background image */}
           <div className="absolute inset-0">
             <img

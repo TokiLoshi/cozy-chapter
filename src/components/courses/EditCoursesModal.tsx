@@ -115,7 +115,7 @@ export default function EditCoursesModal({
           onClick={onClose}
         />
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+        <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
           <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-[10]">
             <div className="flex items-center justify-between">
               <div>
@@ -126,7 +126,7 @@ export default function EditCoursesModal({
               </div>
               <button
                 onClick={() => onClose()}
-                className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
               >
                 <XIcon className="w-5 h-5" />
               </button>

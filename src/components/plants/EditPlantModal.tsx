@@ -108,7 +108,7 @@ export default function EditPlantModal({
         <div className={`${panelStyles.backdrop}`} onClick={onClose} />
         {/** Modal */}
         <div
-          className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 ${panelStyles.container}`}
+          className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto m-4 ${panelStyles.container}`}
         >
           <div className={`${panelStyles.header}`}>
             <div className="flex items-center justify-between">

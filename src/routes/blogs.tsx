@@ -177,7 +177,7 @@ const EditModal = ({ blog }: { blog: Blog }) => {
             onClick={() => setOpen(false)}
           />
           {/** Modal */}
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+          <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
             <div className="sticky top-0 bg-slate-900 border-b border-slate-700 p-6 z-[10]">
               <div className="flex items-center justify-between">
                 <div>

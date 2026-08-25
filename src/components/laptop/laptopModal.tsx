@@ -91,7 +91,7 @@ export default function LaptopModal({
           className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
           onClick={selfDestruct ? undefined : onClose}
         />
-        <div className="relative [z-60] w-full max-w-4xl max-h-[80vh] overflow-hidden bg-black rounded-xl shadow-2xl border border-zinc-700 m-4 flex flex-col">
+        <div className="relative [z-60] w-full max-w-4xl max-h-[85dvh] overflow-hidden bg-black rounded-xl shadow-2xl border border-zinc-700 m-4 flex flex-col">
           {/** Title Bar */}
           <TerminalTitleBar
             title={`${username} - ${username}@iCozy- ~ -- -zsh`}

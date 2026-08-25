@@ -282,7 +282,7 @@ function ReadingRoomDemoComponent() {
             />
 
             {/** Modal Content */}
-            <div className="relative w-full max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+            <div className="relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-3xl font-bold text-white">
                   {getModalTitle()}

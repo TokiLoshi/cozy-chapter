@@ -142,7 +142,7 @@ export default function EditBookModal({
               </div>
               <button
                 onClick={() => onClose()}
-                className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
               >
                 <XIcon className="w-5 h-5" />
               </button>
