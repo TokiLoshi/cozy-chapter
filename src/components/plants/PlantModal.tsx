@@ -409,7 +409,7 @@ export default function PlantModal({
         {/** Modal */}
         {!isEditOpen && !expandedPlant && (
           <div
-            className={`relative w-full z-[60] max-w-4xl max-h-[80vh] overflow-y-auto m-4 ${panelStyles.container}`}
+            className={`relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto m-4 ${panelStyles.container}`}
           >
             <div className={panelStyles.header}>
               <div className="flex items-center justify-between mb-1">
@@ -581,7 +581,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
           onClick={onClose}
         />
         <div
-          className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4 ${panelStyles.container}`}
+          className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto m-4 ${panelStyles.container}`}
         >
           <div className={`${panelStyles.header}`}>
             <div className="flex items-center justify-between">
@@ -594,7 +594,7 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
                 </p>
               </div>
               <button
-                className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
                 onClick={onClose}
               >
                 <XIcon className="w-5 h-5" />

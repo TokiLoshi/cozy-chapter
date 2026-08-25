@@ -112,7 +112,7 @@ export function BaseModal({ onClose, children }: BaseModalProps) {
         {/** Backdrop */}
         <div className={panelStyles.backdrop} onClick={onClose} />
         <div
-          className={`relative z-[10] w-full max-w-md max-h-[80vh] overflow-y-auto p-6 ${panelStyles.container}`}
+          className={`relative z-[10] w-full max-w-md max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
         >
           <button
             onClick={onClose}

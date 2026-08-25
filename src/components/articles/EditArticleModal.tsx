@@ -85,7 +85,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="cursor-pointer px-3 py-3 bg-amber-600/80 hover:bg-amber-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+        className="cursor-pointer px-3 py-3 bg-amber-600/80 hover:bg-amber-500 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2 p-4"
       >
         <Edit className="w-4 h-4" />
       </button>
@@ -97,8 +97,8 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
             onClick={() => setOpen(false)}
           />
           {/** Modal */}
-          <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto p-4 bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
-            <div className="sticky top-0 bg-gradient-to-r from-slate-80/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
+          <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
+            <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
@@ -109,7 +109,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
                   </p>
                 </div>
                 <button
-                  className="cursor-pointer text pointer text-white hover:bg-white/10 rounded-md"
+                  className="cursor-pointer text-white hover:bg-white/10 rounded-md"
                   onClick={() => setOpen(false)}
                 >
                   <XIcon className="w-5 h-5" />
