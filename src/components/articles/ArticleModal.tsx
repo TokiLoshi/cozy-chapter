@@ -43,43 +43,16 @@ export function ExpandedArticleCard({
   return (
     <BaseModal onClose={onClose}>
       {/** Header */}
-      <div className="flex gap-4 mb-4">
+      <div className="gap-4 mb-4">
         <div className="flex-1 min-w-0">
           <h3 className="text-xl font-bold text-slate-100 mb-1">
             {item.title}
           </h3>
           {item.author && (
-            <p className="text-sm text-slate-300">Author(s): {item.author}</p>
+            <p className="text-sm text-slate-300 mb-2">
+              <span className="font-semibold">Author(s):</span> {item.author}
+            </p>
           )}
-          {item.description && (
-            <DisplayDescription description={item.description} />
-          )}
-        </div>
-        <div>
-          {/** Details Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <DetailItem label="Status">
-              <p className="text-sm font-medium text-slate-200">
-                {labelMap[item.status]}
-              </p>
-            </DetailItem>
-
-            {item.wordCount && (
-              <DetailItem label="Word Count">
-                <p className="text-sm font-medium text-slate-200">
-                  ReadingTIme {item.wordCount}
-                </p>
-              </DetailItem>
-            )}
-
-            {item.estimatedReadingTime && (
-              <DetailItem label="Estimate Reading Time">
-                <p className="text-sm font-medium text-slate-200">
-                  ReadingTIme {item.estimatedReadingTime}
-                </p>
-              </DetailItem>
-            )}
-          </div>
 
           {/** External URL */}
           {item.url && (
@@ -88,13 +61,49 @@ export function ExpandedArticleCard({
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-amber-500 hover:text-amber-400 underline"
+                className="inline-flex items-center gap-2 mt-2 text-sm text-amber-500 hover:text-amber-400 underline"
               >
                 <Link className="w-4 h-4" />
                 View
               </a>
             </div>
           )}
+        </div>
+
+        <div>
+          {/** Details Grid */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <DetailItem label="Status">
+              <p className="text-sm mt-2 font-medium text-slate-200">
+                {labelMap[item.status]}
+              </p>
+            </DetailItem>
+            {item.wordCount && (
+              <DetailItem label="Word Count">
+                <p className="text-sm font-medium text-slate-200">
+                  {item.wordCount}
+                </p>{' '}
+              </DetailItem>
+            )}
+
+            {item.estimatedReadingTime && (
+              <DetailItem label="Estimated Reading Time (mins)">
+                <p className="text-sm font-medium text-slate-200">
+                  {item.estimatedReadingTime} <span className="text-xs"></span>
+                </p>
+              </DetailItem>
+            )}
+          </div>
+          {/** Description */}
+          <div className="mb-4">
+            {item.description && (
+              <DisplayDescription description={item.description} />
+            )}
+          </div>
+          {/** Notes */}
+          <div className="mb-4">
+            {item.notes && <DisplayNotes description={item.notes} />}
+          </div>
           {/** Actions  */}
           <div className="flex gap-3 pt-4 border-t border-slate-700">
             <EditArticleModal blog={item} />
@@ -108,8 +117,6 @@ export function ExpandedArticleCard({
               <Trash className="w-4 h-4" />
             </button>
           </div>
-
-          {item.notes && <DisplayNotes description={item.notes} />}
         </div>
       </div>
     </BaseModal>
@@ -181,10 +188,8 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
       author: '',
       description: '',
       status: 'toRead' as 'toRead' | 'reading' | 'read',
-      estimatedReadingTime: undefined,
-      wordCount: undefined,
-      tags: [],
-      highlights: [],
+      estimatedReadingTime: 0,
+      wordCount: 0,
       notes: '',
     },
     validators: {
@@ -295,16 +300,41 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
             {/** Description field */}
             <form.AppField name="description">
               {(field) => (
-                <field.TextField
+                <field.TextArea
                   label="Description"
                   placeholder="what is it about?"
                 />
               )}
             </form.AppField>
 
+            {/** Estimated Reading Time */}
+            <form.AppField name="estimatedReadingTime">
+              {(field) => (
+                <field.NumberField
+                  label="Reading time in minutes"
+                  placeholder="Estimated reading time"
+                />
+              )}
+            </form.AppField>
+
+            {/** Word count */}
+            <form.AppField name="wordCount">
+              {(field) => (
+                <field.NumberField
+                  label="Word count"
+                  placeholder="Approximate word count"
+                />
+              )}
+            </form.AppField>
+
             {/** Notes field */}
             <form.AppField name="notes">
-              {(field) => <field.TextArea label="Notes" />}
+              {(field) => (
+                <field.TextArea
+                  label="Notes"
+                  placeholder="What do you think?"
+                />
+              )}
             </form.AppField>
 
             {/** Tags field */}

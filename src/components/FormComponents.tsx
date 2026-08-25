@@ -215,10 +215,12 @@ export function NumberField({
 
 export function TextArea({
   label,
+  placeholder,
   rows = 3,
 }: {
   label: string
   rows?: number
+  placeholder: string
 }) {
   const field = useFieldContext<string>()
   const errors = useStore(field.store, (state) => state.meta.errors)
@@ -239,6 +241,7 @@ export function TextArea({
         rows={rows}
         onChange={(e) => field.handleChange(e.target.value)}
         className={inputStyles}
+        placeholder={placeholder}
       />
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
     </div>
