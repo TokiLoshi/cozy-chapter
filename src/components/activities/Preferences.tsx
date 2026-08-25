@@ -279,88 +279,32 @@ export default function EditUserPreferences({
   }
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center">
         {/** Backdrop */}
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         />
+
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="flex items-center justify-between border-b border-slate-700/50 p-6">
-            <h2 className="text-2xl font-bold text-white">Sharing and Goals</h2>
-
-            <button
-              onClick={() => onClose()}
-              className="cursor-pointer text-white hover:bg-white/10 rounded-md"
-            >
-              <XIcon className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="p-6 border-t border-slate-700/50">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
-              Your Data
-            </h3>
-            <div className="flex gap-3">
-              <button
-                onClick={handleExport}
-                disabled={exportMutation.isPending}
-                className="cursor-pointer py-2 px-4 rounded-lg border border-slate-600 text-slate-300 hover:bg-white/10 disabled:opacity-50"
-              >
-                {exportMutation.isPending ? 'Exporting..' : 'Export my Data'}
-              </button>
-              {!isConfirmingDelete && (
-                <button
-                  onClick={() => setIsConfirmingDelete(true)}
-                  className="cursor-pointer py-2 px-4 rounded-lg border border-rose-500/30 text-rose-400 hover:bg-rose-500/10"
-                >
-                  Delete my account
-                </button>
-              )}
-            </div>
-            {isConfirmingDelete && (
-              <div className="mt-4 p-4 bg-rose-500/5 border border-rose-500/30 rounded-lg space-y-3">
-                <p className="text-sm text-slate-300">
-                  This permanently deletes your room and all your data. It's
-                  recommended to export your data first if you want a copy. Type{' '}
-                  <span className="font-mono font-bold text-rose-400">
-                    {CONFIRM_PHRASE}
-                  </span>{' '}
-                  below to confirm.
-                </p>
-                <input
-                  value={confirmText}
-                  onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder={CONFIRM_PHRASE}
-                  className="cursor-pointer w-75 p-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                />
-                <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => {
-                      setIsConfirmingDelete(false)
-                      setConfirmText('')
-                    }}
-                    className="cursor-pointer py-2 px-4 rounded-lg text-slate-300 hover:bg-white/10"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    disabled={
-                      confirmText !== CONFIRM_PHRASE ||
-                      deleteAccountMutation.isPending
-                    }
-                    onClick={() => deleteAccountMutation.mutate()}
-                    className="cursor-pointer py-2 px-4 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {deleteAccountMutation.isPending
-                      ? 'Deleting...'
-                      : 'Delete forever'}
-                  </button>
-                </div>
+        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
+          <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-white">
+                  Sharing and Goals
+                </h2>
               </div>
-            )}
+              <button
+                onClick={() => onClose()}
+                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+            </div>
           </div>
+
+          {/** Household Section */}
           <div className="p-6 border-t border-slate-700/50">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
               Your Household
@@ -606,7 +550,8 @@ export default function EditUserPreferences({
               </form>
             )}
           </div>
-          {/** Reading Form */}
+
+          {/** Reading Goals */}
           <div className="p-6 border-t border-slate-700/50">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
               Your Reading Goal
@@ -645,6 +590,71 @@ export default function EditUserPreferences({
                 </form.AppForm>
               </div>
             </form>
+          </div>
+
+          {/** Data Section */}
+          <div className="p-6 border-t border-slate-700/50">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-3">
+              Your Data
+            </h3>
+            <div className="flex gap-3">
+              <button
+                onClick={handleExport}
+                disabled={exportMutation.isPending}
+                className="cursor-pointer py-2 px-4 rounded-lg border border-slate-600 text-slate-300 hover:bg-white/10 disabled:opacity-50"
+              >
+                {exportMutation.isPending ? 'Exporting..' : 'Export my Data'}
+              </button>
+              {!isConfirmingDelete && (
+                <button
+                  onClick={() => setIsConfirmingDelete(true)}
+                  className="cursor-pointer py-2 px-4 rounded-lg border border-rose-500/30 text-rose-400 hover:bg-rose-500/10"
+                >
+                  Delete my account
+                </button>
+              )}
+            </div>
+            {isConfirmingDelete && (
+              <div className="mt-4 p-4 bg-rose-500/5 border border-rose-500/30 rounded-lg space-y-3">
+                <p className="text-sm text-slate-300">
+                  This permanently deletes your room and all your data. It's
+                  recommended to export your data first if you want a copy. Type{' '}
+                  <span className="font-mono font-bold text-rose-400">
+                    {CONFIRM_PHRASE}
+                  </span>{' '}
+                  below to confirm.
+                </p>
+                <input
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={CONFIRM_PHRASE}
+                  className="cursor-pointer w-75 p-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => {
+                      setIsConfirmingDelete(false)
+                      setConfirmText('')
+                    }}
+                    className="cursor-pointer py-2 px-4 rounded-lg text-slate-300 hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    disabled={
+                      confirmText !== CONFIRM_PHRASE ||
+                      deleteAccountMutation.isPending
+                    }
+                    onClick={() => deleteAccountMutation.mutate()}
+                    className="cursor-pointer py-2 px-4 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {deleteAccountMutation.isPending
+                      ? 'Deleting...'
+                      : 'Delete forever'}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

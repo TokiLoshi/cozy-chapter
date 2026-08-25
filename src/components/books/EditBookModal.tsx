@@ -6,6 +6,7 @@ import StarRating from '../StarRating'
 import type { Books, UserBooks } from '@/db/schemas/book-schema'
 import { useAppForm } from '@/hooks/form'
 import { updateUserBookServer } from '@/lib/server/books'
+import { panelStyles } from '@/lib/panelStyles'
 
 type EditBookModalProps = {
   book: Books
@@ -112,10 +113,7 @@ export default function EditBookModal({
     <>
       <div className="fixed inset-0 z-[60] flex items-center justify-center">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-black//60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className={`${panelStyles.backdrop}`} onClick={onClose} />
 
         {/** Modal */}
         <div className="relative w-full max-w-2xl max-h-[90h] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">

@@ -13,6 +13,7 @@ import type { Blog } from '@/lib/types/Blog'
 import { useAppForm } from '@/hooks/form'
 import { submitArticle } from '@/lib/server/articles'
 import { getSessionServer } from '@/lib/utils'
+import { panelStyles } from '@/lib/panelStyles'
 
 export const Route = createFileRoute('/logarticle')({
   loader: async () => {
@@ -187,7 +188,7 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
       notes: '',
     },
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -238,11 +239,8 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[70] flex items-center justify-center">
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+      <div className="fixed inset-0 z-[70] flex items-center justify-center ">
+        <div className={panelStyles['backdrop']} onClick={onClose} />
         <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
           <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
             <div className="flex items-center justify-between">
