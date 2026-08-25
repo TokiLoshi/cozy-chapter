@@ -246,7 +246,7 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
     <>
       <div className="fixed inset-0 z-[70] flex items-center justify-center ">
         <div className={panelStyles['backdrop']} onClick={onClose} />
-        <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
+        <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
           <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
             <div className="flex items-center justify-between">
               <div>
@@ -302,7 +302,7 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
               {(field) => (
                 <field.TextArea
                   label="Description"
-                  placeholder="what is it about?"
+                  placeholder="What is it about?"
                 />
               )}
             </form.AppField>
