@@ -9,7 +9,7 @@ import type { Blog, ReadStatus } from '@/lib/types/Blog'
 import { deleteBlogs, getUserBlogs } from '@/lib/server/articles'
 import { getUserBookServer } from '@/lib/server/books'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { panelStyles } from '@/lib/panelStyles'
 
 type ReadingModalProps = {
   isOpen: boolean
@@ -47,7 +47,6 @@ export default function ReadingModal({
       return titleMatch || authorMatch
     })
   }, [blogs, librarySearch, selectedStatus])
-  // const filteredBlogs = blogs.filter((blog) => blog.status === selectedStatus)
 
   const { data: userBooks } = useQuery({
     queryKey: ['user-books'],
@@ -107,15 +106,14 @@ export default function ReadingModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          onClick={onClose}
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        />
+        <div onClick={onClose} className={panelStyles.backdrop} />
 
         {/** Modal */}
-        <div className="relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 border border-amber-500/10 rounded-xl shadow-2xl shadow-amber-900/20 m-4 p-6">
+        <div
+          className={`relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
+        >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-3xl font-bold text-white">{getModalTitle()}</h2>
             <button
@@ -166,23 +164,21 @@ export default function ReadingModal({
                     : 'No articles in this category yet'}
                 </p>
               ) : (
-                <ScrollArea className="h-[400px]">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredBlogs.map((blog: Blog) => (
-                      <div
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredBlogs.map((blog: Blog) => (
+                    <div
+                      key={blog.id}
+                      className="cursor-pointer"
+                      onClick={() => setExpandedArticleId(blog.id)}
+                    >
+                      <ArticleCardModal
                         key={blog.id}
-                        className="cursor-pointer"
-                        onClick={() => setExpandedArticleId(blog.id)}
-                      >
-                        <ArticleCardModal
-                          key={blog.id}
-                          item={blog}
-                          onDelete={() => handleDeleteArticle(blog.id)}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
+                        item={blog}
+                        onDelete={() => handleDeleteArticle(blog.id)}
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
             </TabsContent>
 

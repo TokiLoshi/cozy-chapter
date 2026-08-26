@@ -2,12 +2,12 @@ import { Edit, Link, Loader2, Plus, Search, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect, useMemo, useState } from 'react'
-import { ScrollArea } from '@radix-ui/react-scroll-area'
 import {
   BaseModal,
   DetailItem,
   DisplayActions,
   DisplayDescription,
+  DisplayNotes,
   DisplayStarRating,
 } from '../ExpandedCard'
 import SearchArea from '../SearchArea'
@@ -37,6 +37,13 @@ type ExpandedBookProps = {
   onClose: () => void
 }
 
+const labelMap: Record<'toRead' | 'reading' | 'read' | 'abandoned', string> = {
+  toRead: 'To Read',
+  reading: 'Reading',
+  read: 'Read',
+  abandoned: 'Abandoned',
+}
+
 function ExpandedBookCard({
   item,
   onEdit,
@@ -63,11 +70,13 @@ function ExpandedBookCard({
             <p className="text-sm text-slate-300">{item.book.subtitle}</p>
           )}
           <p className="text-sm text-slate-300">
-            Authors: {item.book.authors?.join(', ')}
+            <span className="font-semibold">Authors:</span>{' '}
+            {item.book.authors?.join(', ')}
           </p>
           {item.book.publisher && (
             <p className="text-sm text-slate-300">
-              Published {item.book.publishedDate ?? 'uknown date'} by{' '}
+              <span className="font-semibold">Published:</span>{' '}
+              {item.book.publishedDate ?? 'Unknown date'} by{' '}
               {item.book.publisher}
             </p>
           )}
@@ -78,7 +87,8 @@ function ExpandedBookCard({
           )}
           {item.book.categories && (
             <p className="text-sm text-slate-300">
-              Category: {item.book.categories.join(', ')}
+              <span className="font-semibold">Category:</span>{' '}
+              {item.book.categories.join(', ')}
             </p>
           )}
         </div>
@@ -86,18 +96,24 @@ function ExpandedBookCard({
       {/** Details Grid */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         {/** Status */}
-        <DetailItem label="Status">
-          <p className="text-sm font-medium text-slate-200">
-            {item.userBook.status}
-          </p>
-        </DetailItem>
+        {item.userBook.status && (
+          <DetailItem label="Status">
+            <p className="text-sm font-medium text-slate-200">
+              {labelMap[item.userBook.status]}
+            </p>
+          </DetailItem>
+        )}
 
         {/** Last Chapter */}
-        <DetailItem label="Progress">
-          <p className="text-sm font-medium text-slate-200">
-            Chapter {item.userBook.lastChapter || 0}
-          </p>
-        </DetailItem>
+        {typeof item.userBook.lastChapter === 'number' &&
+          item.userBook.lastChapter > 0 && (
+            <DetailItem label="Progress">
+              <p className="text-sm font-medium text-slate-200">
+                {item.userBook.lastChapter} Chapter
+                {item.userBook.lastChapter === 1 ? '' : 's'}
+              </p>
+            </DetailItem>
+          )}
 
         {/** Rating */}
         {item.userBook.rating && (
@@ -140,13 +156,16 @@ function ExpandedBookCard({
         </div>
       )}
 
-      {/** Actions */}
-      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
-
       {/** Description */}
       {item.book.description && (
         <DisplayDescription description={item.book.description} />
       )}
+      {/** Notes */}
+      {item.userBook.notes && (
+        <DisplayNotes description={item.userBook.notes} />
+      )}
+      {/** Actions */}
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
     </BaseModal>
   )
 }
@@ -175,12 +194,17 @@ export function BookCard({
             {item.book.title}
           </h4>
           <p className="text-sm text-slate-400 truncate">
-            {item.book.authors?.join(',')}
+            {item.book.authors?.join(', ')}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-slate-300">
-              Page {item.userBook.currentPage} / {item.book.pageCount}
-            </span>
+            {item.userBook.currentPage &&
+              item.userBook.currentPage > 0 &&
+              item.book.pageCount &&
+              item.book.pageCount > 0 && (
+                <span className="text-xs text-slate-300">
+                  Page {item.userBook.currentPage} / {item.book.pageCount}
+                </span>
+              )}
           </div>
         </div>
         <div className="flex gap-2 items-center">
@@ -190,7 +214,7 @@ export function BookCard({
               e.stopPropagation()
               onEdit()
             }}
-            className="cursor-pointer bg-amber-600/80 hover:bg-amber-600 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Edit className="w-4 h-4" />
           </button>
@@ -216,7 +240,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     userBook: UserBooks
   } | null>(null)
   const queryClient = useQueryClient()
-  const [expandedBook, setExpandedBook] = useState<BookItem | null>(null)
+  const [expandedBookId, setExpandedBookId] = useState<string | null>(null)
   const [librarySearch, setLibrarySearch] = useState('')
 
   const { data: userBooks } = useQuery({
@@ -229,6 +253,9 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
     reading: 'reading',
     read: 'read',
   }
+  const expandedBook = expandedBookId
+    ? (userBooks?.find((item) => item.book.id === expandedBookId) ?? null)
+    : null
 
   const filteredBooks = useMemo(() => {
     if (!userBooks) return []
@@ -314,7 +341,7 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
   }
 
   const handleCardClick = (item: BookItem) => {
-    setExpandedBook(item)
+    setExpandedBookId(item.book.id)
   }
 
   if (!isOpen) return null
@@ -338,8 +365,8 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
         <ExpandedBookCard
           item={expandedBook}
           onEdit={() => handleEdit(expandedBook)}
-          onDelete={() => handleDelete(expandedBook.userBook.id!)}
-          onClose={() => setExpandedBook(null)}
+          onDelete={() => handleDelete(expandedBook.userBook.id)}
+          onClose={() => setExpandedBookId(null)}
         />
       )}
 
@@ -439,33 +466,32 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
           {/** Users books */}
 
           <SearchArea value={librarySearch} onChange={setLibrarySearch} />
-          <ScrollArea className="h-[400px]">
-            {filteredBooks.length === 0 ? (
-              <p className="text-center text-gray-400 py-8">
-                {' '}
-                {librarySearch
-                  ? 'No books match your search'
-                  : 'No books in this category yet'}
-              </p>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredBooks.map((item) => (
-                  <div
-                    onClick={() => handleCardClick(item)}
-                    className="cursor-pointer"
-                    key={`book${item.book.id}`}
-                  >
-                    <BookCard
-                      key={item.book.id}
-                      item={item}
-                      onEdit={() => handleEdit(item)}
-                      onDelete={() => handleDelete(item.userBook.id)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </ScrollArea>
+
+          {filteredBooks.length === 0 ? (
+            <p className="text-center text-gray-400 py-8">
+              {' '}
+              {librarySearch
+                ? 'No books match your search'
+                : 'No books in this category yet'}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredBooks.map((item) => (
+                <div
+                  onClick={() => handleCardClick(item)}
+                  className="cursor-pointer"
+                  key={`book${item.book.id}`}
+                >
+                  <BookCard
+                    key={item.book.id}
+                    item={item}
+                    onEdit={() => handleEdit(item)}
+                    onDelete={() => handleDelete(item.userBook.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
     </>

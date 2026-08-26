@@ -43,23 +43,7 @@ export default function EditBookModal({
       rating: userBook.rating ?? null,
       notes: userBook.notes ?? '',
     } as EditBookFormValues,
-    validators: {
-      onBlur: ({ value }) => {
-        const errors = {
-          fields: {},
-        } as {
-          fields: Record<string, string>
-        }
-        if (
-          book.pageCount &&
-          value.currentPage &&
-          value.currentPage > book.pageCount
-        ) {
-          errors.fields.pageCount = `PageCount cannot exceed ${book.pageCount}`
-        }
-        return errors
-      },
-    },
+
     onSubmit: async ({ value }) => {
       const loadingToast = toast.loading('Updating book...', {
         classNames: {
@@ -111,14 +95,16 @@ export default function EditBookModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
         <div className={`${panelStyles.backdrop}`} onClick={onClose} />
 
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[90h] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+        <div
+          className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+        >
           {/** Header with Book info */}
-          <div className="stick top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-[10]">
+          <div className={`${panelStyles.header}`}>
             <div className="flex items-center justify-between gap-4">
               <div className="flex gap-4">
                 {book.coverImageUrl && (
@@ -187,7 +173,7 @@ export default function EditBookModal({
                           validators={{
                             onChange: ({ value }) => {
                               if (value && value < 0)
-                                return 'Chapters cannot be negative'
+                                return 'Pages cannot be negative'
                               if (
                                 book.pageCount &&
                                 value &&
@@ -223,6 +209,15 @@ export default function EditBookModal({
                             />
                           )}
                         </form.AppField>
+                        {/** Started At */}
+                        <form.AppField name="startedAt">
+                          {(field) => (
+                            <field.DateField
+                              label="Date Started"
+                              placeholder="e.g today's date"
+                            />
+                          )}
+                        </form.AppField>
                       </>
                     )}
                     {isFinished && (
@@ -240,6 +235,15 @@ export default function EditBookModal({
                                   field.handleChange(rating)
                                 }
                                 disabled={false}
+                              />
+                            )}
+                          </form.AppField>
+                          {/** Finished At */}
+                          <form.AppField name="finishedAt">
+                            {(field) => (
+                              <field.DateField
+                                label="Date Finished"
+                                placeholder="e.g today's date"
                               />
                             )}
                           </form.AppField>
@@ -261,7 +265,7 @@ export default function EditBookModal({
               )}
             </form.AppField>
 
-            <div className="flex jusity-end">
+            <div className="flex justify-end">
               <form.AppForm>
                 <form.SubmitButton
                   label="Submit Edit"
