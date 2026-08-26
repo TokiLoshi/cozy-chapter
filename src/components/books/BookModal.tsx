@@ -80,7 +80,7 @@ function ExpandedBookCard({
               {item.book.publisher}
             </p>
           )}
-          {item.book.pageCount && (
+          {(item.userBook.currentPage ?? 0) > 0 && (
             <p className="text-sm text-slate-400">
               {item.book.pageCount} pages{' '}
             </p>
@@ -197,14 +197,11 @@ export function BookCard({
             {item.book.authors?.join(', ')}
           </p>
           <div className="flex items-center gap-2 mt-1">
-            {item.userBook.currentPage &&
-              item.userBook.currentPage > 0 &&
-              item.book.pageCount &&
-              item.book.pageCount > 0 && (
-                <span className="text-xs text-slate-300">
-                  Page {item.userBook.currentPage} / {item.book.pageCount}
-                </span>
-              )}
+            {(item.userBook.currentPage ?? 0) > 0 && (
+              <span className="text-xs text-slate-300">
+                Page {item.userBook.currentPage} / {item.book.pageCount}
+              </span>
+            )}
           </div>
         </div>
         <div className="flex gap-2 items-center">
