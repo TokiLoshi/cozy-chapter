@@ -433,7 +433,7 @@ export default function AudioBooksModal({
         )}
         {!isEditOpen && (
           <div
-            className={`relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
+            className={`relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-white">Audiobooks</h2>
@@ -459,9 +459,6 @@ export default function AudioBooksModal({
               </div>
             </div>
 
-            {/** Audiobooks  */}
-
-            {/** Content */}
             {/** Search Results */}
             {debouncedQuery.length > 2 && (
               <div className="p-4">
@@ -471,7 +468,7 @@ export default function AudioBooksModal({
                       Search Results
                     </h3>
                     <button
-                      className="cursor-pointer right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                      className="cursor-pointer right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 hover:text-slate-400"
                       onClick={() => {
                         setSearchQuery('')
                         setDebouncedQuery('')
@@ -580,6 +577,7 @@ export default function AudioBooksModal({
                       </span>
                     </TabsTrigger>
                   </TabsList>
+
                   {/** To Listen to  */}
                   <TabsContent value="toListen" className="mt-4">
                     <SearchArea

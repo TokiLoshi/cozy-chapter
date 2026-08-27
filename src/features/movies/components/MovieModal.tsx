@@ -18,6 +18,7 @@ import {
   DetailItem,
   DisplayActions,
   DisplayDescription,
+  DisplayNotes,
   DisplayStarRating,
 } from '@/components/ExpandedCard'
 import SearchArea from '@/components/SearchArea'
@@ -28,6 +29,7 @@ import {
   getUserMovieServer,
   searchTMDBMovies,
 } from '@/lib/server/movies'
+import { panelStyles } from '@/lib/panelStyles'
 
 type MovieModal = {
   isOpen: boolean
@@ -59,12 +61,14 @@ function ExpandedMovieCard({
     <BaseModal onClose={onClose}>
       {/** Header */}
       <div className="flex gap-4 mb-4">
-        {item.movie.posterPath && (
+        {item.movie.posterPath ? (
           <img
             src={item.movie.posterPath}
             alt={item.movie.title}
             className="w-16 h-16 object-cover rounded"
           />
+        ) : (
+          <PlaySquare className="h-16 text-white" />
         )}
         <div className="flex-1 min-w-0">
           <h3 className="text-xl font-bold text-slate-100 mb-1">
@@ -88,7 +92,7 @@ function ExpandedMovieCard({
         </DetailItem>
 
         {/** Runtime */}
-        {item.movie.runtime && (
+        {(item.movie.runtime ?? 0) > 0 && (
           <DetailItem label="Duration">
             <p className="text-sm font-medium text-slate-200">
               {item.movie.runtime}
@@ -166,7 +170,8 @@ function ExpandedMovieCard({
             <a
               href={item.movie.externalUrl}
               target="_blank"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-green-600"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-amber-600 hover:bg-amber-500"
             >
               <Play className="w-4 h-4 " />
               View on TMDB
@@ -174,20 +179,18 @@ function ExpandedMovieCard({
           </div>
         )}
       </div>
-      {/** Notes  */}
-      {item.userMovie.notes && (
-        <DetailItem label="Notes">
-          <p className="text-sm text-slate-400">{item.userMovie.notes}</p>
-        </DetailItem>
-      )}
-
-      {/** Actions */}
-      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
-
       {/** Overview */}
       {item.movie.overview && (
         <DisplayDescription description={item.movie.overview} />
       )}
+
+      {/** Notes  */}
+      {item.userMovie.notes && (
+        <DisplayNotes description={item.userMovie.notes} />
+      )}
+
+      {/** Actions */}
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
     </BaseModal>
   )
 }
@@ -218,7 +221,10 @@ function MovieCard({
         <div className="flex-1 min-w-0 flex flex-col">
           <h4 className="font-medium text-slate-100 truncate">{item.title}</h4>
           {/** Tagline */}
-          <p className="text-sm text-slate-300 truncate">{item.tagline}</p>
+          {item.tagline && (
+            <p className="text-sm text-slate-300 truncate">{item.tagline}</p>
+          )}
+
           {/** Runtime */}
           {item.runtime && (
             <p className="text-sm text-slate-300">Runtime: {item.runtime}</p>
@@ -271,7 +277,7 @@ function EmptyTabContent({ message }: { message: string }) {
 export default function MovieModal({ isOpen, onClose }: MovieModal) {
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
-  const [expandedMovie, setExpandedMovie] = useState<MovieItem | null>(null)
+  const [expandedMovieId, setExpandedMovieId] = useState<string | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [movieToEdit, setMovieToEdit] = useState<{
     movie: Movie
@@ -301,6 +307,10 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
     queryKey: ['user-movies'],
     queryFn: () => getUserMovieServer(),
   })
+
+  const expandedMovie = expandedMovieId
+    ? (userMovies?.find((m) => m.userMovie.id === expandedMovieId) ?? null)
+    : null
 
   const addMutation = useMutation({
     mutationFn: (tmdbId: number) => addMovie({ data: { tmdbId } }),
@@ -347,7 +357,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
   }
 
   const handleEdit = (item: { movie: Movie; userMovie: UserMovie }) => {
-    setExpandedMovie(null)
+    setExpandedMovieId(null)
     setMovieToEdit(item)
     setIsEditOpen(true)
   }
@@ -357,7 +367,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
   }
 
   const handleCardClick = (item: MovieItem) => {
-    setExpandedMovie(item)
+    setExpandedMovieId(item.userMovie.id)
   }
 
   const filteredMovies = (items: Array<MovieItem>): Array<MovieItem> => {
@@ -400,12 +410,9 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          onClick={onClose}
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
-        />
+        <div onClick={onClose} className={panelStyles.backdrop} />
 
         {/** Edit Modal */}
         {isEditOpen && movieToEdit && (
@@ -422,7 +429,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
         {/** Expanded Card */}
         {expandedMovie && (
           <ExpandedMovieCard
-            onClose={() => setExpandedMovie(null)}
+            onClose={() => setExpandedMovieId(null)}
             item={expandedMovie}
             onEdit={() => {
               handleEdit(expandedMovie)
@@ -435,239 +442,256 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
 
         {/** Main modal */}
         {!isEditOpen && !expandedMovie && (
-          <div className="relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-white">Movies</h2>
-              <button
-                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-                onClick={() => closeModal()}
-              >
-                <XIcon />
-              </button>
-            </div>
-            {/** Search */}
-            <div className="p-4 border-b border-slate-700">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search Movies..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
+          <div
+            className={`relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+          >
+            <div className={panelStyles.header}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-white">Movies</h2>
+                <button
+                  className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                  onClick={() => closeModal()}
+                >
+                  <XIcon />
+                </button>
               </div>
             </div>
-            {/** Search Results */}
-            <div className="flex flex-col overflow-y-auto p-4">
+            <div className="p-6">
+              {/** Search */}
+              <div className="pb-4 border-b border-slate-700">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search Movies..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
+
+              {/** Search Results */}
               {debouncedQuery.length > 2 && (
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-slate-400">
-                      Search Results
-                    </h3>
-                    <button
-                      className="cursor-pointer text-slate-400 hover:text-white"
-                      onClick={() => {
-                        setSearchQuery('')
-                        setDebouncedQuery('')
-                      }}
-                    >
-                      <XIcon />
-                    </button>
-                  </div>
-                  {isSearching ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                <div className="p-4">
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-slate-400">
+                        Search Results
+                      </h3>
+                      <button
+                        className="cursor-pointer text-slate-400 hover:text-slate-300 right-3 top-1/2 -translate-y-1/2 w-4 h-4"
+                        onClick={() => {
+                          setSearchQuery('')
+                          setDebouncedQuery('')
+                        }}
+                      >
+                        <XIcon />
+                      </button>
                     </div>
-                  ) : searchError ? (
-                    <p className="text-red-400 text-sm">
-                      Failed to search. Please Try again
-                    </p>
-                  ) : searchResults?.length === 0 ? (
-                    <p className="text-slate-400 text-sm">No movies found</p>
-                  ) : (
-                    <div className="space-y-3">
-                      {searchResults?.map(
-                        (movie: Omit<Movie, 'createdAt' | 'updatedAt'>) => (
-                          <div
-                            key={movie.id}
-                            className="flex items-center gap-3"
-                          >
-                            {movie.posterPath && (
-                              <img
-                                src={movie.posterPath}
-                                alt={movie.title}
-                                className="w-16 h-16 object-cover rounded"
-                              />
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-slate-100">
-                                {movie.title}
-                              </h4>
-                              <p className="text-sm text-slate-400">
-                                {movie.tagline}
-                              </p>
-                              <button
-                                onClick={() => handleAdd(movie)}
-                                disabled={
-                                  isInLibrary(movie.id) || addMutation.isPending
-                                }
-                                className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
-                              >
-                                {addMutation.isPending ? (
-                                  <Loader2 className="w-4 h-4" />
-                                ) : isInLibrary(movie.id) ? (
-                                  <span className="text-xs text-slate-300">
-                                    Added
-                                  </span>
-                                ) : (
-                                  <Plus className="cursor-pointer text-white bg-amber-500 hover:bg-amber-500 disabled:cursor-not-allowed rounded-lg transition-colors" />
-                                )}
-                              </button>
+                    {isSearching ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                      </div>
+                    ) : searchError ? (
+                      <p className="text-red-400 text-sm">
+                        Failed to search. Please Try again
+                      </p>
+                    ) : searchResults?.length === 0 ? (
+                      <p className="text-slate-400 text-sm">No movies found</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {searchResults?.map(
+                          (movie: Omit<Movie, 'createdAt' | 'updatedAt'>) => (
+                            <div
+                              key={movie.id}
+                              className="flex items-center gap-3"
+                            >
+                              {movie.posterPath && (
+                                <img
+                                  src={movie.posterPath}
+                                  alt={movie.title}
+                                  className="w-16 h-16 object-cover rounded"
+                                />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-medium text-slate-100">
+                                  {movie.title}
+                                </h4>
+                                <p className="text-sm text-slate-400">
+                                  {movie.tagline}
+                                </p>
+                                <button
+                                  onClick={() => handleAdd(movie)}
+                                  disabled={
+                                    isInLibrary(movie.id) ||
+                                    addMutation.isPending
+                                  }
+                                  className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+                                >
+                                  {addMutation.isPending ? (
+                                    <Loader2 className="w-4 h-4" />
+                                  ) : isInLibrary(movie.id) ? (
+                                    <span className="text-xs text-slate-300">
+                                      Added
+                                    </span>
+                                  ) : (
+                                    <Plus className="cursor-pointer text-white bg-amber-500 hover:bg-amber-500 disabled:cursor-not-allowed rounded-lg transition-colors" />
+                                  )}
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  )}
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
-            </div>
-            {/** User's library  */}
-            <div className="pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-md font-medium text-slate-400">
+
+              {/** User's library  */}
+              <div className="pt-4">
+                <h3 className="text-sm font-medium text-slate-400">
                   Your Watchlist
                 </h3>
+
+                {userMovies?.length === 0 ? (
+                  <p className="text-slate-400 text-sm">
+                    No movies yet. Search to add movies to your watchlist
+                  </p>
+                ) : (
+                  <Tabs defaultValue="watching" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+                      <TabsTrigger
+                        value="toWatch"
+                        className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      >
+                        <span>To Watch</span>
+                        <span className="hidden sm:inline">
+                          {moviesToWatch.length}
+                        </span>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="watching"
+                        className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      >
+                        <span>Watching</span>
+                        <span className="hidden sm:inline">
+                          {moviesWatching.length}
+                        </span>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="watched"
+                        className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      >
+                        <span>Watched</span>
+                        <span className="hidden sm:inline">
+                          {moviesWatched.length}
+                        </span>
+                      </TabsTrigger>
+                    </TabsList>
+
+                    {/** To Watch */}
+                    <TabsContent value="toWatch" className="mt-4">
+                      <SearchArea
+                        value={librarySearch}
+                        onChange={setLibrarySearch}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {moviesToWatch.length === 0 ? (
+                          <EmptyTabContent
+                            message={
+                              librarySearch
+                                ? 'No movies match your filters'
+                                : 'No movies on your watchlist yet'
+                            }
+                          />
+                        ) : (
+                          moviesToWatch.map((item) => (
+                            <div
+                              className="cursor-pointer"
+                              key={item.movie.id}
+                              onClick={() => handleCardClick(item)}
+                            >
+                              <MovieCard
+                                item={item.movie}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() => handleDelete(item.userMovie.id)}
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </TabsContent>
+
+                    {/** Watching  */}
+                    <TabsContent value="watching" className="mt-4">
+                      <SearchArea
+                        value={librarySearch}
+                        onChange={setLibrarySearch}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {moviesWatching.length === 0 ? (
+                          <EmptyTabContent
+                            message={
+                              librarySearch
+                                ? 'No movies match your filters'
+                                : 'No movies on your watching list yet'
+                            }
+                          />
+                        ) : (
+                          moviesWatching.map((item) => (
+                            <div
+                              className="cursor-pointer"
+                              key={item.movie.id}
+                              onClick={() => handleCardClick(item)}
+                            >
+                              <MovieCard
+                                item={item.movie}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() => handleDelete(item.userMovie.id)}
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </TabsContent>
+
+                    {/** Watched */}
+                    <TabsContent value="watched" className="mt-4">
+                      <SearchArea
+                        value={librarySearch}
+                        onChange={setLibrarySearch}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {moviesWatched.length === 0 ? (
+                          <EmptyTabContent
+                            message={
+                              librarySearch
+                                ? 'No movies match your filter'
+                                : 'No movies on your watched list yet'
+                            }
+                          />
+                        ) : (
+                          moviesWatched.map((item) => (
+                            <div
+                              key={item.movie.id}
+                              className="cursor-pointer"
+                              onClick={() => handleCardClick(item)}
+                            >
+                              <MovieCard
+                                item={item.movie}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() => handleDelete(item.userMovie.id)}
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                )}
               </div>
-              {userMovies?.length === 0 ? (
-                <p className="text-slate-400 text-sm">
-                  No movies yet. Search to add movies to your watchlist
-                </p>
-              ) : (
-                <Tabs defaultValue="watching" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 bg-slate-800">
-                    <TabsTrigger
-                      value="toWatch"
-                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                    >
-                      To Watch ({moviesToWatch.length})
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="watching"
-                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                    >
-                      Watching ({moviesWatching.length})
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="watched"
-                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                    >
-                      Watched ({moviesWatched.length})
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {/** To Watch */}
-                  <TabsContent value="toWatch" className="mt-4">
-                    <SearchArea
-                      value={librarySearch}
-                      onChange={setLibrarySearch}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {moviesToWatch.length === 0 ? (
-                        <EmptyTabContent
-                          message={
-                            librarySearch
-                              ? 'No movies match your filters'
-                              : 'No movies on your watchlist yet'
-                          }
-                        />
-                      ) : (
-                        moviesToWatch.map((item) => (
-                          <div
-                            className="cursor-pointer"
-                            key={item.movie.id}
-                            onClick={() => handleCardClick(item)}
-                          >
-                            <MovieCard
-                              item={item.movie}
-                              onEdit={() => handleEdit(item)}
-                              onDelete={() => handleDelete(item.userMovie.id)}
-                            />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-
-                  {/** Watching  */}
-                  <TabsContent value="watching" className="mt-4">
-                    <SearchArea
-                      value={librarySearch}
-                      onChange={setLibrarySearch}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {moviesWatching.length === 0 ? (
-                        <EmptyTabContent
-                          message={
-                            librarySearch
-                              ? 'No movies match your filters'
-                              : 'No movies on your watching list yet'
-                          }
-                        />
-                      ) : (
-                        moviesWatching.map((item) => (
-                          <div
-                            className="cursor-pointer"
-                            key={item.movie.id}
-                            onClick={() => handleCardClick(item)}
-                          >
-                            <MovieCard
-                              item={item.movie}
-                              onEdit={() => handleEdit(item)}
-                              onDelete={() => handleDelete(item.userMovie.id)}
-                            />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-
-                  {/** Watched */}
-                  <TabsContent value="watched" className="mt-4">
-                    <SearchArea
-                      value={librarySearch}
-                      onChange={setLibrarySearch}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {moviesWatched.length === 0 ? (
-                        <EmptyTabContent
-                          message={
-                            librarySearch
-                              ? 'No movies match your filter'
-                              : 'No movies on your watched list yet'
-                          }
-                        />
-                      ) : (
-                        moviesWatched.map((item) => (
-                          <div
-                            key={item.movie.id}
-                            className="cursor-pointer"
-                            onClick={() => handleCardClick(item)}
-                          >
-                            <MovieCard
-                              item={item.movie}
-                              onEdit={() => handleEdit(item)}
-                              onDelete={() => handleDelete(item.userMovie.id)}
-                            />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              )}
             </div>
           </div>
         )}
