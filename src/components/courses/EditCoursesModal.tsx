@@ -43,10 +43,21 @@ export default function EditCoursesModal({
         if (value.title.length === 0) {
           errors.fields.title = 'Title is required'
         }
-        if (value.progressCurrent && value.progressTotal) {
+        if (value.progressTotal && value.progressCurrent) {
           if (parseInt(value.progressCurrent) > parseInt(value.progressTotal)) {
             errors.fields.progressCurrent =
-              'Current progress cannot be higher than total possible progress'
+              'Current progress cannot exceed total progress'
+          }
+        }
+        if (value.progressCurrent) {
+          if (parseInt(value.progressCurrent) < 0) {
+            errors.fields.progressCurrent = "Progress can't be negative"
+          }
+        }
+        if (value.progressTotal) {
+          if (parseInt(value.progressTotal) < 0) {
+            errors.fields.progressTotal =
+              "Total progress possible can't be negative"
           }
         }
 

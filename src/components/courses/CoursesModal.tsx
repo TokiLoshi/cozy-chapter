@@ -561,8 +561,8 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
           }
         }
         if (value.progressTotal) {
-          if (parseInt(value.progressTotal) > 0) {
-            errors.fields.progressCurrent =
+          if (parseInt(value.progressTotal) < 0) {
+            errors.fields.progressTotal =
               "Total progress possible can't be negative"
           }
         }
@@ -722,6 +722,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
                 <field.NumberField
                   label="Current Progress"
                   placeholder="Current Progress"
+                  min={0}
                 />
               )}
             </form.AppField>
@@ -747,6 +748,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
                 <field.NumberField
                   label="Progress Total"
                   placeholder="Course Progress"
+                  min={0}
                 />
               )}
             </form.AppField>
@@ -757,6 +759,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
                 <field.NumberField
                   label="Estimated Minutes Remaining"
                   placeholder="Course Estimated Minutes Remaining"
+                  min={0}
                 />
               )}
             </form.AppField>
