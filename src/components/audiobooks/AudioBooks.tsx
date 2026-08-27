@@ -409,7 +409,7 @@ export default function AudioBooksModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[70] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] p-4 flex items-center justify-center">
         {/** Backdrop */}
         <div className={panelStyles.backdrop} onClick={closeModal} />
         {/** Edit modal */}
@@ -433,7 +433,7 @@ export default function AudioBooksModal({
         )}
         {!isEditOpen && (
           <div
-            className={`relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
+            className={`relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-white">Audiobooks</h2>
@@ -551,24 +551,33 @@ export default function AudioBooksModal({
                 </p>
               ) : (
                 <Tabs defaultValue="listening" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+                  <TabsList className="grid w-full grid-cols-3  bg-slate-800">
                     <TabsTrigger
                       value="toListen"
                       className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
-                      To Listen to ({audioToListen.length})
+                      <span className="">To Listen</span>
+                      <span className="hidden sm:inline">
+                        ({audioToListen.length})
+                      </span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="listening"
                       className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
-                      Listening To ({audioListening.length})
+                      <span className="">Listening To</span>
+                      <span className="hidden sm:inline">
+                        ({audioListening.length})
+                      </span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="listened"
                       className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
-                      Finished ({audioListened.length})
+                      <span>Finished </span>
+                      <span className="hidden sm:inline">
+                        ({audioListened.length})
+                      </span>
                     </TabsTrigger>
                   </TabsList>
                   {/** To Listen to  */}
