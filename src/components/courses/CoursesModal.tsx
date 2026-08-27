@@ -2,7 +2,6 @@ import { Edit, Laptop, Trash, XIcon } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
 import EditCoursesModal from './EditCoursesModal'
 import type { Courses } from '@/db/schemas/course-schema'
 import {
@@ -10,6 +9,7 @@ import {
   DetailItem,
   DisplayActions,
   DisplayDescription,
+  DisplayNotes,
 } from '@/components/ExpandedCard'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import SearchArea from '@/components/SearchArea'
@@ -63,9 +63,11 @@ function ExpandedCourseCard({
       {/** Details Grid */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         {/** Author */}
-        <DetailItem label="Author">
-          <p className="text-sm font-medium text-slate-200">{item.author}</p>
-        </DetailItem>
+        {item.author && (
+          <DetailItem label="Author">
+            <p className="text-sm font-medium text-slate-200">{item.author}</p>
+          </DetailItem>
+        )}
 
         {/** Platform */}
         {item.platform && (
@@ -139,11 +141,7 @@ function ExpandedCourseCard({
         )}
       </div>
       {/** Notes */}
-      {item.notes && (
-        <DetailItem label="Notes">
-          <p className="text-sm font-medium text-slate-200">{item.notes}</p>
-        </DetailItem>
-      )}
+      {item.notes && <DisplayNotes description={item.notes} />}
 
       {/** Actions */}
       <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
@@ -388,12 +386,9 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[70] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0  bg-slate-500/30 backdrop-blur-sm"
-          onClick={closeModal}
-        />
+        <div className={`${panelStyles.backdrop}`} onClick={closeModal} />
         {/** Edit Modal */}
         {isEditOpen && courseToEdit && (
           <EditCoursesModal
@@ -416,89 +411,107 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
 
         {/** Modal */}
         {!isEditOpen && !expandedCourse && (
-          <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-gradient-to-b from-slate-800 to-slate-900 rounded-xl border border-amber-500/10 shadow-2xl shadow-amber-900/20 m-4">
-            <div className="sticky top-0 bg-gradient-to-r from-slate-800/95 to-slate-800/80 backdrop-blur-md border-b border-amber-500/10 p-6 z-[10]">
-              <h2 className="text-3xl font-bold text-white">Courses</h2>
+          <div
+            className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+          >
+            <div className={`${panelStyles.header}`}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-white">Courses</h2>
+                <button
+                  className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                  onClick={closeModal}
+                >
+                  <XIcon />
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
               <button
-                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-                onClick={closeModal}
+                className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-white font-medium transition-colors"
+                onClick={() => {
+                  setisAddOpen(true)
+                }}
               >
-                <XIcon />
+                + Add Course
               </button>
-            </div>
-            <button
-              className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-white font-medium transition-colors"
-              onClick={() => {
-                setisAddOpen(true)
-              }}
-            >
-              + Add Course
-            </button>
-            {/** Course Form */}
-            {isAddOpen && (
-              <CourseForm
-                isOpen={true}
-                onClose={() => setisAddOpen(false)}
-                refreshPath={refreshPath}
-              />
-            )}
-
-            {/** Search */}
-            <div className="pt-4">
-              <h3 className="text-sm font-medium text-slate-400 mb-3">
-                What are we learning today?
-              </h3>
-              {/** Empty State */}
-              {courses?.length === 0 && (
-                <div className="text-center text-gray-400 py-8">
-                  No courses added to inventory yet
-                </div>
+              {/** Course Form */}
+              {isAddOpen && (
+                <CourseForm
+                  isOpen={true}
+                  onClose={() => setisAddOpen(false)}
+                  refreshPath={refreshPath}
+                />
               )}
-              <SearchArea value={courseSearch} onChange={setCourseSearch} />
+
+              {/** Search */}
+              <div className="pt-4">
+                <h3 className="text-sm font-medium text-slate-400 mb-3">
+                  What are we learning today?
+                </h3>
+                {/** Empty State */}
+                {courses?.length === 0 && (
+                  <div className="text-center text-gray-400 py-8">
+                    No courses added to inventory yet
+                  </div>
+                )}
+                <SearchArea value={courseSearch} onChange={setCourseSearch} />
+              </div>
+              <Tabs defaultValue="high" className="w-full mt-4">
+                <TabsList className="grid w-full grid-cols-4 bg-slate-800">
+                  <TabsTrigger
+                    value="high"
+                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                  >
+                    <span>High</span>
+                    <span className="hidden sm:inline">
+                      {byPriority.high.length}
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="medium"
+                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                  >
+                    <span>Medium </span>
+                    <span className="hidden sm:inline">
+                      {byPriority.medium.length}
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="low"
+                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                  >
+                    <span>Low</span>
+                    <span className="hidden sm:inline">
+                      {byPriority.low.length}
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="none"
+                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                  >
+                    <span>None</span>
+                    <span className="hidden sm:inline">
+                      {byPriority.none.length}
+                    </span>
+                  </TabsTrigger>
+                </TabsList>
+                {(['high', 'medium', 'low', 'none'] as const).map((p) => (
+                  <TabsContent key={p} value={p} className="mt-4">
+                    <CourseGrid
+                      items={byPriority[p]}
+                      onCardClick={handleCardClick}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      emptyMessage={
+                        courseSearch
+                          ? 'No courses match your search'
+                          : 'Nothing added to courses yet'
+                      }
+                    />
+                  </TabsContent>
+                ))}
+              </Tabs>
             </div>
-            <Tabs defaultValue="high" className="w-full mt-4">
-              <TabsList className="grid w-full grid-cols-4 bg-slate-800">
-                <TabsTrigger
-                  value="high"
-                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
-                >
-                  High ({byPriority.high.length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="medium"
-                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
-                >
-                  Medium ({byPriority.medium.length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="low"
-                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
-                >
-                  Low ({byPriority.low.length})
-                </TabsTrigger>
-                <TabsTrigger
-                  value="none"
-                  className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
-                >
-                  None ({byPriority.none.length})
-                </TabsTrigger>
-              </TabsList>
-              {(['high', 'medium', 'low', 'none'] as const).map((p) => (
-                <TabsContent key={p} value={p} className="mt-4">
-                  <CourseGrid
-                    items={byPriority[p]}
-                    onCardClick={handleCardClick}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    emptyMessage={
-                      courseSearch
-                        ? 'No courses match your search'
-                        : 'Nothing added to courses yet'
-                    }
-                  />
-                </TabsContent>
-              ))}
-            </Tabs>
           </div>
         )}
       </div>
@@ -506,9 +519,8 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
   )
 }
 
-function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
+function CourseForm({ isOpen, onClose }: CourseFormProps) {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
   const form = useAppForm({
     defaultValues: {
       title: '',
@@ -540,7 +552,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
         // progress unit required
         if (value.progressUnit.length === 0) {
           errors.fields.progressUnit =
-            'progess units required, please select video or text or lessons'
+            'Progress units required, please select video, lessons or chapters.'
         }
         return errors
       },
@@ -586,18 +598,18 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             title: 'text-slate-100',
           },
         })
-        onClose()
-        navigate({ to: refreshPath })
       }
     },
   })
   if (!isOpen) return null
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
-        <div className={panelStyles['backdrop']} onClick={onClose} />
-        <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 backdrop-blur-md border-b border-slate-700/50 p-6 z-[10]">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <div className={panelStyles.backdrop} onClick={onClose} />
+        <div
+          className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+        >
+          <div className={panelStyles.header}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">
@@ -696,7 +708,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
               {(field) => (
                 <field.NumberField
                   label="Current Progress"
-                  placeholder="Course ProgressCurrent"
+                  placeholder="Current Progress"
                 />
               )}
             </form.AppField>
@@ -711,7 +723,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
                     { label: 'Lessons', value: 'lessons' },
                     { label: 'Chapters', value: 'chapters' },
                   ]}
-                  placeholder="How is progess measured?"
+                  placeholder="How is progress measured?"
                 />
               )}
             </form.AppField>
@@ -721,7 +733,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
               {(field) => (
                 <field.NumberField
                   label="Progress Total"
-                  placeholder="Course Progress Total"
+                  placeholder="Course Progress"
                 />
               )}
             </form.AppField>
@@ -731,7 +743,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
               {(field) => (
                 <field.NumberField
                   label="Estimated Minutes Remaining"
-                  placeholder="Course Estimated Minues Remaining"
+                  placeholder="Course Estimated Minutes Remaining"
                 />
               )}
             </form.AppField>
@@ -749,7 +761,7 @@ function CourseForm({ isOpen, onClose, refreshPath }: CourseFormProps) {
             {/** Notes */}
             <form.AppField name="notes">
               {(field) => (
-                <field.TextField
+                <field.TextArea
                   label="Notes"
                   placeholder="add your thoughts here"
                 />

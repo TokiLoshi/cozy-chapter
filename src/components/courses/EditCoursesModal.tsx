@@ -1,21 +1,19 @@
-import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import type { Courses } from '@/db/schemas/course-schema'
 import { useAppForm } from '@/hooks/form'
 import { updateCoursesServer } from '@/lib/server/courses'
+import { panelStyles } from '@/lib/panelStyles'
 
 export default function EditCoursesModal({
   course,
-  refreshPath,
   onClose,
 }: {
   course: Courses
   refreshPath: string
   onClose: () => void
 }) {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const form = useAppForm({
     defaultValues: {
@@ -35,7 +33,7 @@ export default function EditCoursesModal({
       finishedAt: course.finishedAt,
     },
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -92,8 +90,6 @@ export default function EditCoursesModal({
             title: 'text-slate-100',
           },
         })
-        navigate({ to: refreshPath })
-        onClose()
       } catch (error) {
         console.error(`Error updating course: ${(error as Error).message}`)
         toast.error('Failed to update course: ', {
@@ -108,15 +104,14 @@ export default function EditCoursesModal({
   })
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className={panelStyles.backdrop} onClick={onClose} />
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-[10]">
+        <div
+          className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+        >
+          <div className={`${panelStyles.header}`}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-white">Edit Course</h2>
@@ -244,7 +239,7 @@ export default function EditCoursesModal({
               {(field) => (
                 <field.NumberField
                   label="Estimated Minutes Remaining"
-                  placeholder={'Course Estimated Minues Remaining'}
+                  placeholder={'Course Estimated Minutes Remaining'}
                 />
               )}
             </form.AppField>
@@ -285,7 +280,7 @@ export default function EditCoursesModal({
             {/** Notes */}
             <form.AppField name="notes">
               {(field) => (
-                <field.TextField
+                <field.TextArea
                   label="Notes"
                   placeholder={'Add your thoughts here'}
                 />
