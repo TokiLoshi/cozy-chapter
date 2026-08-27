@@ -118,7 +118,7 @@ export default function ReadingModal({
             <h2 className="text-3xl font-bold text-white">{getModalTitle()}</h2>
             <button
               onClick={onClose}
-              className="cursor-pointer text-gray-400 hover:text-white"
+              className="cursor-pointer font-bold text-gray-400 hover:text-white text-2xl"
             >
               <XIcon />
             </button>

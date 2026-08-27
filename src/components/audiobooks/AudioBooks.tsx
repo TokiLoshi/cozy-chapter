@@ -19,6 +19,7 @@ import {
   getUserAudiobooksServer,
   searchAudiobooks,
 } from '@/lib/server/audioBook'
+import { panelStyles } from '@/lib/panelStyles'
 
 type AudioBooksModalProps = {
   isOpen: boolean
@@ -236,8 +237,9 @@ export default function AudioBooksModal({
     userAudioBook: UserAudioBooks
   } | null>(null)
   const queryClient = useQueryClient()
-  const [expandedAudioBook, setExpandedAudioBook] =
-    useState<AudioBookItem | null>(null)
+  const [expandedAudioBookId, setExpandedAudioBookId] = useState<string | null>(
+    null,
+  )
   // Filter options
   const [librarySearch, setLibrarySearch] = useState('')
 
@@ -268,6 +270,12 @@ export default function AudioBooksModal({
     queryFn: () => getUserAudiobooksServer(),
   })
 
+  const expandedAudioBook = expandedAudioBookId
+    ? (userAudiobooks?.find(
+        (item) => item.audioBook.id === expandedAudioBookId,
+      ) ?? null)
+    : null
+
   // Audiobook mutation
   const addMutation = useMutation({
     mutationFn: (audibook: Omit<AudioBooks, 'createdAt' | 'updatedAt'>) =>
@@ -293,7 +301,7 @@ export default function AudioBooksModal({
       toast.success('Audiobook removed from your library')
     },
     onError: () => {
-      toast.error('Faield to remove audiobook')
+      toast.error('Failed to remove audiobook')
     },
   })
 
@@ -325,7 +333,7 @@ export default function AudioBooksModal({
     audioBook: AudioBooks
     userAudioBook: UserAudioBooks
   }) => {
-    setExpandedAudioBook(null)
+    setExpandedAudioBookId(null)
     setAudioBookToEdit(item)
     setIsEditOpen(true)
   }
@@ -336,7 +344,7 @@ export default function AudioBooksModal({
 
   // Launch Expandable Modal
   const handleCardClick = (item: AudioBookItem) => {
-    setExpandedAudioBook(item)
+    setExpandedAudioBookId(item.audioBook.id)
   }
 
   // To Listen List Search Filter
@@ -389,9 +397,7 @@ export default function AudioBooksModal({
     if (!librarySearch.trim()) return filtered
     const searchTerm = librarySearch.toLowerCase()
     return filtered.filter((book) => {
-      const titleMatch = book.audioBook.title
-        .toLowerCase()
-        .includes(librarySearch)
+      const titleMatch = book.audioBook.title.toLowerCase().includes(searchTerm)
       const authorMatch = book.audioBook.authors?.some((author) =>
         author.toLowerCase().includes(searchTerm),
       )
@@ -403,12 +409,9 @@ export default function AudioBooksModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
-          onClick={closeModal}
-        />
+        <div className={panelStyles.backdrop} onClick={closeModal} />
         {/** Edit modal */}
         {isEditOpen && audioBookToEdit && (
           <EditAudioBookModal
@@ -424,12 +427,14 @@ export default function AudioBooksModal({
           <ExpandedAudioCard
             item={expandedAudioBook}
             onEdit={() => handleEdit(expandedAudioBook)}
-            onDelete={() => handleDelete(expandedAudioBook.userAudioBook.id!)}
-            onClose={() => setExpandedAudioBook(null)}
+            onDelete={() => handleDelete(expandedAudioBook.userAudioBook.id)}
+            onClose={() => setExpandedAudioBookId(null)}
           />
         )}
         {!isEditOpen && (
-          <div className="relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+          <div
+            className={`relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
+          >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-white">Audiobooks</h2>
               <button
@@ -457,9 +462,9 @@ export default function AudioBooksModal({
             {/** Audiobooks  */}
 
             {/** Content */}
-            <div className="flex-1 overflow-y-auto p-4">
-              {/** Search Results */}
-              {debouncedQuery.length > 2 && (
+            {/** Search Results */}
+            {debouncedQuery.length > 2 && (
+              <div className="p-4">
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-medium text-slate-400 mb-3">
@@ -531,8 +536,8 @@ export default function AudioBooksModal({
                     </div>
                   )}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/** User's Library */}
             <div className="pt-4">
@@ -549,7 +554,7 @@ export default function AudioBooksModal({
                   <TabsList className="grid w-full grid-cols-3 bg-slate-800">
                     <TabsTrigger
                       value="toListen"
-                      className="curor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
                       To Listen to ({audioToListen.length})
                     </TabsTrigger>
@@ -584,11 +589,11 @@ export default function AudioBooksModal({
                       ) : (
                         audioToListen.map((item) => (
                           <div
+                            key={item.audioBook.id}
                             onClick={() => handleCardClick(item)}
                             className="cursor-pointer"
                           >
                             <AudioBookCard
-                              key={item.audioBook.id}
                               item={item}
                               onEdit={() => handleEdit(item)}
                               onDelete={() =>
@@ -617,21 +622,19 @@ export default function AudioBooksModal({
                         />
                       ) : (
                         audioListening.map((item) => (
-                          <>
-                            <div
-                              onClick={() => handleCardClick(item)}
-                              className="cursor-pointer"
-                            >
-                              <AudioBookCard
-                                key={item.audioBook.id}
-                                item={item}
-                                onEdit={() => handleEdit(item)}
-                                onDelete={() =>
-                                  handleDelete(item.userAudioBook.id)
-                                }
-                              />
-                            </div>
-                          </>
+                          <div
+                            onClick={() => handleCardClick(item)}
+                            className="cursor-pointer"
+                            key={item.audioBook.id}
+                          >
+                            <AudioBookCard
+                              item={item}
+                              onEdit={() => handleEdit(item)}
+                              onDelete={() =>
+                                handleDelete(item.userAudioBook.id)
+                              }
+                            />
+                          </div>
                         ))
                       )}
                     </div>
@@ -656,9 +659,9 @@ export default function AudioBooksModal({
                           <div
                             onClick={() => handleCardClick(item)}
                             className="cursor-pointer"
+                            key={item.audioBook.id}
                           >
                             <AudioBookCard
-                              key={item.audioBook.id}
                               item={item}
                               onEdit={() => handleEdit(item)}
                               onDelete={() =>

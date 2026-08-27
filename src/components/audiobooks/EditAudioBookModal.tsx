@@ -2,10 +2,11 @@ import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { z } from 'zod'
 import { useQueryClient } from '@tanstack/react-query'
-import StarRating from '../StarRating'
+import StarRating from '../../components/StarRating'
 import type { AudioBooks, UserAudioBooks } from '@/db/schemas/audiobook-schema'
 import { useAppForm } from '@/hooks/form'
 import { updateUserAudiobookServer } from '@/lib/server/audioBook'
+import { panelStyles } from '@/lib/panelStyles'
 
 type EditAudioBookModalProps = {
   audioBook: AudioBooks
@@ -47,7 +48,7 @@ export default function EditAudioBookModal({
       notes: userAudioBook.notes,
     } as EditAudioBookFormValues,
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -118,211 +119,215 @@ export default function EditAudioBookModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className={`${panelStyles.backdrop}`} onClick={onClose} />
 
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[90h] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           {/** Header with audiobook info */}
-          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-700/50 p-6 z-[10]">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex gap-4">
-                {audioBook.coverImageUrl && (
-                  <img
-                    src={audioBook.coverImageUrl}
-                    alt={audioBook.title}
-                    className="w-16 h-16 object-cover rounded-lg shadow-md"
+          <div
+            className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+          >
+            <div className={`${panelStyles.header}`}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex gap-4">
+                  {audioBook.coverImageUrl && (
+                    <img
+                      src={audioBook.coverImageUrl}
+                      alt={audioBook.title}
+                      className="w-16 h-16 object-cover rounded-lg shadow-md"
+                    />
+                  )}
+                  <div>
+                    <h2 className="text-2xl font-bold text-white">
+                      {audioBook.title}
+                    </h2>
+                    <p className="text-sm text-slate-400">
+                      by {audioBook.authors?.join(', ') ?? 'Unknown'}
+                    </p>
+                    {audioBook.totalChapters && (
+                      <p className="text-xs text-slate-500 mt-1">
+                        {audioBook.totalChapters} chapters
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={() => onClose()}
+                  className="cursor-pointer text-white hover:bg-white/10 rounded-md"
+                >
+                  <XIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/** Form  */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                form.handleSubmit()
+              }}
+              className="p-6 space-y-6 text-gray-100"
+            >
+              {/**  Status Edit */}
+              <form.AppField name="status">
+                {(field) => (
+                  <field.Select
+                    label="Listening Status"
+                    values={[
+                      { label: 'Want to Listen to', value: 'toListen' },
+                      { label: 'Listening to', value: 'listening' },
+                      { label: 'Finished listening to', value: 'listened' },
+                    ]}
                   />
                 )}
-                <div>
-                  <h2 className="text-2xl font-bold text-white">
-                    {audioBook.title}
-                  </h2>
-                  <p className="text-sm text-slate-400">
-                    by {audioBook.authors?.join(', ') ?? 'Unknown'}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {audioBook.totalChapters} chapters
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => onClose()}
-                className="cursor-pointer text-white hover:bg-white/10 rounded-md"
-              >
-                <XIcon className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-          {/** Form  */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
-            className="p-6 space-y-6 text-gray-100"
-          >
-            {/**  Status Edit */}
-            <form.AppField name="status">
-              {(field) => (
-                <field.Select
-                  label="Listening Status"
-                  values={[
-                    { label: 'Want to Listen to', value: 'toListen' },
-                    { label: 'Listening to', value: 'listening' },
-                    { label: 'Finished listening to', value: 'listened' },
-                  ]}
-                />
-              )}
-            </form.AppField>
+              </form.AppField>
 
-            <form.Subscribe
-              selector={(state) => state.values.status}
-              children={(status) => {
-                const isListeningOrFinished =
-                  status === 'listening' || status === 'listened'
-                const isFinished = status === 'listened'
-                return (
-                  <>
-                    {isListeningOrFinished && (
-                      <>
-                        {/** Current Chapter Edit */}
-                        <form.AppField
-                          name="lastChapter"
-                          validators={{
-                            onChange: ({ value }) => {
-                              if (value && value < 0)
-                                return 'Chapters cannot be negative'
-                              if (
-                                audioBook.totalChapters &&
-                                value &&
-                                value > audioBook.totalChapters
-                              ) {
-                                return `Chapters cannot exceed total chapters: ${audioBook.totalChapters}`
-                              }
-                              return undefined
-                            },
-                          }}
-                        >
-                          {(field) => (
-                            <div>
+              <form.Subscribe
+                selector={(state) => state.values.status}
+                children={(status) => {
+                  const isListeningOrFinished =
+                    status === 'listening' || status === 'listened'
+                  const isFinished = status === 'listened'
+                  return (
+                    <>
+                      {isListeningOrFinished && (
+                        <>
+                          {/** Current Chapter Edit */}
+                          <form.AppField
+                            name="lastChapter"
+                            validators={{
+                              onChange: ({ value }) => {
+                                if (value && value < 0)
+                                  return 'Chapters cannot be negative'
+                                if (
+                                  audioBook.totalChapters &&
+                                  value &&
+                                  value > audioBook.totalChapters
+                                ) {
+                                  return `Chapters cannot exceed total chapters: ${audioBook.totalChapters}`
+                                }
+                                return undefined
+                              },
+                            }}
+                          >
+                            {(field) => (
+                              <div>
+                                <field.NumberField
+                                  label="Current Chapter"
+                                  min={0}
+                                  max={audioBook.totalChapters ?? undefined}
+                                  placeholder={
+                                    userAudioBook.lastChapter
+                                      ? userAudioBook.toString()
+                                      : 'last chapter'
+                                  }
+                                />
+                              </div>
+                            )}
+                          </form.AppField>
+
+                          {/** Position in Chapter  */}
+                          <form.AppField
+                            name="positionMinutes"
+                            validators={{
+                              onChange: ({ value }) => {
+                                if (value && value < 0)
+                                  return 'Position cannot be negative'
+                                return undefined
+                              },
+                            }}
+                          >
+                            {(field) => (
                               <field.NumberField
-                                label="Current Chapter"
+                                label="Current Position (in minutes)"
                                 min={0}
-                                max={audioBook.totalChapters ?? undefined}
                                 placeholder={
                                   userAudioBook.lastChapter
-                                    ? userAudioBook.toString()
-                                    : 'last chapter'
+                                    ? userAudioBook.lastChapter.toString()
+                                    : '0'
                                 }
-                              />
-                            </div>
-                          )}
-                        </form.AppField>
-
-                        {/** Position in Chapter  */}
-                        <form.AppField
-                          name="positionMinutes"
-                          validators={{
-                            onChange: ({ value }) => {
-                              if (value && value < 0)
-                                return 'Position cannot be negative'
-                              return undefined
-                            },
-                          }}
-                        >
-                          {(field) => (
-                            <field.NumberField
-                              label="Current Position (in minutes)"
-                              min={0}
-                              placeholder={
-                                userAudioBook.lastChapter
-                                  ? userAudioBook.lastChapter.toString()
-                                  : '0'
-                              }
-                            />
-                          )}
-                        </form.AppField>
-
-                        {/** Started At */}
-                        <form.AppField name="startedAt">
-                          {(field) => (
-                            <field.DateField
-                              label="date started"
-                              placeholder={
-                                userAudioBook.startedAt
-                                  ? userAudioBook.startedAt.toLocaleDateString()
-                                  : 'No start date yet'
-                              }
-                            />
-                          )}
-                        </form.AppField>
-                      </>
-                    )}
-                    {isFinished && (
-                      <>
-                        {/** Finished At */}
-                        <form.AppField name="finishedAt">
-                          {(field) => (
-                            <field.DateField
-                              label="date finished"
-                              placeholder={
-                                userAudioBook.finishedAt
-                                  ? userAudioBook.finishedAt.toLocaleDateString()
-                                  : 'No finish date yet'
-                              }
-                            />
-                          )}
-                        </form.AppField>
-
-                        {/** Rating */}
-
-                        <div>
-                          <label className="block text-sm font-medium text-slate-300 mb-2">
-                            Rating
-                          </label>
-                          <form.AppField name="rating">
-                            {(field) => (
-                              <StarRating
-                                value={field.state.value}
-                                onChange={(rating) =>
-                                  field.handleChange(rating)
-                                }
-                                disabled={false}
                               />
                             )}
                           </form.AppField>
-                        </div>
-                      </>
-                    )}
-                  </>
-                )
-              }}
-            />
-            {/** Notes  */}
-            <form.AppField name="notes">
-              {(field) => (
-                <field.TextField
-                  label="notes"
-                  placeholder={userAudioBook.notes ?? 'notes'}
-                />
-              )}
-            </form.AppField>
 
-            <div className="flex justify-end">
-              <form.AppForm>
-                <form.SubmitButton
-                  label="Submit Edit"
-                  className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
-                />
-              </form.AppForm>
-            </div>
-          </form>
+                          {/** Started At */}
+                          <form.AppField name="startedAt">
+                            {(field) => (
+                              <field.DateField
+                                label="Date started"
+                                placeholder={
+                                  userAudioBook.startedAt
+                                    ? userAudioBook.startedAt.toLocaleDateString()
+                                    : new Date().toLocaleDateString()
+                                }
+                              />
+                            )}
+                          </form.AppField>
+                        </>
+                      )}
+                      {isFinished && (
+                        <>
+                          {/** Finished At */}
+                          <form.AppField name="finishedAt">
+                            {(field) => (
+                              <field.DateField
+                                label="Date finished"
+                                placeholder={
+                                  userAudioBook.finishedAt
+                                    ? userAudioBook.finishedAt.toLocaleDateString()
+                                    : new Date().toLocaleDateString()
+                                }
+                              />
+                            )}
+                          </form.AppField>
+
+                          {/** Rating */}
+
+                          <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                              Rating
+                            </label>
+                            <form.AppField name="rating">
+                              {(field) => (
+                                <StarRating
+                                  value={field.state.value}
+                                  onChange={(rating) =>
+                                    field.handleChange(rating)
+                                  }
+                                  disabled={false}
+                                />
+                              )}
+                            </form.AppField>
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )
+                }}
+              />
+              {/** Notes  */}
+              <form.AppField name="notes">
+                {(field) => (
+                  <field.TextArea
+                    label="Notes"
+                    placeholder={userAudioBook.notes ?? 'notes'}
+                  />
+                )}
+              </form.AppField>
+
+              <div className="flex justify-end">
+                <form.AppForm>
+                  <form.SubmitButton
+                    label="Submit Edit"
+                    className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                  />
+                </form.AppForm>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </>

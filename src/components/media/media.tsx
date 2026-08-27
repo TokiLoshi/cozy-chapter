@@ -1,4 +1,5 @@
 import { Search, XIcon } from 'lucide-react'
+import { panelStyles } from '@/lib/panelStyles'
 
 type MediaModalProps = {
   isOpen: boolean
@@ -11,23 +12,22 @@ export default function MediaModal({ isOpen, onClose }: MediaModalProps) {
   }
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
         {/** Backdrop */}
+        <div className={panelStyles.backdrop} onClick={closeModal} />
         <div
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
-          onClick={closeModal}
-        />
-        <div className="relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
+          className={`relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto p-6 ${panelStyles.container}`}
+        >
           <div className="flex items-center justify-between mb-6">Media</div>
           <button
-            className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+            className="cursor-pointer font-bold text-gray-400 hover:text-white text-2xl"
             onClick={closeModal}
           >
             <XIcon />
           </button>
         </div>
         {/** Search */}
-        <div className="p-4 border-b border-slate-700">
+        <div className="p-4 border-b border-slate-800">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
