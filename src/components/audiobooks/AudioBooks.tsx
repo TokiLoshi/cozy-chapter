@@ -409,7 +409,7 @@ export default function AudioBooksModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[70] p-4 flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
         <div className={panelStyles.backdrop} onClick={closeModal} />
         {/** Edit modal */}
@@ -435,253 +435,259 @@ export default function AudioBooksModal({
           <div
             className={`relative w-full max-w-4xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-white">Audiobooks</h2>
-              <button
-                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-                onClick={closeModal}
-              >
-                <XIcon />
-              </button>
+            <div className={panelStyles.header}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-white">Audiobooks</h2>
+                <button
+                  className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                  onClick={closeModal}
+                >
+                  <XIcon />
+                </button>
+              </div>
             </div>
 
             {/* Search */}
-            <div className="p-4 border-b border-slate-700">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search for audiobooks..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-            </div>
-
-            {/** Search Results */}
-            {debouncedQuery.length > 2 && (
-              <div className="p-4">
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-slate-400 mb-3">
-                      Search Results
-                    </h3>
-                    <button
-                      className="cursor-pointer right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 hover:text-slate-400"
-                      onClick={() => {
-                        setSearchQuery('')
-                        setDebouncedQuery('')
-                      }}
-                    >
-                      <XIcon />
-                    </button>
-                  </div>
-                  {isSearching ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
-                    </div>
-                  ) : searchError ? (
-                    <p className="text-red-400 text-sm">
-                      Failed to search. Please try again
-                    </p>
-                  ) : searchResults?.length === 0 ? (
-                    <p className="text-slate-400 text-sm">
-                      No audiobooks found.
-                    </p>
-                  ) : (
-                    <div className="space-y-3">
-                      {searchResults?.map((audiobook: AudioBooks) => (
-                        <div
-                          key={audiobook.id}
-                          className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg"
-                        >
-                          {audiobook.coverImageUrl && (
-                            <img
-                              src={audiobook.coverImageUrl}
-                              alt={audiobook.title}
-                              className="w-16 h-16 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-slate-100 truncate">
-                              {audiobook.title}
-                            </h4>
-                            <p className="text-sm text-slate-400 truncate">
-                              {audiobook.authors?.join(', ')}
-                            </p>
-                          </div>
-                          <button
-                            onClick={() => handleAdd(audiobook)}
-                            disabled={
-                              isInLibrary(audiobook.id) || addMutation.isPending
-                            }
-                            className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
-                          >
-                            {addMutation.isPending ? (
-                              <Loader2 className="w-4 h-4 animate-spin text-white" />
-                            ) : isInLibrary(audiobook.id) ? (
-                              <span className="text-xs text-slate-300">
-                                Added
-                              </span>
-                            ) : (
-                              <Plus className="w-4 h-4 text-white cursor-pointer" />
-                            )}
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+            <div className="p-6">
+              <div className="pb-4 border-b border-slate-700">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search for audiobooks..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
                 </div>
               </div>
-            )}
 
-            {/** User's Library */}
-            <div className="pt-4">
-              <h3 className="text-sm font-medium text-slate-400 mb-3">
-                Your Library
-              </h3>
+              {/** Search Results */}
+              {debouncedQuery.length > 2 && (
+                <div className="p-4">
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-medium text-slate-400 mb-3">
+                        Search Results
+                      </h3>
+                      <button
+                        className="cursor-pointer right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 hover:text-slate-400"
+                        onClick={() => {
+                          setSearchQuery('')
+                          setDebouncedQuery('')
+                        }}
+                      >
+                        <XIcon />
+                      </button>
+                    </div>
+                    {isSearching ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
+                      </div>
+                    ) : searchError ? (
+                      <p className="text-red-400 text-sm">
+                        Failed to search. Please try again
+                      </p>
+                    ) : searchResults?.length === 0 ? (
+                      <p className="text-slate-400 text-sm">
+                        No audiobooks found.
+                      </p>
+                    ) : (
+                      <div className="space-y-3">
+                        {searchResults?.map((audiobook: AudioBooks) => (
+                          <div
+                            key={audiobook.id}
+                            className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg"
+                          >
+                            {audiobook.coverImageUrl && (
+                              <img
+                                src={audiobook.coverImageUrl}
+                                alt={audiobook.title}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-slate-100 truncate">
+                                {audiobook.title}
+                              </h4>
+                              <p className="text-sm text-slate-400 truncate">
+                                {audiobook.authors?.join(', ')}
+                              </p>
 
-              {userAudiobooks?.length === 0 ? (
-                <p className="text-slate-400 text-sm">
-                  No audiobooks yet. Search above to add some!
-                </p>
-              ) : (
-                <Tabs defaultValue="listening" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3  bg-slate-800">
-                    <TabsTrigger
-                      value="toListen"
-                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                    >
-                      <span className="">To Listen</span>
-                      <span className="hidden sm:inline">
-                        ({audioToListen.length})
-                      </span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="listening"
-                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                    >
-                      <span className="">Listening To</span>
-                      <span className="hidden sm:inline">
-                        ({audioListening.length})
-                      </span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="listened"
-                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
-                    >
-                      <span>Finished </span>
-                      <span className="hidden sm:inline">
-                        ({audioListened.length})
-                      </span>
-                    </TabsTrigger>
-                  </TabsList>
-
-                  {/** To Listen to  */}
-                  <TabsContent value="toListen" className="mt-4">
-                    <SearchArea
-                      value={librarySearch}
-                      onChange={setLibrarySearch}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {audioToListen.length === 0 ? (
-                        <EmptyTabContent
-                          message={
-                            librarySearch
-                              ? 'No audiobooks match your search'
-                              : 'No books in your to listen list yet'
-                          }
-                        />
-                      ) : (
-                        audioToListen.map((item) => (
-                          <div
-                            key={item.audioBook.id}
-                            onClick={() => handleCardClick(item)}
-                            className="cursor-pointer"
-                          >
-                            <AudioBookCard
-                              item={item}
-                              onEdit={() => handleEdit(item)}
-                              onDelete={() =>
-                                handleDelete(item.userAudioBook.id)
-                              }
-                            />
+                              <button
+                                onClick={() => handleAdd(audiobook)}
+                                disabled={
+                                  isInLibrary(audiobook.id) ||
+                                  addMutation.isPending
+                                }
+                                className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
+                              >
+                                {addMutation.isPending ? (
+                                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                                ) : isInLibrary(audiobook.id) ? (
+                                  <span className="text-xs text-slate-300">
+                                    Added
+                                  </span>
+                                ) : (
+                                  <Plus className="w-4 h-4 text-white cursor-pointer" />
+                                )}
+                              </button>
+                            </div>
                           </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-                  {/** Listening to  */}
-                  <TabsContent value="listening" className="mt-4">
-                    <SearchArea
-                      value={librarySearch}
-                      onChange={setLibrarySearch}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {audioListening.length === 0 ? (
-                        <EmptyTabContent
-                          message={
-                            librarySearch
-                              ? 'No books match your search'
-                              : 'No audiobooks in this category yet'
-                          }
-                        />
-                      ) : (
-                        audioListening.map((item) => (
-                          <div
-                            onClick={() => handleCardClick(item)}
-                            className="cursor-pointer"
-                            key={item.audioBook.id}
-                          >
-                            <AudioBookCard
-                              item={item}
-                              onEdit={() => handleEdit(item)}
-                              onDelete={() =>
-                                handleDelete(item.userAudioBook.id)
-                              }
-                            />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-                  {/** Listened to  */}
-                  <TabsContent value="listened" className="mt-4">
-                    <SearchArea
-                      value={librarySearch}
-                      onChange={setLibrarySearch}
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {audioListened.length === 0 ? (
-                        <EmptyTabContent
-                          message={
-                            librarySearch
-                              ? 'No books match your search'
-                              : 'No audiobooks in this category yet'
-                          }
-                        />
-                      ) : (
-                        audioListened.map((item) => (
-                          <div
-                            onClick={() => handleCardClick(item)}
-                            className="cursor-pointer"
-                            key={item.audioBook.id}
-                          >
-                            <AudioBookCard
-                              item={item}
-                              onEdit={() => handleEdit(item)}
-                              onDelete={() =>
-                                handleDelete(item.userAudioBook.id)
-                              }
-                            />
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
+
+              {/** User's Library */}
+              <div className="pt-4">
+                <h3 className="text-sm font-medium text-slate-400 mb-3">
+                  Your Library
+                </h3>
+
+                {userAudiobooks?.length === 0 ? (
+                  <p className="text-slate-400 text-sm">
+                    No audiobooks yet. Search above to add some!
+                  </p>
+                ) : (
+                  <Tabs defaultValue="listening" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3  bg-slate-800">
+                      <TabsTrigger
+                        value="toListen"
+                        className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      >
+                        <span className="">To Listen</span>
+                        <span className="hidden sm:inline">
+                          ({audioToListen.length})
+                        </span>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="listening"
+                        className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      >
+                        <span className="">Listening To</span>
+                        <span className="hidden sm:inline">
+                          ({audioListening.length})
+                        </span>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="listened"
+                        className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
+                      >
+                        <span>Finished </span>
+                        <span className="hidden sm:inline">
+                          ({audioListened.length})
+                        </span>
+                      </TabsTrigger>
+                    </TabsList>
+
+                    {/** To Listen to  */}
+                    <TabsContent value="toListen" className="mt-4">
+                      <SearchArea
+                        value={librarySearch}
+                        onChange={setLibrarySearch}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {audioToListen.length === 0 ? (
+                          <EmptyTabContent
+                            message={
+                              librarySearch
+                                ? 'No audiobooks match your search'
+                                : 'No books in your to listen list yet'
+                            }
+                          />
+                        ) : (
+                          audioToListen.map((item) => (
+                            <div
+                              key={item.audioBook.id}
+                              onClick={() => handleCardClick(item)}
+                              className="cursor-pointer"
+                            >
+                              <AudioBookCard
+                                item={item}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() =>
+                                  handleDelete(item.userAudioBook.id)
+                                }
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </TabsContent>
+                    {/** Listening to  */}
+                    <TabsContent value="listening" className="mt-4">
+                      <SearchArea
+                        value={librarySearch}
+                        onChange={setLibrarySearch}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {audioListening.length === 0 ? (
+                          <EmptyTabContent
+                            message={
+                              librarySearch
+                                ? 'No books match your search'
+                                : 'No audiobooks in this category yet'
+                            }
+                          />
+                        ) : (
+                          audioListening.map((item) => (
+                            <div
+                              onClick={() => handleCardClick(item)}
+                              className="cursor-pointer"
+                              key={item.audioBook.id}
+                            >
+                              <AudioBookCard
+                                item={item}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() =>
+                                  handleDelete(item.userAudioBook.id)
+                                }
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </TabsContent>
+                    {/** Listened to  */}
+                    <TabsContent value="listened" className="mt-4">
+                      <SearchArea
+                        value={librarySearch}
+                        onChange={setLibrarySearch}
+                      />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {audioListened.length === 0 ? (
+                          <EmptyTabContent
+                            message={
+                              librarySearch
+                                ? 'No books match your search'
+                                : 'No audiobooks in this category yet'
+                            }
+                          />
+                        ) : (
+                          audioListened.map((item) => (
+                            <div
+                              onClick={() => handleCardClick(item)}
+                              className="cursor-pointer"
+                              key={item.audioBook.id}
+                            >
+                              <AudioBookCard
+                                item={item}
+                                onEdit={() => handleEdit(item)}
+                                onDelete={() =>
+                                  handleDelete(item.userAudioBook.id)
+                                }
+                              />
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                )}
+              </div>
             </div>
           </div>
         )}
