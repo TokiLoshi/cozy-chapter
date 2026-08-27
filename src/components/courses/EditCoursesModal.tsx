@@ -24,10 +24,11 @@ export default function EditCoursesModal({
       category: course.category ?? '',
       url: course.url ?? '',
       priority: course.priority,
-      progressCurrent: course.progressCurrent,
-      progressTotal: course.progressTotal ?? '',
+      progressCurrent: String(course.progressCurrent),
+      progressTotal: course.progressTotal?.toString() ?? '',
       progressUnit: course.progressUnit,
-      estimatedMinutesRemaining: course.estimatedMinutesRemaining ?? '',
+      estimatedMinutesRemaining:
+        course.estimatedMinutesRemaining?.toString() ?? '',
       notes: course.notes ?? '',
       startedAt: course.startedAt ?? '',
       finishedAt: course.finishedAt,
@@ -41,6 +42,12 @@ export default function EditCoursesModal({
         }
         if (value.title.length === 0) {
           errors.fields.title = 'Title is required'
+        }
+        if (value.progressCurrent && value.progressTotal) {
+          if (parseInt(value.progressCurrent) > parseInt(value.progressTotal)) {
+            errors.fields.progressCurrent =
+              'Current progress cannot be higher than total possible progress'
+          }
         }
 
         return errors
@@ -65,16 +72,15 @@ export default function EditCoursesModal({
               category: value.category,
               url: value.url,
               priority: value.priority,
-              progressCurrent:
-                typeof value.progressCurrent == 'string'
-                  ? parseInt(value.progressCurrent) || 0
-                  : value.progressCurrent,
+              progressCurrent: value.progressCurrent
+                ? parseInt(value.progressCurrent)
+                : 0,
               progressTotal: value.progressTotal
-                ? parseInt(String(value.progressTotal))
+                ? parseInt(value.progressTotal)
                 : null,
               progressUnit: value.progressUnit,
               estimatedMinutesRemaining: value.estimatedMinutesRemaining
-                ? parseInt(String(value.estimatedMinutesRemaining))
+                ? parseInt(value.estimatedMinutesRemaining)
                 : null,
               notes: value.notes,
               startedAt: value.startedAt ? new Date(value.startedAt) : null,
@@ -90,6 +96,7 @@ export default function EditCoursesModal({
             title: 'text-slate-100',
           },
         })
+        onClose()
       } catch (error) {
         console.error(`Error updating course: ${(error as Error).message}`)
         toast.error('Failed to update course: ', {
@@ -143,7 +150,7 @@ export default function EditCoursesModal({
             {/** Author */}
             <form.AppField name="author">
               {(field) => (
-                <field.TextField label="Author" placeholder={'Course Author'} />
+                <field.TextField label="Author" placeholder="Course author" />
               )}
             </form.AppField>
 
@@ -152,7 +159,7 @@ export default function EditCoursesModal({
               {(field) => (
                 <field.TextField
                   label="Description"
-                  placeholder={'Course Description'}
+                  placeholder="Course description"
                 />
               )}
             </form.AppField>
@@ -162,7 +169,7 @@ export default function EditCoursesModal({
               {(field) => (
                 <field.TextField
                   label="Platform"
-                  placeholder={'Course Platform'}
+                  placeholder="Course platform"
                 />
               )}
             </form.AppField>
@@ -172,7 +179,7 @@ export default function EditCoursesModal({
               {(field) => (
                 <field.TextField
                   label="Category"
-                  placeholder={'Course Category'}
+                  placeholder="Course category"
                 />
               )}
             </form.AppField>
@@ -180,7 +187,7 @@ export default function EditCoursesModal({
             {/** URL */}
             <form.AppField name="url">
               {(field) => (
-                <field.TextField label="URL" placeholder={'Course URL'} />
+                <field.TextField label="URL" placeholder="Course URL" />
               )}
             </form.AppField>
 
@@ -204,7 +211,8 @@ export default function EditCoursesModal({
               {(field) => (
                 <field.NumberField
                   label="Current Progress"
-                  placeholder={'Current Progress'}
+                  placeholder="Current progress"
+                  min={0}
                 />
               )}
             </form.AppField>
@@ -219,7 +227,7 @@ export default function EditCoursesModal({
                     { label: 'Lessons', value: 'lessons' },
                     { label: 'Chapters', value: 'chapters' },
                   ]}
-                  placeholder="How is progess measured?"
+                  placeholder="How is progress measured?"
                 />
               )}
             </form.AppField>
@@ -230,6 +238,7 @@ export default function EditCoursesModal({
                 <field.NumberField
                   label="Total Progress"
                   placeholder={'Course Progress Total'}
+                  min={0}
                 />
               )}
             </form.AppField>
@@ -240,6 +249,7 @@ export default function EditCoursesModal({
                 <field.NumberField
                   label="Estimated Minutes Remaining"
                   placeholder={'Course Estimated Minutes Remaining'}
+                  min={0}
                 />
               )}
             </form.AppField>

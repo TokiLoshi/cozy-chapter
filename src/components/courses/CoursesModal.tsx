@@ -88,19 +88,10 @@ function ExpandedCourseCard({
         )}
 
         {/** progressTotal */}
-        {item.progressTotal && (
+        {(item.progressTotal ?? 0) > 0 && (
           <DetailItem label="Total Progress">
             <p className="text-sm font-medium text-slate-200">
               {item.progressTotal} {item.progressUnit}
-            </p>
-          </DetailItem>
-        )}
-
-        {/** progressUnit */}
-        {item.progressUnit && (
-          <DetailItem label="Progress Unit">
-            <p className="text-sm font-medium text-slate-200">
-              {item.progressUnit}
             </p>
           </DetailItem>
         )}
@@ -122,34 +113,33 @@ function ExpandedCourseCard({
             </p>
           </DetailItem>
         )}
-
-        {/** url */}
-        {item.url && (
-          <DetailItem label="Link">
-            <div className="mb-4">
-              <a
-                href={item.url}
-                target="_blank"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-cyan-600 hover:bg-cyan-500"
-              >
-                <Laptop className="w-4 h-4 text-cyan-300" />
-                Go do a lesson
-              </a>
-            </div>
-            <p className="text-sm font-medium text-slate-200">{item.url}</p>
-          </DetailItem>
-        )}
       </div>
-      {/** Notes */}
-      {item.notes && <DisplayNotes description={item.notes} />}
-
-      {/** Actions */}
-      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
 
       {/** Overview */}
       {item.description && (
         <DisplayDescription description={item.description} />
       )}
+      {/** Notes */}
+      {item.notes && <DisplayNotes description={item.notes} />}
+
+      {/** url */}
+      {item.url && (
+        <DetailItem label="Go do a Lesson">
+          <div className="mb-4 flex justify-center mt-2">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex text-centeritems-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-amber-600 hover:bg-amber-500"
+            >
+              <Laptop className="w-4 h-4 mt-1 text-amber-300" />
+              Start
+            </a>
+          </div>
+        </DetailItem>
+      )}
+      {/** Actions */}
+      <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
     </BaseModal>
   )
 }
@@ -180,8 +170,8 @@ function CourseCard({
   return (
     <>
       <div className="flex items-start gap-3 p-4 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 rounded-xl transition-all duration-200 text-white">
-        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-          <Laptop className="w-5 h-5 text-cyan-300" />
+        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+          <Laptop className="w-5 h-5 text-amber-300" />
         </div>
         <div className="flex-1 min-w-0 flex flex-col gap-1">
           {/** Title */}
@@ -223,15 +213,19 @@ function CourseCard({
               </div>
               <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-cyan-500 rounded-full transition-all"
+                  className="h-full bg-amber-500 rounded-full transition-all"
                   style={{ width: `${pct}%` }}
                 />
               </div>
             </div>
           ) : (
-            <p className="text-xs text-slate-500 mt-1">
-              {item.progressCurrent} / {item.progressTotal ?? 'unknown'}
-            </p>
+            <>
+              {item.progressCurrent && item.progressTotal && (
+                <p className="text-xs text-slate-500 mt-1">
+                  {item.progressCurrent} / {item.progressTotal}
+                </p>
+              )}
+            </>
           )}
         </div>
         <div className="flex gap-2 items-center flex-shrink-0">
@@ -307,7 +301,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [courseToEdit, setCourseToEdit] = useState<Courses | null>(null)
   const [courseSearch, setCourseSearch] = useState('')
-  const [expandedCourse, setExpandedCourse] = useState<Courses | null>(null)
+  const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
   const { data: courses } = useQuery({
@@ -320,7 +314,8 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
   const closeModal = () => {
     onClose()
   }
-
+  const expandedCourse =
+    courses?.find((course) => course.id === expandedCourseId) ?? null
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteCourseServer({ data: id }),
     onSuccess: () => {
@@ -346,13 +341,13 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
   }
 
   const handleEdit = (item: Courses) => {
-    setExpandedCourse(null)
+    setExpandedCourseId(null)
     setCourseToEdit(item)
     setIsEditOpen(true)
   }
 
   const handleCardClick = (item: Courses) => {
-    setExpandedCourse(item)
+    setExpandedCourseId(item.id)
   }
 
   const filteredCourses = useMemo(() => {
@@ -405,7 +400,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
             item={expandedCourse}
             onEdit={() => handleEdit(expandedCourse)}
             onDelete={() => handleDelete(expandedCourse.id)}
-            onClose={() => setExpandedCourse(null)}
+            onClose={() => setExpandedCourseId(null)}
           />
         )}
 
@@ -427,7 +422,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
             </div>
             <div className="p-6">
               <button
-                className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-cyan-600 hover:bg-cyan-500 text-white font-medium transition-colors"
+                className="mb-3 py-2 px-6 rounded-lg cursor-pointer bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors"
                 onClick={() => {
                   setisAddOpen(true)
                 }}
@@ -460,7 +455,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
                 <TabsList className="grid w-full grid-cols-4 bg-slate-800">
                   <TabsTrigger
                     value="high"
-                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                   >
                     <span>High</span>
                     <span className="hidden sm:inline">
@@ -469,7 +464,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
                   </TabsTrigger>
                   <TabsTrigger
                     value="medium"
-                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                   >
                     <span>Medium </span>
                     <span className="hidden sm:inline">
@@ -478,7 +473,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
                   </TabsTrigger>
                   <TabsTrigger
                     value="low"
-                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                   >
                     <span>Low</span>
                     <span className="hidden sm:inline">
@@ -487,7 +482,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
                   </TabsTrigger>
                   <TabsTrigger
                     value="none"
-                    className="cursor-pointer data-[state=active]:bg-cyan-600 text-slate-200"
+                    className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                   >
                     <span>None</span>
                     <span className="hidden sm:inline">
@@ -554,6 +549,24 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
           errors.fields.progressUnit =
             'Progress units required, please select video, lessons or chapters.'
         }
+        if (value.progressTotal && value.progressCurrent) {
+          if (parseInt(value.progressCurrent) > parseInt(value.progressTotal)) {
+            errors.fields.progressCurrent =
+              'Current progress cannot exceed total progress'
+          }
+        }
+        if (value.progressCurrent) {
+          if (parseInt(value.progressCurrent) < 0) {
+            errors.fields.progressCurrent = "Progress can't be negative"
+          }
+        }
+        if (value.progressTotal) {
+          if (parseInt(value.progressTotal) > 0) {
+            errors.fields.progressCurrent =
+              "Total progress possible can't be negative"
+          }
+        }
+
         return errors
       },
     },
@@ -763,7 +776,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
               {(field) => (
                 <field.TextArea
                   label="Notes"
-                  placeholder="add your thoughts here"
+                  placeholder="Add your thoughts here"
                 />
               )}
             </form.AppField>
