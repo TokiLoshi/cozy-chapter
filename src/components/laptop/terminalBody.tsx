@@ -23,6 +23,13 @@ export default function TerminalBody({
     inputRef.current?.focus()
   }
 
+  const lineStyles = {
+    input: 'text-slate-100',
+    error: 'text-red-300',
+    system: 'text-emerald-400',
+    output: 'text-slate-400',
+  } as const
+
   return (
     <div
       className="flex-1 overflow-y-auto p-4 min-h-[360px] font-mono text-sm cursor-text"
@@ -30,24 +37,13 @@ export default function TerminalBody({
     >
       {/** History */}
       {history.map((line) => (
-        <div
-          key={line.id}
-          className={
-            line.type === 'input'
-              ? 'text-white'
-              : line.type === 'error'
-                ? 'text-red-400'
-                : line.type === 'system'
-                  ? 'text-green-400'
-                  : 'text-zinc-300'
-          }
-        >
+        <div key={line.id} className={lineStyles[line.type]}>
           {line.content}
         </div>
       ))}
       {/** Active prompt */}
       <div className="flex items-center gap-2 mt-1">
-        <span className="text-blue-400">{currentDir}</span>
+        <span className="text-amber-400">{currentDir}</span>
         {!selfDestruct && (
           <input
             ref={inputRef}

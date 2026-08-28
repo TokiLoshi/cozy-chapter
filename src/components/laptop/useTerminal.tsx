@@ -74,9 +74,21 @@ export default function useTerminal(
 
     // Neofetch
     const handleNeofetch = () => {
+      const specs = [
+        ['user', username],
+        ['os', 'CozyOS v1.0.0'],
+        ['shell', 'cozy-zsh'],
+        ['terminal', 'CozyTerm'],
+        [
+          'apps',
+          'movies, series, podcasts, courses, books, articles, audiobooks, plants',
+        ],
+        ['uptime', 'Good vibes only'],
+        ['chaos ratio', 'Perfection 🔥'],
+      ]
       addLine(
         'output',
-        <div className="flex gap-6 py-2">
+        <div className="flex-wrap gap-6 py-2 min-w-0">
           <pre className="text-amber-400 text-xs leading-tight">
             {`╔═══════════╗
 ║  ☕ cozy   ║
@@ -84,45 +96,26 @@ export default function useTerminal(
 ╚═══════════╝`}
           </pre>
           <div className="space-y-1 text-sm">
-            <div>
-              <span className="text-cyan-400">user</span>{' '}
-              <span className="text-zinc-400">{username}</span>{' '}
-            </div>
-            <div>
-              <span className="text-cyan-400">os</span>{' '}
-              <span className="text-zinc-400"> CozyOs v1.0.0</span>
-            </div>
-            <div>
-              <span className="text-cyan-400">shell</span>{' '}
-              <span className="text-zinc-400"> cozy-zsh</span>
-            </div>
-            <div>
-              <span className="text-cyan-400">terminal</span>{' '}
-              <span className="text-zinc-400"> CozyTerm</span>
-            </div>
-            <div>
-              <span className="text-cyan-400">apps</span>{' '}
-              <span className="text-zinc-400">
-                movies, series, podcasts, courses
-              </span>
-            </div>
-            <div>
-              <span className="text-cyan-400">uptime</span>{' '}
-              <span className="text-zinc-400"> Good vibes only</span>
-            </div>
-            <div>
-              <span className="text-cyan-400">chaos ratio</span>{' '}
-              <span className="text-zinc-400"> Perfection 🔥</span>
-            </div>
-            <div className="pt-1 flex gap-1">
-              <span className="w-3 h-3 bg-red-500 rounded-sm" />{' '}
-              <span className="w-3 h-3 bg-amber-500 rounded-sm" />
-              <span className="w-3 h-3 bg-green-500 rounded-sm" />
-              <span className="w-3 h-3 bg-green-500 rounded-sm" />
-              <span className="w-3 h-3 bg-cyan-500 rounded-sm" />
-              <span className="w-3 h-3 bg-blue-500 rounded-sm" />
-              <span className="w-3 h-3 bg-purple-500 rounded-sm" />
-            </div>
+            {specs.map(([label, value]) => (
+              <div key={label}>
+                <span className="text-amber-400">{label}</span>{' '}
+                <span className="text-slate-400">{value}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-1 flex gap-1">
+            {[
+              'bg-slate-600',
+              'bg-slate-500',
+              'bg-slate-400',
+              'bg-amber-300',
+              'bg-amber-400',
+              'bg-amber-500',
+              'bg-amber-600',
+            ].map((c) => (
+              <span key={c} className={`w-3 h-3 rounded-sm ${c}`} />
+            ))}
           </div>
         </div>,
       )
