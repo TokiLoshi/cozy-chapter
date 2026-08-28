@@ -6,6 +6,7 @@ import type { TvSeries, UserSeries } from '@/db/schemas/series-schema'
 import StarRating from '@/components/StarRating'
 import { useAppForm } from '@/hooks/form'
 import { updateUserSeriesServer } from '@/lib/server/series'
+import { panelStyles } from '@/lib/panelStyles'
 
 type EditSeriesModalProps = {
   series: TvSeries
@@ -44,7 +45,7 @@ export default function EditSeriesModal({
       notes: userSeries.notes,
     } as EditSeriesFormValues,
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -104,7 +105,7 @@ export default function EditSeriesModal({
         queryClient.invalidateQueries({ queryKey: ['user-series'] })
         onClose()
       } catch (error) {
-        console.error(`Error updating movies: ${(error as Error).message}`)
+        console.error(`Error updating series: ${(error as Error).message}`)
         toast.dismiss(loadingToast)
         toast.error('Please try again', {
           description: 'Failed to update series',
@@ -119,16 +120,15 @@ export default function EditSeriesModal({
   })
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       {/** Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className={panelStyles.backdrop} onClick={onClose} />
 
       {/** Modal */}
-      <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-2xl border border-slate-700 m-4">
-        <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-800/50 p-6 z-[10]">
+      <div
+        className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+      >
+        <div className={panelStyles.header}>
           <div className="flex items-center justify-between gap-4">
             <div className="flex gap-4">
               {series.posterPath && (
@@ -145,7 +145,7 @@ export default function EditSeriesModal({
                 {series.tagline && (
                   <p className="text-slate-400">{series.tagline}</p>
                 )}
-                {series.numberOfEpisodes && (
+                {(series.numberOfEpisodes ?? 0) > 0 && (
                   <p className="text-xs text-slate-500 mt-1">
                     {series.numberOfEpisodes}
                   </p>
@@ -193,17 +193,12 @@ export default function EditSeriesModal({
                 <>
                   {isWatchingOrFinished && (
                     <>
-                      {/**  Watching on */}
                       {/** StartedAt */}
                       <form.AppField name="startedAt">
                         {(field) => (
                           <field.DateField
-                            label="date started"
-                            placeholder={
-                              userSeries.startedAt
-                                ? userSeries.startedAt.toLocaleDateString()
-                                : 'No start date yet'
-                            }
+                            label="Date started"
+                            placeholder="No start date yet"
                           />
                         )}
                       </form.AppField>
@@ -211,8 +206,8 @@ export default function EditSeriesModal({
                       <form.AppField name="currentSeason">
                         {(field) => (
                           <field.NumberField
-                            label="current season"
-                            placeholder={String(userSeries.currentSeason ?? 0)}
+                            label="Current season"
+                            placeholder="e.g 2"
                           />
                         )}
                       </form.AppField>
@@ -220,8 +215,8 @@ export default function EditSeriesModal({
                       <form.AppField name="currentEpisode">
                         {(field) => (
                           <field.NumberField
-                            label="current episode"
-                            placeholder={String(userSeries.currentEpisode ?? 0)}
+                            label="Current episode"
+                            placeholder="e.g 10"
                           />
                         )}
                       </form.AppField>
@@ -234,11 +229,7 @@ export default function EditSeriesModal({
                         {(field) => (
                           <field.DateField
                             label="Date Finished"
-                            placeholder={
-                              userSeries.finishedAt
-                                ? userSeries.finishedAt.toLocaleDateString()
-                                : 'No finish date yet'
-                            }
+                            placeholder="No finish date yet"
                           />
                         )}
                       </form.AppField>
@@ -268,12 +259,8 @@ export default function EditSeriesModal({
           <form.AppField name="watchingOn">
             {(field) => (
               <field.TextField
-                label="platform watching on"
-                placeholder={
-                  userSeries.status === 'watched'
-                    ? 'watched on:'
-                    : 'watching on'
-                }
+                label="Platform watching on"
+                placeholder="platform e.g Netflix"
               />
             )}
           </form.AppField>
@@ -282,8 +269,8 @@ export default function EditSeriesModal({
           <form.AppField name="notes">
             {(field) => (
               <field.TextField
-                label="notes"
-                placeholder={userSeries.notes ?? 'notes'}
+                label="Notes"
+                placeholder="What did you think?"
               />
             )}
           </form.AppField>
@@ -291,7 +278,7 @@ export default function EditSeriesModal({
             <form.AppForm>
               <form.SubmitButton
                 label="Submit Edit"
-                className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
+                className="cursor-pointer bg-amber-600 hover:bg-amber-500 p-2 w-25 font-semibold"
               />
             </form.AppForm>
           </div>

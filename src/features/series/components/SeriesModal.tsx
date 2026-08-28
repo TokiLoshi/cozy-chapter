@@ -91,20 +91,19 @@ function ExpandedSeriesCard({
         </DetailItem>
 
         {/** Seasons */}
-        {(item.series.numberOfSeasons ?? 0) > 2 && (
+        {(item.series.numberOfSeasons ?? 0) > 0 && (
           <DetailItem label="Seasons">
             <p className="text-sm font-medium text-slate-200">
-              {item.series.numberOfSeasons}
+              {item.series.numberOfSeasons} seasons
             </p>
           </DetailItem>
         )}
 
         {/** Episodes */}
-        {/** Seasons */}
         {(item.series.numberOfEpisodes ?? 0) > 2 && (
           <DetailItem label="Episodes">
             <p className="text-sm font-medium text-slate-200">
-              {item.series.numberOfEpisodes}
+              {item.series.numberOfEpisodes} episodes
             </p>
           </DetailItem>
         )}
@@ -197,6 +196,12 @@ function ExpandedSeriesCard({
           </div>
         )}
       </div>
+
+      {/** Overview */}
+      {item.series.overview && (
+        <DisplayDescription description={item.series.overview} />
+      )}
+
       {/** Notes  */}
       {item.userSeries.notes && (
         <DisplayNotes description={item.userSeries.notes} />
@@ -204,11 +209,6 @@ function ExpandedSeriesCard({
 
       {/** Actions */}
       <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
-
-      {/** Overview */}
-      {item.series.overview && (
-        <DisplayDescription description={item.series.overview} />
-      )}
     </BaseModal>
   )
 }
@@ -221,7 +221,6 @@ function SeriesCard({
   item: TvSeries
   onEdit: () => void
   onDelete: () => void
-  onClose: () => void
 }) {
   return (
     <>
@@ -465,7 +464,7 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
         {/** Main modal */}
         {!isEditOpen && !expandedSeries && (
           <div
-            className={`relative w-full z-[60] max-w-4xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+            className={`relative w-full z-[70] max-w-4xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
           >
             <div className={panelStyles.header}>
               <div className="flex items-center justify-between">
@@ -641,7 +640,6 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
                           >
                             <SeriesCard
                               item={item.series}
-                              onClose={() => closeModal()}
                               onEdit={() => handleEdit(item)}
                               onDelete={() => handleDelete(item.userSeries.id)}
                             />
@@ -677,7 +675,6 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
                               item={item.series}
                               onEdit={() => handleEdit(item)}
                               onDelete={() => handleDelete(item.userSeries.id)}
-                              onClose={() => closeModal()}
                             />
                           </div>
                         ))
@@ -711,7 +708,6 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
                               item={item.series}
                               onEdit={() => handleEdit(item)}
                               onDelete={() => handleDelete(item.userSeries.id)}
-                              onClose={() => onClose()}
                             />
                           </div>
                         ))
