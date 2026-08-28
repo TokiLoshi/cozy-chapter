@@ -56,8 +56,10 @@ export function TerminalTitleBar({
           </button>
         </div>
         {/** Centered Title */}
-        <div className="flex-1 text-center">
-          <span className="text-zinc-400 text-sm font-mono">📁 {title} </span>
+        <div className="flex-1 min-2-0 text-center ">
+          <span className="block truncate text-zinc-400 text-sm font-mono ms-2">
+            📁 {title}{' '}
+          </span>
         </div>
         {/** Spacer to balance traffic lights */}
         <div className="w-14" />
@@ -85,22 +87,23 @@ export default function LaptopModal({
   if (!isOpen) return null
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
         {/** Backdrop */}
         <div
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
+          className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           onClick={selfDestruct ? undefined : onClose}
         />
-        <div className="relative [z-60] w-full max-w-4xl max-h-[85dvh] overflow-hidden bg-black rounded-xl shadow-2xl border border-zinc-700 m-4 flex flex-col">
+        <div className="relative w-full max-w-4xl max-h-[85dvh] overflow-hidden bg-black rounded-xl shadow-[0_0_60px_-15px_rgba(74,222,128,0.25)] border border-zinc-700 flex flex-col">
           {/** Title Bar */}
+
           <TerminalTitleBar
-            title={`${username} - ${username}@iCozy- ~ -- -zsh`}
+            title={`${username}@iCozy -- ~ -- -zsh`}
             onClose={onClose}
             onToggleGUI={() => setIsGUI(!isGUI)}
           />
 
           {/** Terminal body */}
-          <div className="flex-1 overflow-y-auto p-4 min-h-[400px]">
+          <div className="flex-1 overflow-y-auto p-4 min-h-[400px] shadow-[inset_0_2px_rgba(0,0,0,0.9)]">
             {isGUI ? (
               <div className="text-white font-mono text-sm">
                 {/** GUI mode placeholder */}
