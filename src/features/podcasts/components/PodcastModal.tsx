@@ -50,7 +50,7 @@ function SourceBadge({ source }: { source: string }) {
   return (
     <>
       <span
-        className={`text-xs px-2 py-0.5 rounded-full ${isSpotify ? 'bg-green-600/30 text-green-400' : 'bg-red-600/30 text-red-400'}`}
+        className={`text-xs px-2 py-0.5 mt-2 mb-3 rounded-full ${isSpotify ? 'bg-green-600/30 text-green-400' : 'bg-red-600/30 text-red-400'}`}
       >
         {isSpotify ? 'Spotify' : 'YouTube'}
       </span>
@@ -106,11 +106,14 @@ function ExpandedPodcastCard({
           </p>
         </DetailItem>
         {/** Duration */}
-        <DetailItem label="Duration">
-          <p className="text-sm font-medium text-slate-200">
-            {formatDuration(item.podcast.durationMs)}
-          </p>
-        </DetailItem>
+        {(item.podcast.durationMs ?? 0) > 0 && (
+          <DetailItem label="Duration">
+            <p className="text-sm font-medium text-slate-200">
+              {formatDuration(item.podcast.durationMs)}
+            </p>
+          </DetailItem>
+        )}
+
         {/** Progress */}
         {(item.userPodcast.lastPositionMs ?? 0) > 0 && (
           <DetailItem label="Progress">
@@ -467,7 +470,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
 
             {/** Search */}
             <div className="p-6">
-              <div className="p-4 border-b border-slate-700">
+              <div className="pb-4 border-b border-slate-700">
                 {/** Source toggle */}
                 <div className="flex gap-2 mb-3">
                   <button
@@ -583,7 +586,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                   Your Library
                 </h3>
                 {/** Source filter  */}
-                <div className="flex gap-1">
+                <div className="flex gap-1 mb-3 mt-2">
                   {(
                     [
                       { value: 'all', label: 'All' },

@@ -78,8 +78,9 @@ export const searchSpotifyPodcasts = createServerFn({ method: 'GET' })
       throw new Error('Failed to search Spotify podcasts')
     }
     const data = await response.json()
-    const adaptedResults = adaptSpotifySearchResults(data)
 
+    const adaptedResults = adaptSpotifySearchResults(data)
+    console.log('Search Spotify: ', adaptedResults)
     return adaptedResults
   })
 
@@ -99,9 +100,10 @@ export const searchYouTubePodcasts = createServerFn({ method: 'GET' })
     }
 
     const searchData = await searchResponse.json()
+    console.log('Search data: ', searchData)
     const videoIds = searchData.items
       .map((item: any) => item.id.videoId)
-      .join(' ')
+      .join(',')
 
     const detailsResponse = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${apiKey}`,
