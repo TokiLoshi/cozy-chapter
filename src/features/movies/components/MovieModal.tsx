@@ -226,7 +226,7 @@ function MovieCard({
           )}
 
           {/** Runtime */}
-          {item.runtime && (
+          {(item.runtime ?? 0) > 0 && (
             <p className="text-sm text-slate-300">Runtime: {item.runtime}</p>
           )}
 
@@ -569,7 +569,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
                       >
                         <span>To Watch</span>
                         <span className="hidden sm:inline">
-                          {moviesToWatch.length}
+                          ({moviesToWatch.length})
                         </span>
                       </TabsTrigger>
                       <TabsTrigger
@@ -578,7 +578,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
                       >
                         <span>Watching</span>
                         <span className="hidden sm:inline">
-                          {moviesWatching.length}
+                          ({moviesWatching.length})
                         </span>
                       </TabsTrigger>
                       <TabsTrigger
@@ -587,7 +587,7 @@ export default function MovieModal({ isOpen, onClose }: MovieModal) {
                       >
                         <span>Watched</span>
                         <span className="hidden sm:inline">
-                          {moviesWatched.length}
+                          ({moviesWatched.length})
                         </span>
                       </TabsTrigger>
                     </TabsList>

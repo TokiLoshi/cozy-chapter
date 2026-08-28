@@ -6,6 +6,7 @@ import type { Movie, UserMovie } from '@/db/schemas/movies-schema'
 import StarRating from '@/components/StarRating'
 import { useAppForm } from '@/hooks/form'
 import { updateUserMovieServer } from '@/lib/server/movies'
+import { panelStyles } from '@/lib/panelStyles'
 
 type EditMovieModalProps = {
   movie: Movie
@@ -40,7 +41,7 @@ export default function EditMovieModal({
       notes: userMovie.notes,
     } as EditMovieFormValues,
     validators: {
-      onBlur: ({ value }) => {
+      onChange: ({ value }) => {
         const errors = {
           fields: {},
         } as {
@@ -50,6 +51,7 @@ export default function EditMovieModal({
           errors.fields.rating =
             "rating can't be negative - the movie couldn't have been that bad"
         }
+
         return errors
       },
     },
@@ -99,16 +101,15 @@ export default function EditMovieModal({
   })
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
       {/** Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className={panelStyles.backdrop} onClick={onClose} />
 
       {/** Modal */}
-      <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-2xl border border-slate-700 m-4">
-        <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-800/50 p-6 z-[10]">
+      <div
+        className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+      >
+        <div className={panelStyles.header}>
           <div className="flex items-center justify-between gap-4">
             <div className="flex gap-4">
               {movie.posterPath && (
@@ -123,7 +124,7 @@ export default function EditMovieModal({
                 {movie.tagline && (
                   <p className="text-slate-400">{movie.tagline}</p>
                 )}
-                {movie.runtime && (
+                {(movie.runtime ?? 0) > 0 && (
                   <p className="text-xs text-slate-500 mt-1">{movie.runtime}</p>
                 )}
               </div>
@@ -175,11 +176,7 @@ export default function EditMovieModal({
                         {(field) => (
                           <field.DateField
                             label="date started"
-                            placeholder={
-                              userMovie.startedAt
-                                ? userMovie.startedAt.toLocaleDateString()
-                                : 'No start date yet'
-                            }
+                            placeholder="Date started"
                           />
                         )}
                       </form.AppField>
@@ -192,11 +189,7 @@ export default function EditMovieModal({
                         {(field) => (
                           <field.DateField
                             label="Date Finished"
-                            placeholder={
-                              userMovie.finishedAt
-                                ? userMovie.finishedAt.toLocaleDateString()
-                                : 'No finish date yet'
-                            }
+                            placeholder="Date finished"
                           />
                         )}
                       </form.AppField>
@@ -222,26 +215,19 @@ export default function EditMovieModal({
               )
             }}
           />
-          {/** Watching on */}
+
           <form.AppField name="watchingOn">
             {(field) => (
               <field.TextField
                 label="platform watching on"
-                placeholder={
-                  userMovie.status === 'watched' ? 'watched on:' : 'watching on'
-                }
+                placeholder="platform e.g Netflix"
               />
             )}
           </form.AppField>
 
           {/** Notes */}
           <form.AppField name="notes">
-            {(field) => (
-              <field.TextField
-                label="notes"
-                placeholder={userMovie.notes ?? 'notes'}
-              />
-            )}
+            {(field) => <field.TextField label="notes" placeholder="notes" />}
           </form.AppField>
           <div className="flex justify-end">
             <form.AppForm>
