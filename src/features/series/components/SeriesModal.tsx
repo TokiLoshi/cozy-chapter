@@ -1,4 +1,13 @@
-import { Edit, Loader2, Play, Plus, Search, Trash, XIcon } from 'lucide-react'
+import {
+  Edit,
+  Loader2,
+  Play,
+  PlaySquare,
+  Plus,
+  Search,
+  Trash,
+  XIcon,
+} from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect, useMemo, useState } from 'react'
@@ -9,6 +18,7 @@ import {
   DetailItem,
   DisplayActions,
   DisplayDescription,
+  DisplayNotes,
   DisplayStarRating,
 } from '@/components/ExpandedCard'
 import SearchArea from '@/components/SearchArea'
@@ -80,7 +90,7 @@ function ExpandedSeriesCard({
         </DetailItem>
 
         {/** Seasons */}
-        {item.series.numberOfSeasons && (
+        {(item.series.numberOfSeasons ?? 0) > 2 && (
           <DetailItem label="Seasons">
             <p className="text-sm font-medium text-slate-200">
               {item.series.numberOfSeasons}
@@ -90,7 +100,7 @@ function ExpandedSeriesCard({
 
         {/** Episodes */}
         {/** Seasons */}
-        {item.series.numberOfEpisodes && (
+        {(item.series.numberOfEpisodes ?? 0) > 2 && (
           <DetailItem label="Episodes">
             <p className="text-sm font-medium text-slate-200">
               {item.series.numberOfEpisodes}
@@ -177,7 +187,8 @@ function ExpandedSeriesCard({
             <a
               href={item.series.externalUrl}
               target="_blank"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-green-600"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-medium transition-colors bg-amber-600 hover:bg-amber-500"
             >
               <Play className="w-4 h-4" />
               View on TMDB
@@ -187,9 +198,7 @@ function ExpandedSeriesCard({
       </div>
       {/** Notes  */}
       {item.userSeries.notes && (
-        <DetailItem label="Notes">
-          <p className="text-sm text-slate-400">{item.userSeries.notes}</p>
-        </DetailItem>
+        <DisplayNotes description={item.userSeries.notes} />
       )}
 
       {/** Actions */}
@@ -224,22 +233,25 @@ function SeriesCard({
             className="w-16 h-16 object-cover rounded flex-shrink-0"
           />
         ) : (
-          <Play />
+          <PlaySquare className="h-16 text-white" />
         )}
         {/** Title */}
         <div className="flex-1 min-w-0 flex flex-col">
           <h4 className="font-medium text-slate-100 truncate">{item.title}</h4>
           {/** Tagline */}
-          <p className="text-sm text-slate-300 truncate">{item.tagline}</p>
+          {item.tagline && (
+            <p className="text-sm text-slate-300 truncate">{item.tagline}</p>
+          )}
+
           {/** Seasons */}
-          {item.numberOfSeasons && (
+          {(item.numberOfSeasons ?? 0) > 0 && (
             <p className="text-sm text-slate-300">
               Seasons: {item.numberOfSeasons}
             </p>
           )}
 
           {/** Seasons */}
-          {item.numberOfEpisodes && (
+          {(item.numberOfEpisodes ?? 0) > 0 && (
             <p className="text-sm text-slate-300">
               Episodes: {item.numberOfEpisodes}
             </p>
@@ -292,7 +304,7 @@ function EmptyTabContent({ message }: { message: string }) {
 export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
-  const [expandedSeries, setExpandedSeries] = useState<SeriesItem | null>(null)
+  const [expandedSeriesId, setExpandedSeriesId] = useState<string | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [seriesToEdit, setSeriesToEdit] = useState<{
     series: TvSeries
@@ -322,6 +334,10 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
     queryKey: ['user-series'],
     queryFn: () => getUserSeriesServer(),
   })
+
+  const expandedSeries = expandedSeriesId
+    ? (userSeries?.find((s) => s.userSeries.id === expandedSeriesId) ?? null)
+    : null
 
   const addMutation = useMutation({
     mutationFn: (tmdbId: number) => addSeries({ data: { tmdbId } }),
@@ -365,7 +381,7 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
     })
   }
   const handleEdit = (item: { series: TvSeries; userSeries: UserSeries }) => {
-    setExpandedSeries(null)
+    setExpandedSeriesId(null)
     setSeriesToEdit(item)
     setIsEditOpen(true)
   }
@@ -373,8 +389,8 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
   const closeModal = () => {
     onClose()
   }
-  const handleCardClick = (item: SeriesItem | null) => {
-    setExpandedSeries(item)
+  const handleCardClick = (item: SeriesItem) => {
+    setExpandedSeriesId(item.userSeries.id)
   }
 
   const filteredSeries = (items: Array<SeriesItem>): Array<SeriesItem> => {
@@ -437,7 +453,7 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
         {/** Expanded Card */}
         {expandedSeries && (
           <ExpandedSeriesCard
-            onClose={() => setExpandedSeries(null)}
+            onClose={() => setExpandedSeriesId(null)}
             item={expandedSeries}
             onEdit={() => {
               handleEdit(expandedSeries)
