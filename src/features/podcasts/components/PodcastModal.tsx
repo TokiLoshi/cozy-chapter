@@ -1,4 +1,13 @@
-import { Edit, Loader2, Play, Plus, Search, Trash, XIcon } from 'lucide-react'
+import {
+  Edit,
+  Loader2,
+  Play,
+  PlaySquare,
+  Plus,
+  Search,
+  Trash,
+  XIcon,
+} from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useEffect, useMemo, useState } from 'react'
@@ -21,6 +30,7 @@ import {
   searchSpotifyPodcasts,
   searchYouTubePodcasts,
 } from '@/lib/server/podcasts'
+import { panelStyles } from '@/lib/panelStyles'
 
 type PodcastModalProps = {
   isOpen: boolean
@@ -102,20 +112,19 @@ function ExpandedPodcastCard({
           </p>
         </DetailItem>
         {/** Progress */}
-        {item.userPodcast.lastPositionMs &&
-          item.userPodcast.lastPositionMs > 0 && (
-            <DetailItem label="Progress">
-              <p className="text-sm font-medium text-slate-200">
-                {formatDuration(item.userPodcast.lastPositionMs)}
-                {item.podcast.durationMs && (
-                  <span className="text-slate-400">
-                    {' '}
-                    / {formatDuration(item.podcast.durationMs)}
-                  </span>
-                )}
-              </p>
-            </DetailItem>
-          )}
+        {(item.userPodcast.lastPositionMs ?? 0) > 0 && (
+          <DetailItem label="Progress">
+            <p className="text-sm font-medium text-slate-200">
+              {formatDuration(item.userPodcast.lastPositionMs)}
+              {item.podcast.durationMs && (
+                <span className="text-slate-400">
+                  {' '}
+                  / {formatDuration(item.podcast.durationMs)}
+                </span>
+              )}
+            </p>
+          </DetailItem>
+        )}
 
         {/** Rating */}
         {item.userPodcast.rating && (
@@ -152,6 +161,11 @@ function ExpandedPodcastCard({
         )}
       </div>
 
+      {/** Description */}
+      {item.podcast.description && (
+        <DisplayDescription description={item.podcast.description} />
+      )}
+
       {/** Play Button */}
       {item.podcast.externalUrl && (
         <div className="mb-4">
@@ -169,11 +183,6 @@ function ExpandedPodcastCard({
 
       {/** Actions */}
       <DisplayActions onEdit={onEdit} onDelete={onDelete} onClose={onClose} />
-
-      {/** Description */}
-      {item.podcast.description && (
-        <DisplayDescription description={item.podcast.description} />
-      )}
     </BaseModal>
   )
 }
@@ -191,13 +200,16 @@ function PodcastCard({
     <>
       <div className="flex items-start gap-3 p-3 bg-slate-700/50 rounded-lg">
         {/** Image */}
-        {item.podcast.coverImageUrl && (
+        {item.podcast.coverImageUrl ? (
           <img
             src={item.podcast.coverImageUrl}
             alt={item.podcast.episodeTitle}
             className="w-16 h-16 object-cover rounded flex-shrink-0"
           />
+        ) : (
+          <PlaySquare className="h-16 text-white" />
         )}
+
         {/** Title */}
         <div className="flex-1 min-w-0 flex flex-col">
           <h4 className="font-medium text-slate-100 truncate">
@@ -218,7 +230,7 @@ function PodcastCard({
         </div>
         <div className="flex gap-2 items-center flex-shrink-0">
           <button
-            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-amber-600 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
             onClick={(e) => {
               e.stopPropagation()
               onEdit()
@@ -254,7 +266,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [searchSource, setSearchSource] = useState<SearchSource>('spotify')
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all')
-  const [expandedPodcast, setExpandedPodcast] = useState<PodcastItem | null>(
+  const [expandedPodcastId, setExpandedPodcastId] = useState<string | null>(
     null,
   )
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -290,6 +302,11 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
     queryKey: ['user-podcasts'],
     queryFn: () => getUserPodcastsServer(),
   })
+
+  const expandedPodcasts = expandedPodcastId
+    ? (userPodcasts?.find((p) => p.userPodcast.id === expandedPodcastId) ??
+      null)
+    : null
 
   const addMutation = useMutation({
     mutationFn: (podcast: Omit<Podcast, 'createdAt' | 'updatedAt'>) =>
@@ -335,7 +352,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
   }
 
   const handleEdit = (item: { podcast: Podcast; userPodcast: UserPodcast }) => {
-    setExpandedPodcast(null)
+    setExpandedPodcastId(null)
     setPodcastToEdit(item)
     setIsEditOpen(true)
   }
@@ -344,8 +361,8 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
     onClose()
   }
 
-  const handleCardClick = (item: PodcastItem) => {
-    setExpandedPodcast(item)
+  const handleCardClick = (item: UserPodcast) => {
+    setExpandedPodcastId(item.id)
   }
 
   const filterBySourceAndSearch = (
@@ -401,12 +418,9 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          onClick={onClose}
-          className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"
-        />
+        <div onClick={onClose} className={panelStyles.backdrop} />
 
         {/** Edit Modal */}
         {isEditOpen && podcastToEdit && (
@@ -421,62 +435,68 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
         )}
 
         {/** Expanded Card */}
-        {expandedPodcast && (
+        {expandedPodcasts && (
           <ExpandedPodcastCard
-            item={expandedPodcast}
+            onClose={() => setExpandedPodcastId(null)}
+            item={expandedPodcasts}
             onEdit={() => {
-              handleEdit(expandedPodcast)
+              handleEdit(expandedPodcasts)
             }}
             onDelete={() => {
-              handleDelete(expandedPodcast.userPodcast.id)
+              handleDelete(expandedPodcasts.userPodcast.id)
             }}
-            onClose={() => setExpandedPodcast(null)}
           />
         )}
 
         {/** Main modal */}
-        {!isEditOpen && !expandedPodcast && (
-          <div className="relative w-full z-[60] max-w-4xl max-h-[8dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-white">Podcasts</h2>
-              <button
-                className="cursor-pointer text-gray-400 hover:text-white text-2xl"
-                onClick={closeModal}
-              >
-                <XIcon />
-              </button>
-            </div>
-            {/** Search */}
-            <div className="p-4 border-b border-slate-700">
-              {/** Source toggle */}
-              <div className="flex gap-2 mb-3">
+        {!isEditOpen && !expandedPodcastId && (
+          <div
+            className={`relative w-full z-[70] max-w-4xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+          >
+            <div className={panelStyles.header}>
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-bold text-white">Podcasts</h2>
                 <button
-                  className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'spotify' ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-600'}`}
-                  onClick={() => setSearchSource('spotify')}
+                  className="cursor-pointer text-gray-400 hover:text-white text-2xl"
+                  onClick={closeModal}
                 >
-                  Spotify
+                  <XIcon />
                 </button>
-                <button
-                  className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'youTube' ? 'bg-red-500 text-slate-300' : ' text-white hover:text-slate-600'}`}
-                  onClick={() => setSearchSource('youTube')}
-                >
-                  YouTube
-                </button>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder={`Search ${searchSource === 'spotify' ? 'Spotify' : 'YouTube'} podcasts...`}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
               </div>
             </div>
 
-            {/** Search Results */}
-            <div className="flex-1 overflow-y-auto p-4">
+            {/** Search */}
+            <div className="p-6">
+              <div className="p-4 border-b border-slate-700">
+                {/** Source toggle */}
+                <div className="flex gap-2 mb-3">
+                  <button
+                    className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'spotify' ? 'bg-green-600 text-white' : 'text-slate-300 hover:bg-slate-600'}`}
+                    onClick={() => setSearchSource('spotify')}
+                  >
+                    Spotify
+                  </button>
+                  <button
+                    className={`cursor-pointer px-3 py-1 rounded-full text-sm font-medium transition-colors ${searchSource === 'youTube' ? 'bg-red-500 text-slate-300' : ' text-white hover:text-slate-600'}`}
+                    onClick={() => setSearchSource('youTube')}
+                  >
+                    YouTube
+                  </button>
+                </div>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder={`Search ${searchSource === 'spotify' ? 'Spotify' : 'YouTube'} podcasts...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+              </div>
+
+              {/** Search Results */}
+
               {debouncedQuery.length > 2 && (
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
@@ -509,7 +529,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         (podcast: Omit<Podcast, 'createdAt' | 'updatedAt'>) => (
                           <div
                             key={podcast.id}
-                            className="flex items-start gap-3 p-3 bg-slate-700/50"
+                            className="flex items-center gap-3"
                           >
                             {podcast.coverImageUrl && (
                               <img
@@ -546,7 +566,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                                   Added
                                 </span>
                               ) : (
-                                <Plus className="cursor-pointer text-white bg-amber-600 hover:bg-amber-500" />
+                                <Plus className="cursor-pointer text-white bg-amber-600 hover:bg-amber-500 disabled:cursor-not-allowed rounded-lg" />
                               )}
                             </button>
                           </div>
@@ -556,12 +576,10 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                   )}
                 </div>
               )}
-            </div>
 
-            {/** User's Library */}
-            <div className="pt-4">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-md font-medium text-slate-400">
+              {/** User's Library */}
+              <div className="pt-4">
+                <h3 className="text-sm font-medium text-slate-400">
                   Your Library
                 </h3>
                 {/** Source filter  */}
@@ -594,19 +612,28 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                       value="toListen"
                       className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
-                      To Listen ({podcastsToListen.length})
+                      <span>To Listen</span>
+                      <span className="hidden sm:inline">
+                        ({podcastsToListen.length})
+                      </span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="listening"
                       className="cursor-pointer data-[state=active]:bg-amber-500 text-slate-200"
                     >
-                      Listening to ({podcastsListening.length})
+                      <span>Listening to</span>
+                      <span className="hidden sm:inline">
+                        ({podcastsListening.length})
+                      </span>
                     </TabsTrigger>
                     <TabsTrigger
                       value="listened"
                       className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
-                      Finished ({podcastsListened.length})
+                      <span>Finished</span>
+                      <span className="hidden sm:inline">
+                        ({podcastsListened.length})
+                      </span>
                     </TabsTrigger>
                   </TabsList>
 
@@ -630,7 +657,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                           <div
                             className="cursor-pointer"
                             key={item.podcast.id}
-                            onClick={() => handleCardClick(item)}
+                            onClick={() => handleCardClick(item.userPodcast)}
                           >
                             <PodcastCard
                               item={item}
@@ -662,7 +689,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                         podcastsListening.map((item) => (
                           <div
                             className="cursor-pointer"
-                            onClick={() => handleCardClick(item)}
+                            onClick={() => handleCardClick(item.userPodcast)}
                             key={item.podcast.id}
                           >
                             <PodcastCard
@@ -695,7 +722,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                           <div
                             className="cursor-pointer"
                             key={item.podcast.id}
-                            onClick={() => handleCardClick}
+                            onClick={() => handleCardClick(item.userPodcast)}
                           >
                             <PodcastCard
                               item={item}

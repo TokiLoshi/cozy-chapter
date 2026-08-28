@@ -274,7 +274,7 @@ function SeriesCard({
               e.stopPropagation()
               onEdit()
             }}
-            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
+            className="cursor-pointer bg-amber-600 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
           >
             <Edit className="w-4 h-4" />
           </button>
