@@ -622,7 +622,7 @@ export default function PodcastModal({ isOpen, onClose }: PodcastModalProps) {
                     </TabsTrigger>
                     <TabsTrigger
                       value="listening"
-                      className="cursor-pointer data-[state=active]:bg-amber-500 text-slate-200"
+                      className="cursor-pointer data-[state=active]:bg-amber-600 text-slate-200"
                     >
                       <span>Listening to</span>
                       <span className="hidden sm:inline">

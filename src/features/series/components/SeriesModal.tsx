@@ -555,7 +555,7 @@ export default function SeriesModal({ isOpen, onClose }: SeriesModal) {
                                   className="p-2 bg-amber-600 hover:bg-amber-500 disabled:bg-slate-600 disabled:cursor-not-allowed rounded-lg transition-colors"
                                 >
                                   {addMutation.isPending ? (
-                                    <Loader2 className="w-4 h-4" />
+                                    <Loader2 className="w-4 h-4 animate-spin text-white" />
                                   ) : isInLibrary(series.id) ? (
                                     <span className="text-xs text-slate-300">
                                       Added

@@ -268,10 +268,7 @@ export default function EditSeriesModal({
           {/** Notes */}
           <form.AppField name="notes">
             {(field) => (
-              <field.TextField
-                label="Notes"
-                placeholder="What did you think?"
-              />
+              <field.TextArea label="Notes" placeholder="What did you think?" />
             )}
           </form.AppField>
           <div className="flex justify-end">

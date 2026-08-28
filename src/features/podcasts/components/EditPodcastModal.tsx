@@ -7,6 +7,7 @@ import type { Podcast, UserPodcast } from '@/db/schemas/podcast-schema'
 import StarRating from '@/components/StarRating'
 import { useAppForm } from '@/hooks/form'
 import { updateUserPodcastServer } from '@/lib/server/podcasts'
+import { panelStyles } from '@/lib/panelStyles'
 
 type EditPodcastModalProps = {
   podcast: Podcast
@@ -31,8 +32,9 @@ export default function EditPodcastModal({
   onClose,
 }: EditPodcastModalProps) {
   const queryClient = useQueryClient()
-  const currentPositionMinutes =
-    Math.floor(userPodcast.lastPositionMs ?? 0) / 60000
+  const currentPositionMinutes = Math.floor(
+    (userPodcast.lastPositionMs ?? 0) / 60000,
+  )
   const podcastDurationMinutes = Math.floor((podcast.durationMs ?? 0) / 60000)
 
   const form = useAppForm({
@@ -44,19 +46,7 @@ export default function EditPodcastModal({
       rating: userPodcast.rating,
       notes: userPodcast.notes,
     } as EditPodcastFormValues,
-    validators: {
-      onBlur: ({ value }) => {
-        const errors = {
-          fields: {},
-        } as {
-          fields: Record<string, string>
-        }
-        if (value.lastPositionMs && value.lastPositionMs < 0) {
-          errors.fields.lastPositionMinutes = 'Position cannot be negative'
-        }
-        return errors
-      },
-    },
+    validators: {},
     onSubmit: async ({ value }) => {
       const loadingToast = toast.loading('Updating podcast...', {
         classNames: {
@@ -106,15 +96,14 @@ export default function EditPodcastModal({
   })
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center">
+      <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
         {/** Backdrop */}
-        <div
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className={panelStyles.backdrop} onClick={onClose} />
         {/** Modal */}
-        <div className="relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto bg-slate-900 rounded-xl shadow-2xl border border-slate-700 m-4">
-          <div className="sticky top-0 bg-slate-800/95 border-b backdrop-blur-md border-slate-800/50 p-6 z-[10]">
+        <div
+          className={`relative w-full max-w-2xl max-h-[85dvh] overflow-y-auto ${panelStyles.container}`}
+        >
+          <div className={panelStyles.header}>
             <div className="flex items-center justify-between gap-4">
               <div className="flex gap-4">
                 {podcast.coverImageUrl && (
@@ -243,12 +232,8 @@ export default function EditPodcastModal({
                         <form.AppField name="startedAt">
                           {(field) => (
                             <field.DateField
-                              label="date started"
-                              placeholder={
-                                userPodcast.startedAt
-                                  ? userPodcast.startedAt.toLocaleDateString()
-                                  : 'No start date yet'
-                              }
+                              label="Date started"
+                              placeholder="No start date yet"
                             />
                           )}
                         </form.AppField>
@@ -261,12 +246,8 @@ export default function EditPodcastModal({
                         <form.AppField name="finishedAt">
                           {(field) => (
                             <field.DateField
-                              label="date finished"
-                              placeholder={
-                                userPodcast.finishedAt
-                                  ? userPodcast.finishedAt.toLocaleDateString()
-                                  : 'No finish date yet'
-                              }
+                              label="Date finished"
+                              placeholder="No finish date yet"
                             />
                           )}
                         </form.AppField>
@@ -298,9 +279,9 @@ export default function EditPodcastModal({
             {/** Notes  */}
             <form.AppField name="notes">
               {(field) => (
-                <field.TextField
-                  label="notes"
-                  placeholder={userPodcast.notes ?? 'notes'}
+                <field.TextArea
+                  label="Notes"
+                  placeholder="What do you think?"
                 />
               )}
             </form.AppField>
