@@ -175,8 +175,8 @@ export default function EditMovieModal({
                       <form.AppField name="startedAt">
                         {(field) => (
                           <field.DateField
-                            label="date started"
-                            placeholder="Date started"
+                            label="Date started"
+                            placeholder="No date yet"
                           />
                         )}
                       </form.AppField>
@@ -189,7 +189,7 @@ export default function EditMovieModal({
                         {(field) => (
                           <field.DateField
                             label="Date Finished"
-                            placeholder="Date finished"
+                            placeholder="No date yet"
                           />
                         )}
                       </form.AppField>
@@ -219,7 +219,7 @@ export default function EditMovieModal({
           <form.AppField name="watchingOn">
             {(field) => (
               <field.TextField
-                label="platform watching on"
+                label="Platform watching on"
                 placeholder="platform e.g Netflix"
               />
             )}
@@ -227,7 +227,7 @@ export default function EditMovieModal({
 
           {/** Notes */}
           <form.AppField name="notes">
-            {(field) => <field.TextField label="notes" placeholder="notes" />}
+            {(field) => <field.TextField label="Notes" placeholder="notes" />}
           </form.AppField>
           <div className="flex justify-end">
             <form.AppForm>

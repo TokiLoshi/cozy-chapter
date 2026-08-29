@@ -52,7 +52,7 @@ export const deleteBlogs = createServerFn({ method: 'POST' })
     if (!session) throw redirect({ to: '/login' })
     const blogId = data
     try {
-      await deleteArticle(blogId)
+      await deleteArticle(blogId, session.user.id)
       return { success: true, id: blogId }
     } catch (error) {
       console.error(
@@ -71,7 +71,7 @@ export const updateBlog = createServerFn({ method: 'POST' })
     const session = await getSessionServer()
     if (!session) throw redirect({ to: '/login' })
     try {
-      await updateArticle(data.id, data.updates)
+      await updateArticle(data.id, session.user.id, data.updates)
       window.location.reload()
       return { success: true, id: data.id }
     } catch (error) {

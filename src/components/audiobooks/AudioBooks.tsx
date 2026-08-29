@@ -286,10 +286,10 @@ export default function AudioBooksModal({
       queryClient.invalidateQueries({ queryKey: ['user-audiobooks'] })
       // setSearchQuery('')
       // setDebouncedQuery('')
-      toast.success('Audiobook added to your library')
+      toast.success('Audiobook added to your library.')
     },
     onError: () => {
-      toast.error('Failed to add audiobook')
+      toast.error('Failed to add audiobook.')
     },
   })
 
@@ -298,10 +298,10 @@ export default function AudioBooksModal({
     mutationFn: (id: string) => deleteUserAudiobookServer({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-audiobooks'] })
-      toast.success('Audiobook removed from your library')
+      toast.success('Audiobook removed from your library.')
     },
     onError: () => {
-      toast.error('Failed to remove audiobook')
+      toast.error('Failed to remove audiobook.')
     },
   })
 
@@ -468,7 +468,7 @@ export default function AudioBooksModal({
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-sm font-medium text-slate-400 mb-3">
-                        Search Results
+                        Search results
                       </h3>
                       <button
                         className="cursor-pointer right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 hover:text-slate-400"
@@ -486,7 +486,7 @@ export default function AudioBooksModal({
                       </div>
                     ) : searchError ? (
                       <p className="text-red-400 text-sm">
-                        Failed to search. Please try again
+                        Failed to search. Please try again.
                       </p>
                     ) : searchResults?.length === 0 ? (
                       <p className="text-slate-400 text-sm">
@@ -549,7 +549,7 @@ export default function AudioBooksModal({
 
                 {userAudiobooks?.length === 0 ? (
                   <p className="text-slate-400 text-sm">
-                    No audiobooks yet. Search above to add some!
+                    No audiobooks yet. Search above to add some.
                   </p>
                 ) : (
                   <Tabs defaultValue="listening" className="w-full">
@@ -594,8 +594,8 @@ export default function AudioBooksModal({
                           <EmptyTabContent
                             message={
                               librarySearch
-                                ? 'No audiobooks match your search'
-                                : 'No books in your to listen list yet'
+                                ? 'No audiobooks match your search.'
+                                : 'No books in your to listen list yet.'
                             }
                           />
                         ) : (
@@ -662,8 +662,8 @@ export default function AudioBooksModal({
                           <EmptyTabContent
                             message={
                               librarySearch
-                                ? 'No books match your search'
-                                : 'No audiobooks in this category yet'
+                                ? 'No books match your search.'
+                                : 'No audiobooks in this category yet.'
                             }
                           />
                         ) : (

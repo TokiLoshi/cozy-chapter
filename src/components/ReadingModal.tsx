@@ -83,7 +83,7 @@ export default function ReadingModal({
       queryClient.invalidateQueries({ queryKey: ['user-blogs'] })
       toast.success('Article deleted')
     },
-    onError: () => toast.error('Failed to delete article, please try again'),
+    onError: () => toast.error('Failed to delete article, please try again.'),
   })
 
   const handleDeleteArticle = (id: string) => {
@@ -161,8 +161,8 @@ export default function ReadingModal({
               {filteredBlogs.length === 0 ? (
                 <p className="text-center text-gray-400 py-8">
                   {librarySearch
-                    ? 'No articles match your search'
-                    : 'No articles in this category yet'}
+                    ? 'No articles match your search.'
+                    : 'No articles in this category yet.'}
                 </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -79,7 +79,7 @@ export function ExpandedArticleCard({
               </p>
             </DetailItem>
             {item.wordCount && (
-              <DetailItem label="Word Count">
+              <DetailItem label="Word count">
                 <p className="text-sm font-medium text-slate-200">
                   {item.wordCount}
                 </p>{' '}
@@ -87,7 +87,7 @@ export function ExpandedArticleCard({
             )}
 
             {item.estimatedReadingTime && (
-              <DetailItem label="Estimated Reading Time (mins)">
+              <DetailItem label="Estimated reading time (mins)">
                 <p className="text-sm font-medium text-slate-200">
                   {item.estimatedReadingTime} <span className="text-xs"></span>
                 </p>
@@ -341,7 +341,7 @@ export default function ArticleForm({ isOpen, onClose }: ArticleFormProps) {
             <form.AppField name="status">
               {(field) => (
                 <field.Select
-                  label="Reading Status"
+                  label="Reading status"
                   values={[
                     { label: 'To Read', value: 'toRead' },
                     { label: 'Reading', value: 'reading' },

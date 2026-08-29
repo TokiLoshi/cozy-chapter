@@ -136,7 +136,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
               <form.AppField name="url">
                 {(field) => (
                   <field.TextField
-                    label="url"
+                    label="URL"
                     placeholder="http://www.example.com"
                   />
                 )}
@@ -145,10 +145,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
               {/** Author */}
               <form.AppField name="author">
                 {(field) => (
-                  <field.TextField
-                    label="author"
-                    placeholder="article author"
-                  />
+                  <field.TextField label="Author" placeholder="Who wrote it?" />
                 )}
               </form.AppField>
 
@@ -156,7 +153,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
               <form.AppField name="description">
                 {(field) => (
                   <field.TextArea
-                    label="description"
+                    label="Description"
                     placeholder="What is it about?"
                   />
                 )}
@@ -167,7 +164,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
                 {(field) => (
                   <field.NumberField
                     label="Reading time in minutes"
-                    placeholder="Estimated reading time"
+                    placeholder="Estimated reading time."
                   />
                 )}
               </form.AppField>
@@ -177,7 +174,7 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
                 {(field) => (
                   <field.NumberField
                     label="Word count"
-                    placeholder="Approximate word count"
+                    placeholder="Approximate word count."
                   />
                 )}
               </form.AppField>
@@ -196,13 +193,13 @@ export default function EditArticleModal({ blog }: { blog: Blog }) {
               <form.AppField name="status">
                 {(field) => (
                   <field.Select
-                    label="Reading Status"
+                    label="Reading status"
                     values={[
                       { label: 'Want to Read', value: 'toRead' },
                       { label: 'Reading', value: 'reading' },
                       { label: 'Read', value: 'read' },
                     ]}
-                    placeholder="Select status"
+                    placeholder="Select status."
                   />
                 )}
               </form.AppField>

@@ -75,7 +75,7 @@ export const commands: Array<Command> = [
   {
     action: '🎵',
     description:
-      'Know some fred again.. lyrics? CozyOS does too. Try out: "If you don\'t know don\'t worry"',
+      'Know some fred again.. lyrics? CozyOS does too. Try out: "If you don\'t know"',
     category: 'terminal',
   },
   {

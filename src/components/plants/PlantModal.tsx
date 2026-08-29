@@ -109,7 +109,7 @@ function ExpandedPlantCard({
         </div>
         <div className="grid grid-cols-2 gap-3 mb-4">
           {/** last watered */}
-          <DetailItem label="Last Watered">
+          <DetailItem label="Last watered">
             <p className="text-sm font-medium text-slate-200">
               {item.lastWatered
                 ? new Date(item.lastWatered).toLocaleDateString() +
@@ -118,7 +118,7 @@ function ExpandedPlantCard({
             </p>
           </DetailItem>
           {/** recommendedWateringIntervalDays */}
-          <DetailItem label="Recommended Watering Interval">
+          <DetailItem label="Recommended watering interval">
             <p className="text-sm font-medium text-slate-200">
               {item.recommendedWateringIntervalDays
                 ? item.recommendedWateringIntervalDays
@@ -127,7 +127,7 @@ function ExpandedPlantCard({
           </DetailItem>
           {/** recommended light */}
           {item.lightPreferences && (
-            <DetailItem label="Light Preferences">
+            <DetailItem label="Light preferences">
               <p className="text-sm font-medium text-slate-200">
                 {formatLightPreference(item.lightPreferences)}
               </p>
@@ -135,7 +135,7 @@ function ExpandedPlantCard({
           )}
 
           {/** Plant health */}
-          <DetailItem label="Plant Health">
+          <DetailItem label="Plant health">
             <p
               className={`${getHealthColor(item.plantHealth)} text-sm font-medium`}
             >
@@ -156,13 +156,13 @@ function ExpandedPlantCard({
 const formatLightPreference = (pref: LightPreferences): string => {
   switch (pref) {
     case 'low':
-      return 'Low Light'
+      return 'Low light'
     case 'medium':
-      return 'Medium Light'
+      return 'Medium light'
     case 'brightIndirect':
-      return 'Bright Indirect Light'
+      return 'Bright indirect light'
     case 'brightDirect':
-      return 'Bright Direct Light'
+      return 'Bright direct light'
     default:
       return 'unknown'
   }
@@ -284,10 +284,10 @@ export default function PlantModal({ isOpen, onClose }: PlantFormProps) {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-plants'] })
-      toast.success('Plant removed from your library')
+      toast.success('Plant removed from your library.')
     },
     onError: () => {
-      toast.error('Failed to remove plant')
+      toast.error('Failed to remove plant.')
     },
   })
 
@@ -298,17 +298,17 @@ export default function PlantModal({ isOpen, onClose }: PlantFormProps) {
       queryClient.invalidateQueries({ queryKey: ['user-plants'] })
       toast.success(`Watered ${count} plant${count === 1 ? '' : 's'} 💧`)
     },
-    onError: () => toast.error('Failed to water plants'),
+    onError: () => toast.error('Failed to water plants.'),
   })
 
   const handleDelete = (id: string) => {
-    toast('Are you sure you want to remove this plant', {
+    toast('Are you sure you want to remove this plant.', {
       action: {
         label: 'Remove',
         onClick: () => deleteMutation.mutate(id),
       },
       cancel: {
-        label: 'cancel',
+        label: 'Cancel',
         onClick: () => {},
       },
     })
@@ -519,7 +519,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
           value.recommendedWateringIntervalDays <= 0
         ) {
           errors.fields.recommendedWateringIntervalDays =
-            'Please enter plant watering period'
+            'Please enter plant watering period.'
         }
         return errors
       },
@@ -550,7 +550,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
         onClose()
       } catch (error) {
         console.error('Something went wrong ', error)
-        toast.error('Failed to add plant', {
+        toast.error('Failed to add plant.', {
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
             title: 'text-slate-100',
@@ -604,7 +604,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
               {(field) => (
                 <field.TextField
                   label="Species"
-                  placeholder="Species / type of plant e.g Orchid"
+                  placeholder="Species / type of plant e.g Orchid."
                 />
               )}
             </form.AppField>
@@ -624,7 +624,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
               {(field) => (
                 <field.NumberField
                   label="Recommended days between waterings"
-                  placeholder="e.g 7"
+                  placeholder="How often should they be watered? E.g 7"
                 />
               )}
             </form.AppField>
@@ -634,7 +634,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
               {(field) => (
                 <field.TextField
                   label="Group"
-                  placeholder="e.g lounge plants"
+                  placeholder="E.g lounge plants."
                 />
               )}
             </form.AppField>
@@ -644,7 +644,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
               {(field) => (
                 <field.DateField
                   label="Date last watered"
-                  placeholder="e.g today's date"
+                  placeholder="Not watered yet."
                 />
               )}
             </form.AppField>
@@ -662,7 +662,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
                       value: 'needsAttention',
                     },
                   ]}
-                  placeholder="Select status"
+                  placeholder="How is this plant doing?"
                 />
               )}
             </form.AppField>
@@ -678,7 +678,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
                     { label: 'Bright Indirect', value: 'brightIndirect' },
                     { label: 'Bright Direct', value: 'brightDirect' },
                   ]}
-                  placeholder="Tends to do better in which lighting?"
+                  placeholder="Which lighting does it tend to do better in?"
                 />
               )}
             </form.AppField>
@@ -688,7 +688,7 @@ function PlantForm({ isOpen, onClose }: PlantFormProps) {
               {(field) => (
                 <field.TextField
                   label="Notes"
-                  placeholder="add your thoughts here"
+                  placeholder="Any thoughts or reminders to add here?"
                 />
               )}
             </form.AppField>

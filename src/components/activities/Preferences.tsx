@@ -359,7 +359,7 @@ export default function EditUserPreferences({
                       >
                         {(field) => (
                           <field.TextField
-                            label="Household Name"
+                            label="Household name"
                             placeholder="Name your household"
                           />
                         )}
@@ -419,7 +419,7 @@ export default function EditUserPreferences({
                         <div className="flex justify-end">
                           <householdForm.AppForm>
                             <householdForm.SubmitButton
-                              label="Send Invite"
+                              label="Send invite"
                               className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                             />
                           </householdForm.AppForm>
@@ -466,7 +466,7 @@ export default function EditUserPreferences({
                       >
                         {(field) => (
                           <field.TextField
-                            label="Household Name"
+                            label="Household name"
                             placeholder="Name your household"
                           />
                         )}
@@ -517,7 +517,7 @@ export default function EditUserPreferences({
                 >
                   {(field) => (
                     <field.TextField
-                      label="Household Name"
+                      label="Household name"
                       placeholder="Name your household"
                     />
                   )}
@@ -542,7 +542,7 @@ export default function EditUserPreferences({
                 <div className="flex justify-end">
                   <householdForm.AppForm>
                     <householdForm.SubmitButton
-                      label="Send Invite"
+                      label="Send invite"
                       className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                     />
                   </householdForm.AppForm>
@@ -584,7 +584,7 @@ export default function EditUserPreferences({
               <div className="flex justify-end">
                 <form.AppForm>
                   <form.SubmitButton
-                    label="Update Goal"
+                    label="Update goal"
                     className="cursor-pointer bg-amber-600/90 hover:bg-amber-500/90 p-2 w-25 font-semibold"
                   />
                 </form.AppForm>

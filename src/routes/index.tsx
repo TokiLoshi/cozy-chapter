@@ -96,7 +96,7 @@ const features = [
     icon: <Terminal className="w-6 h-6" />,
     title: 'Terminal',
     description:
-      "Launch anything from your terminal. Includes easter eggs for devs, sudo make me a sandwich, and fred fans, if you don't know don't worry",
+      "Launch anything from your terminal. Includes easter eggs for devs, sudo make me a sandwich, and fred fans, if you don't know.. don't worry",
     ...palettes.system,
   },
 ]

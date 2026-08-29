@@ -52,7 +52,7 @@ export default function ArticleCard({
       </div>
 
       <div className="flex gap-2 items-center">
-        <EditArticleModal blog={item} refreshPath="/readingroom" />
+        <EditArticleModal blog={item} />
 
         <button
           onClick={onDelete}
