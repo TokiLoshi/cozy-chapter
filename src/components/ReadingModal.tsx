@@ -16,6 +16,7 @@ type ReadingModalProps = {
   onClose: () => void
   selectedStatus: ReadStatus
   onAddArticleClick: () => void
+  defaultTab: 'articles' | 'books' | null
 }
 
 export default function ReadingModal({
@@ -23,6 +24,7 @@ export default function ReadingModal({
   onClose,
   selectedStatus,
   onAddArticleClick,
+  defaultTab,
 }: ReadingModalProps) {
   const [librarySearch, setLibrarySearch] = useState('')
   const queryClient = useQueryClient()
@@ -124,7 +126,7 @@ export default function ReadingModal({
           </div>
 
           {/** Tabs */}
-          <Tabs defaultValue="articles" className="w-full">
+          <Tabs defaultValue={defaultTab ?? 'articles'} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4 bg-slate-800">
               <TabsTrigger
                 value="articles"

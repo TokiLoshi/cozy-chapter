@@ -5,6 +5,7 @@ import AudioBooksModal from '../audiobooks/AudioBooks'
 import PlantModal from '../plants/PlantModal'
 import ReadingModal from '../ReadingModal'
 import TerminalBody from './terminalBody'
+import type { ReadStatus } from '@/lib/types/Blog'
 import PodcastModal from '@/features/podcasts/components/PodcastModal'
 import MovieModal from '@/features/movies/components/MovieModal'
 import SeriesModal from '@/features/series/components/SeriesModal'
@@ -79,6 +80,7 @@ export default function LaptopModal({
   // const [folder, setFolder] = useState(`~/${username}/`)
   const [isGUI, setIsGUI] = useState(false)
   const [activeApp, setActiveApp] = useState<string | null>(null)
+  const [selectedStatus, setSelectedStatus] = useState<ReadStatus>('reading')
 
   useEffect(() => {
     if (!isOpen) {
@@ -114,7 +116,13 @@ export default function LaptopModal({
               </div>
             ) : (
               <>
-                <TerminalBody username={username} onLaunchApp={setActiveApp} />
+                <TerminalBody
+                  username={username}
+                  onLaunchApp={(app) => {
+                    setActiveApp(app?.name ?? null)
+                    if (app?.status) setSelectedStatus(app.status)
+                  }}
+                />
               </>
             )}
           </div>
@@ -145,10 +153,15 @@ export default function LaptopModal({
         onClose={() => setActiveApp(null)}
       />
       <ReadingModal
-        isOpen={activeApp === 'reading'}
+        isOpen={
+          activeApp === 'reading' ||
+          activeApp === 'articles' ||
+          activeApp === 'books'
+        }
         onClose={() => setActiveApp(null)}
-        selectedStatus="reading"
+        selectedStatus={selectedStatus}
         onAddArticleClick={() => openWindow('article')}
+        defaultTab={activeApp === 'books' ? 'books' : 'articles'}
       />
     </>
   )

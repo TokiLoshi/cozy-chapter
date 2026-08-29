@@ -242,6 +242,7 @@ function ReadingRoomComponent() {
               // closeModal()
               openWindow('article')
             }}
+            defaultTab="books"
           />
         )}
       </div>

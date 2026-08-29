@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import type { ReadStatus } from '@/lib/types/Blog'
 import { commands } from '@/db/commands'
 
 type TerminalLine = {
@@ -7,9 +8,15 @@ type TerminalLine = {
   content: string | React.ReactNode
 }
 
+const statusMap: Record<string, ReadStatus | undefined> = {
+  toread: 'toRead',
+  reading: 'reading',
+  read: 'read',
+}
+
 export default function useTerminal(
   username: string,
-  onLaunchApp: (app: string | null) => void,
+  onLaunchApp: (app: { name: string; status?: ReadStatus } | null) => void,
   selfDestruct = false,
 ) {
   const [history, setHistory] = useState<Array<TerminalLine>>([
@@ -140,45 +147,45 @@ export default function useTerminal(
         break
       case 'movies':
         addLine('system', 'Launching movies')
-        onLaunchApp('movies')
+        onLaunchApp({ name: 'movies' })
         break
       case 'series':
         addLine('system', 'Launching series')
-        onLaunchApp('series')
+        onLaunchApp({ name: 'series' })
         break
       case 'courses':
         addLine('system', 'Launching courses')
-        onLaunchApp('courses')
+        onLaunchApp({ name: 'courses' })
         break
       case 'whoami':
         addLine('system', username)
         break
       case 'podcasts':
         addLine('system', 'Launching podcasts...')
-        onLaunchApp('podcasts')
+        onLaunchApp({ name: 'podcasts' })
         break
       case 'audiobooks':
         addLine('system', 'Launching audiobooks...')
-        onLaunchApp('audiobooks')
+        onLaunchApp({ name: 'audiobooks' })
         break
       case 'plants':
         addLine('system', 'Launching plants...')
-        onLaunchApp('plants')
-        break
-      case 'books':
-        addLine('system', 'Launching books...')
-        onLaunchApp('reading')
-        break
-      case 'articles':
-        addLine('system', 'Launching articles...')
-        onLaunchApp('reading')
+        onLaunchApp({ name: 'plants' })
         break
       case 'reading':
-        addLine('system', 'Launching articles...')
-        onLaunchApp('reading')
+      case 'articles':
+      case 'books': {
+        const arg = args[0]?.toLowerCase()
+        if (arg && !statusMap[arg]) {
+          addLine('error', `${cmd}: invalid status '${arg}'`)
+          addLine('output', `usage: ${cmd} [toread|reading|read]`)
+          break
+        }
+        addLine('system', `Launching ${cmd}...`)
+        onLaunchApp({ name: cmd, status: statusMap[arg] ?? 'reading' })
         break
+      }
       case 'cd':
-        // setCurrentDir('')
         addLine('output', `cd: this room is cozy enough`)
         break
       case 'date': {

@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { useWindowStore } from '../ui/windowStore'
 import useTerminal from './useTerminal'
+import type { ReadStatus } from '@/lib/types/Blog'
 
 export default function TerminalBody({
   username,
   onLaunchApp,
 }: {
   username: string
-  onLaunchApp: (app: string | null) => void
+  onLaunchApp: (app: { name: string; status?: ReadStatus } | null) => void
 }) {
   const { selfDestruct } = useWindowStore()
   const { history, inputValue, setInputValue, currentDir, handleKeyDown } =
