@@ -26,6 +26,23 @@ export const commands: Array<Command> = [
     description: 'Launch podcasts from Spotify or YouTube',
     category: 'app',
   },
+  {
+    action: 'plants',
+    description:
+      'Launch your plants dashboard to track their health and determine which ones need watering',
+    category: 'app',
+  },
+  {
+    action: 'audiobooks',
+    description: 'Launch audiobooks from Spotify',
+    category: 'app',
+  },
+  {
+    action: 'reading',
+    description:
+      'Launch your reading room to pick up on your articles and books',
+    category: 'app',
+  },
   // System
   {
     action: 'help',
@@ -68,22 +85,22 @@ export const commands: Array<Command> = [
   },
   {
     action: 'whoami',
-    description: 'returns username',
+    description: 'Returns username',
     category: 'system',
   },
   {
     action: 'echo',
-    description: 'echoes your thoughts',
+    description: 'Echoes your thoughts',
     category: 'system',
   },
   {
     action: 'date',
-    description: 'tells you the date and time',
+    description: 'Tells you the date and time',
     category: 'system',
   },
   {
     action: 'history',
-    description: 'prints command history',
+    description: 'Prints command history',
     category: 'system',
   },
 ]

@@ -1,5 +1,4 @@
 import { Edit, LeafIcon, Trash, XIcon } from 'lucide-react'
-import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -29,7 +28,6 @@ type LightPreferences = 'low' | 'medium' | 'brightDirect' | 'brightIndirect'
 type PlantFormProps = {
   isOpen: boolean
   onClose: () => void
-  refreshPath: string
 }
 
 type ExpandedPlantCardProps = {
@@ -258,12 +256,7 @@ function EmptyTabContent({ message }: { message: string }) {
   return <p className="text-slate-400 text-sm py-4 text-center">{message}</p>
 }
 
-export default function PlantModal({
-  isOpen,
-  onClose,
-  refreshPath,
-  // userId,
-}: PlantFormProps) {
+export default function PlantModal({ isOpen, onClose }: PlantFormProps) {
   const [isAddFormOpen, setisAddFormOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [plantToEdit, setPlantToEdit] = useState<EnrichedPlant | null>(null)
@@ -390,7 +383,6 @@ export default function PlantModal({
         {isEditOpen && plantToEdit && (
           <EditPlantModal
             plant={plantToEdit}
-            refreshPath="/readingroom"
             onClose={() => {
               setIsEditOpen(false)
               setPlantToEdit(null)
@@ -456,7 +448,6 @@ export default function PlantModal({
                   <PlantForm
                     isOpen={true}
                     onClose={() => setisAddFormOpen(false)}
-                    refreshPath={refreshPath}
                   />
                 )}
                 {/** Empty State */}
@@ -494,10 +485,9 @@ export default function PlantModal({
   )
 }
 
-function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
+function PlantForm({ isOpen, onClose }: PlantFormProps) {
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
 
   const form = useAppForm({
     defaultValues: {
@@ -558,7 +548,6 @@ function PlantForm({ isOpen, onClose, refreshPath }: PlantFormProps) {
           },
         })
         onClose()
-        navigate({ to: refreshPath })
       } catch (error) {
         console.error('Something went wrong ', error)
         toast.error('Failed to add plant', {

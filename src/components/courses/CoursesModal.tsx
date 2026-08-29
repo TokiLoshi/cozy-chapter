@@ -25,13 +25,11 @@ import { useAppForm } from '@/hooks/form'
 type CourseFormProps = {
   isOpen: boolean
   onClose: () => void
-  refreshPath: string
 }
 
 type CourseModal = {
   isOpen: boolean
   onClose: () => void
-  refreshPath: string
 }
 
 function ExpandedCourseCard({
@@ -227,26 +225,26 @@ function CourseCard({
               )}
             </>
           )}
-        </div>
-        <div className="flex gap-2 items-center flex-shrink-0">
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onEdit()
-            }}
-            className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-2 rounded-lg transition-all duration-200"
-          >
-            <Edit className="w-4 h-4" />
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onDelete()
-            }}
-            className="cursor-pointer bg-red-500/80 hover:bg-red-400 text-white p-2 rounded-lg transition-all duration-200"
-          >
-            <Trash className="w-4 h-4" />
-          </button>
+          <div className="flex mt-2  gap-2 items-center flex-shrink-0">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onEdit()
+              }}
+              className="cursor-pointer bg-amber-600/80 hover:bg-amber-500 text-white p-3 rounded-lg transition-all duration-200"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onDelete()
+              }}
+              className="cursor-pointer bg-red-500/80 hover:bg-red-400 text-white p-3 rounded-lg transition-all duration-200"
+            >
+              <Trash className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </>
@@ -375,8 +373,6 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
     }
   }, [filteredCourses])
 
-  const refreshPath = '/readingroom'
-
   if (!isOpen) return null
 
   return (
@@ -388,7 +384,6 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
         {isEditOpen && courseToEdit && (
           <EditCoursesModal
             course={courseToEdit}
-            refreshPath="/readingroom"
             onClose={() => {
               setIsEditOpen(false)
               setCourseToEdit(null)
@@ -431,11 +426,7 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
               </button>
               {/** Course Form */}
               {isAddOpen && (
-                <CourseForm
-                  isOpen={true}
-                  onClose={() => setisAddOpen(false)}
-                  refreshPath={refreshPath}
-                />
+                <CourseForm isOpen={true} onClose={() => setisAddOpen(false)} />
               )}
 
               {/** Search */}

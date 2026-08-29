@@ -1,4 +1,3 @@
-import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import { XIcon } from 'lucide-react'
 import { useState } from 'react'
@@ -14,14 +13,11 @@ import { panelStyles } from '@/lib/panelStyles'
 
 export default function EditPlantModal({
   plant,
-  refreshPath,
   onClose,
 }: {
   plant: Plant
-  refreshPath: string
   onClose: () => void
 }) {
-  const navigate = useNavigate()
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(
     plant.plantImageUrl ?? null,
   )
@@ -86,7 +82,6 @@ export default function EditPlantModal({
             console.error(`Error deleting image(s)`)
           }
         }
-        navigate({ to: refreshPath })
         onClose()
       } catch (error) {
         console.error('Error editing plant modal', error)

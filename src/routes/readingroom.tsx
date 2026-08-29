@@ -70,11 +70,11 @@ export const Route = createFileRoute('/readingroom')({
 function ReadingRoomComponent() {
   const { session, userBooks } = Route.useLoaderData()
 
-  const { data: blogsData = [] } = useQuery({
-    queryKey: ['user-blogs'],
-    queryFn: async () => (await getUserBlogs()) ?? [],
-    initialData: Route.useLoaderData().blogs,
-  })
+  // const { data: blogsData = [] } = useQuery({
+  //   queryKey: ['user-blogs'],
+  //   queryFn: async () => (await getUserBlogs()) ?? [],
+  //   initialData: Route.useLoaderData().blogs,
+  // })
 
   const [selectedStatus, setSelectedStatus] = useState<ReadStatus | null>(null)
   const [isLampOn, setIsLampOn] = useState(false)
@@ -204,8 +204,6 @@ function ReadingRoomComponent() {
         <PlantModal
           isOpen={open.plants}
           onClose={() => closeWindow('plants')}
-          refreshPath="/readingroom"
-          // plants={plants || []}
         />
 
         {/** Credits Overlay */}
@@ -240,7 +238,6 @@ function ReadingRoomComponent() {
             isOpen={!!selectedStatus}
             onClose={closeModal}
             selectedStatus={selectedStatus}
-            blogs={blogsData}
             onAddArticleClick={() => {
               // closeModal()
               openWindow('article')

@@ -157,6 +157,26 @@ export default function useTerminal(
         addLine('system', 'Launching podcasts...')
         onLaunchApp('podcasts')
         break
+      case 'audiobooks':
+        addLine('system', 'Launching audiobooks...')
+        onLaunchApp('audiobooks')
+        break
+      case 'plants':
+        addLine('system', 'Launching plants...')
+        onLaunchApp('plants')
+        break
+      case 'books':
+        addLine('system', 'Launching books...')
+        onLaunchApp('reading')
+        break
+      case 'articles':
+        addLine('system', 'Launching articles...')
+        onLaunchApp('reading')
+        break
+      case 'reading':
+        addLine('system', 'Launching articles...')
+        onLaunchApp('reading')
+        break
       case 'cd':
         // setCurrentDir('')
         addLine('output', `cd: this room is cozy enough`)

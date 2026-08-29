@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import CoursesModal from '../courses/CoursesModal'
 import { useWindowStore } from '../ui/windowStore'
+import AudioBooksModal from '../audiobooks/AudioBooks'
+import PlantModal from '../plants/PlantModal'
+import ReadingModal from '../ReadingModal'
 import TerminalBody from './terminalBody'
 import PodcastModal from '@/features/podcasts/components/PodcastModal'
 import MovieModal from '@/features/movies/components/MovieModal'
@@ -25,7 +28,7 @@ export function TerminalTitleBar({
 }: TerminalTitleBarProps) {
   return (
     <>
-      <div className="flex items-center h-9 bg-zinc-800 rounded-t-xl px-3 select-none border-zinc-700">
+      <div className="flex flex-shrink-0 h-11 items-center bg-zinc-800 rounded-t-xl px-3 select-none border-zinc-700">
         {/** Traffic lights */}
         <div className="flex items-center gap-2 group">
           <button
@@ -82,7 +85,7 @@ export default function LaptopModal({
       setActiveApp(null)
     }
   }, [isOpen])
-  const { selfDestruct } = useWindowStore()
+  const { selfDestruct, openWindow } = useWindowStore()
 
   if (!isOpen) return null
   return (
@@ -124,7 +127,6 @@ export default function LaptopModal({
       <CoursesModal
         isOpen={activeApp === 'courses'}
         onClose={() => setActiveApp(null)}
-        refreshPath="/readingroom"
       />
       <MovieModal
         isOpen={activeApp === 'movies'}
@@ -133,6 +135,20 @@ export default function LaptopModal({
       <SeriesModal
         isOpen={activeApp === 'series'}
         onClose={() => setActiveApp(null)}
+      />
+      <AudioBooksModal
+        isOpen={activeApp === 'audiobooks'}
+        onClose={() => setActiveApp(null)}
+      />
+      <PlantModal
+        isOpen={activeApp === 'plants'}
+        onClose={() => setActiveApp(null)}
+      />
+      <ReadingModal
+        isOpen={activeApp === 'reading'}
+        onClose={() => setActiveApp(null)}
+        selectedStatus="reading"
+        onAddArticleClick={() => openWindow('article')}
       />
     </>
   )

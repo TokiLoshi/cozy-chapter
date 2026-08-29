@@ -11,7 +11,6 @@ export default function EditCoursesModal({
   onClose,
 }: {
   course: Courses
-  refreshPath: string
   onClose: () => void
 }) {
   const queryClient = useQueryClient()

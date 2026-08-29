@@ -15,7 +15,6 @@ type ReadingModalProps = {
   isOpen: boolean
   onClose: () => void
   selectedStatus: ReadStatus
-  blogs: Array<Blog>
   onAddArticleClick: () => void
 }
 
