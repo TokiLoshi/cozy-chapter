@@ -7,6 +7,7 @@ import {
   Leaf,
   MonitorPlay,
   Newspaper,
+  PenBox,
   Popcorn,
   Terminal,
 } from 'lucide-react'
@@ -16,104 +17,133 @@ export const Route = createFileRoute('/')({
   component: App,
 })
 
-function App() {
-  //
-  const features = [
-    {
-      icon: <Newspaper className="w-6 h-6" />,
-      title: 'Articles',
-      description: 'Save articles and track your reading progress.',
-      color: 'from-cyan-500/30 to-cyan-500/5',
-      border: 'border-cyan-500/30',
-      accent: 'text-cyan-400',
-    },
-    {
-      icon: <BookOpen className="w-6 h-6" />,
-      title: 'Books',
-      description:
-        'Track your reading page by page to achieve your reading goals.',
-      color: 'from-amber-500/30 to-amber-500/5',
-      border: 'border-amber-500/30',
-      accent: 'text-amber-400',
-    },
-    {
-      icon: <Headphones className="w-6 h-6" />,
-      title: 'AudioBooks',
-      description: 'Track your listening progress.',
-      color: 'from-purple-500/20 to-purple-500/5',
-      border: 'border-purple-500/30',
-      accent: 'text-purple-400',
-    },
-    {
-      icon: <Popcorn className="w-6 h-6" />,
-      title: 'Movies',
-      description: 'Build your watchlist with TMDB integration.',
-      color: 'from-rose-500/20 to-rose-500/5',
-      border: 'border-rose-500/30',
-      accent: 'text-rose-400',
-    },
-    {
-      icon: <MonitorPlay className="w-6 h-6" />,
-      title: 'Series',
-      description: 'Track seasons, episodes, and your binge progress.',
-      color: 'from-blue-500/20 to-blue-500/5',
-      border: 'border-blue-500/30',
-      accent: 'text-blue-400',
-    },
-    {
-      icon: <Film className="w-6 h-6" />,
-      title: 'Podcasts',
-      description:
-        'Track your listens across spotify and youtube and launch your podcast.',
-      color: 'from-green-500/20 to-green-500/5',
-      border: 'border-green-500/30',
-      accent: 'text-green-400',
-    },
-    {
-      icon: <Leaf className="w-6 h-6" />,
-      title: 'Plants',
-      description: 'Monitor watering schedules and plant health.',
-      color: 'from-emerald-500/20 to-emerald-500/5',
-      border: 'border-emerald-500/30',
-      accent: 'text-emerald-400',
-    },
-    {
-      icon: <Terminal className="w-6 h-6" />,
-      title: 'Terminal',
-      description:
-        "Launch Movies, Series, Podcasts and (in dev) courses. Includes easter eggs for devs and fred fans, if you don't know don't worry",
-      color: 'from-zinc-500/20 to-zinc-500/5',
-      border: 'border-zinc-500/30',
-      accent: 'text-zinc-400',
-    },
-  ]
-  const steps = [
-    {
-      step: '01',
-      title: 'Explore the room',
-      description:
-        'Navigate a 3D cozy room filled with clickable objects, and easter eggs',
-      accent: 'text-cyan-400',
-      border: 'border-cyan-500/20',
-    },
-    {
-      step: '02',
-      title: 'Track your media',
-      description:
-        'Add movies and series from TMDB, save podcast episodes from Spotify, track your reading progress and monitor your plants.',
-      accent: 'text-amber-400',
-      border: 'border-amber-500/20',
-    },
-    {
-      step: '03',
-      title: 'Find the easter eggs',
-      description:
-        "There's a terminal with hidden commands, play around and see what you discover",
-      accent: 'text-purple-400',
-      border: 'border-purple-500/20',
-    },
-  ]
+const palettes = {
+  reading: {
+    color: 'from-amber-500/20 to-amber-500/5',
+    border: 'border-amber-500/30',
+    accent: 'text-amber-400',
+  },
+  watching: {
+    color: 'from-rose-500/20 to-rose-500/5',
+    border: 'border-rose-500/30',
+    accent: 'text-rose-400',
+  },
+  living: {
+    color: 'from-emerald-500/20 to-emerald-500/5',
+    border: 'border-emerald-500/30',
+    accent: 'text-emerald-400',
+  },
+  system: {
+    color: 'from-zinc-500/20 to-zinc-500/5',
+    border: 'border-zinc-500/30',
+    accent: 'text-zinc-400',
+  },
+}
 
+const features = [
+  {
+    icon: <Newspaper className="w-6 h-6" />,
+    title: 'Articles',
+    description: 'Save articles and track your reading progress.',
+    ...palettes.reading,
+  },
+  {
+    icon: <BookOpen className="w-6 h-6" />,
+    title: 'Books',
+    description:
+      'Track your reading page by page to achieve your reading goals.',
+    ...palettes.reading,
+  },
+  {
+    icon: <Headphones className="w-6 h-6" />,
+    title: 'AudioBooks',
+    description: 'Track your listening progress.',
+    ...palettes.reading,
+  },
+  {
+    icon: <Popcorn className="w-6 h-6" />,
+    title: 'Movies',
+    description: 'Build your watchlist with TMDB integration.',
+    ...palettes.watching,
+  },
+  {
+    icon: <MonitorPlay className="w-6 h-6" />,
+    title: 'Series',
+    description: 'Track seasons, episodes, and your binge progress.',
+    ...palettes.watching,
+  },
+  {
+    icon: <Film className="w-6 h-6" />,
+    title: 'Podcasts',
+    description:
+      'Track your listens across spotify and youtube and launch your podcast.',
+    ...palettes.watching,
+  },
+  {
+    icon: <Leaf className="w-6 h-6" />,
+    title: 'Plants',
+    description: 'Monitor watering schedules and plant health.',
+    ...palettes.living,
+  },
+  {
+    icon: <PenBox className="w-6 h-6" />,
+    title: 'Courses',
+    description:
+      'Track and prioritise your courses, and launch a lesson to keep learning.',
+    ...palettes.living,
+  },
+  {
+    icon: <Terminal className="w-6 h-6" />,
+    title: 'Terminal',
+    description:
+      "Launch anything from your terminal. Includes easter eggs for devs, sudo make me a sandwich, and fred fans, if you don't know don't worry",
+    ...palettes.system,
+  },
+]
+const steps = [
+  {
+    step: '01',
+    title: 'Explore the room',
+    description:
+      'Navigate a 3D cozy room filled with clickable objects, and easter eggs, use the laptop as you central command.',
+    accent: 'text-cyan-400',
+    border: 'border-cyan-500/20',
+  },
+  {
+    step: '02',
+    title: 'Track your media',
+    description:
+      'Add movies and series from TMDB, save podcast episodes from Spotify, track your reading progress and monitor your plants and keep your courses in order.',
+    accent: 'text-amber-400',
+    border: 'border-amber-500/20',
+  },
+  {
+    step: '03',
+    title: 'Find the easter eggs',
+    description:
+      "There's a terminal with hidden commands, play around and see what you discover",
+    accent: 'text-rose-400',
+    border: 'border-rose-500/20',
+  },
+  {
+    step: '04',
+    title: 'Share your plants with your special someone',
+    description:
+      'Invite your person to share your plants with you, take care of them together.',
+    accent: 'text-emerald-400',
+    border: 'border-emerald-500/20',
+  },
+  {
+    step: '05',
+    title: 'Your data always',
+    description:
+      'Feel like self-destructing? Export your data and delete your cozy room. It will literally rm -rf your data from the database and throw you out.',
+    accent: 'text-zinc-400',
+    border: 'border-zinc-500/20',
+  },
+]
+
+function App() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
@@ -148,8 +178,9 @@ function App() {
               </span>
             </h1>
             <p className="text-xl md:text-2xl text-slate-400 font-light max-w-2xl mx-auto mb-4 leading-relaxed">
-              Track your books, articles, movies, series, podcasts, plants (and
-              soon... courses)
+              Track your books, articles, audiobooks, movies, series, podcasts,
+              plant health across your household, and courses. Launch anything
+              from your terminal, click around and discover easter eggs.
             </p>
 
             <p className="text-sm text-slate-500 mb-10">
@@ -180,14 +211,15 @@ function App() {
                 Everything in one room
               </p>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                Track all your media
+                Keep your cozy room in order
               </h2>
               <p className="text-lg text-slate-400 max-w-xl mx-auto">
                 Click around the 3D room to open different trackers. Most
-                objects are interactive
+                objects are interactive. Everything is launchable from the
+                terminal on your laptop.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {features.map((feature) => (
                 <div
                   key={feature.title}
