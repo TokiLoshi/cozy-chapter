@@ -78,7 +78,7 @@ function ExpandedCourseCard({
 
         {/** progressCurrent */}
         {item.progressCurrent > 0 && (
-          <DetailItem label="Current Progress">
+          <DetailItem label="Current progress">
             <p className="text-sm font-medium text-slate-200">
               {item.progressCurrent} {item.progressUnit}
             </p>
@@ -87,7 +87,7 @@ function ExpandedCourseCard({
 
         {/** progressTotal */}
         {(item.progressTotal ?? 0) > 0 && (
-          <DetailItem label="Total Progress">
+          <DetailItem label="Total progress">
             <p className="text-sm font-medium text-slate-200">
               {item.progressTotal} {item.progressUnit}
             </p>
@@ -96,7 +96,7 @@ function ExpandedCourseCard({
 
         {/** EstimatedMinutes remaining */}
         {item.estimatedMinutesRemaining && (
-          <DetailItem label="Estimated Time Remaining">
+          <DetailItem label="Estimated time remaining">
             <p className="text-sm font-medium text-slate-200">
               {item.estimatedMinutesRemaining} min
             </p>
@@ -122,7 +122,7 @@ function ExpandedCourseCard({
 
       {/** url */}
       {item.url && (
-        <DetailItem label="Go do a Lesson">
+        <DetailItem label="Go do a lesson">
           <div className="mb-4 flex justify-center mt-2">
             <a
               href={item.url}
@@ -490,8 +490,8 @@ export default function CoursesModal({ isOpen, onClose }: CourseModal) {
                       onDelete={handleDelete}
                       emptyMessage={
                         courseSearch
-                          ? 'No courses match your search'
-                          : 'Nothing added to courses yet'
+                          ? 'No courses match your search.'
+                          : 'Nothing added to courses yet.'
                       }
                     />
                   </TabsContent>
@@ -533,7 +533,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
         }
         // title required
         if (value.title.length === 0) {
-          errors.fields.title = 'Title required'
+          errors.fields.title = 'Title required.'
         }
         // progress unit required
         if (value.progressUnit.length === 0) {
@@ -543,18 +543,18 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
         if (value.progressTotal && value.progressCurrent) {
           if (parseInt(value.progressCurrent) > parseInt(value.progressTotal)) {
             errors.fields.progressCurrent =
-              'Current progress cannot exceed total progress'
+              'Current progress cannot exceed total progress.'
           }
         }
         if (value.progressCurrent) {
           if (parseInt(value.progressCurrent) < 0) {
-            errors.fields.progressCurrent = "Progress can't be negative"
+            errors.fields.progressCurrent = "Progress can't be negative."
           }
         }
         if (value.progressTotal) {
           if (parseInt(value.progressTotal) < 0) {
             errors.fields.progressTotal =
-              "Total progress possible can't be negative"
+              "Total progress possible can't be negative."
           }
         }
 
@@ -659,7 +659,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
               {(field) => (
                 <field.TextField
                   label="Description"
-                  placeholder="Course Description"
+                  placeholder="Course description"
                 />
               )}
             </form.AppField>
@@ -669,7 +669,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
               {(field) => (
                 <field.TextField
                   label="Platform"
-                  placeholder="Course Platform"
+                  placeholder="Course platform"
                 />
               )}
             </form.AppField>
@@ -679,7 +679,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
               {(field) => (
                 <field.TextField
                   label="Category"
-                  placeholder="Course Category"
+                  placeholder="Course category"
                 />
               )}
             </form.AppField>
@@ -711,7 +711,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
             <form.AppField name="progressCurrent">
               {(field) => (
                 <field.NumberField
-                  label="Current Progress"
+                  label="Current progress"
                   placeholder="Current Progress"
                   min={0}
                 />
@@ -722,7 +722,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
             <form.AppField name="progressUnit">
               {(field) => (
                 <field.Select
-                  label="Progress Unit"
+                  label="Progress unit"
                   values={[
                     { label: 'Videos', value: 'videos' },
                     { label: 'Lessons', value: 'lessons' },
@@ -737,8 +737,8 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
             <form.AppField name="progressTotal">
               {(field) => (
                 <field.NumberField
-                  label="Progress Total"
-                  placeholder="Course Progress"
+                  label="Total progress"
+                  placeholder="Course progress"
                   min={0}
                 />
               )}
@@ -749,7 +749,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
               {(field) => (
                 <field.NumberField
                   label="Estimated Minutes Remaining"
-                  placeholder="Course Estimated Minutes Remaining"
+                  placeholder="Course estimated minutes remaining"
                   min={0}
                 />
               )}
@@ -759,7 +759,7 @@ function CourseForm({ isOpen, onClose }: CourseFormProps) {
             <form.AppField name="startedAt">
               {(field) => (
                 <field.DateField
-                  label="Date Course Started"
+                  label="Date course started"
                   placeholder="today"
                 />
               )}

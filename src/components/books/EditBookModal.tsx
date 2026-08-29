@@ -203,7 +203,7 @@ export default function EditBookModal({
                         <form.AppField name="lastChapter">
                           {(field) => (
                             <field.NumberField
-                              label="Last Chapter Read"
+                              label="Last chapter read"
                               placeholder="0"
                               min={0}
                             />
@@ -213,7 +213,7 @@ export default function EditBookModal({
                         <form.AppField name="startedAt">
                           {(field) => (
                             <field.DateField
-                              label="Date Started"
+                              label="Date started"
                               placeholder="e.g today's date"
                             />
                           )}
@@ -242,7 +242,7 @@ export default function EditBookModal({
                           <form.AppField name="finishedAt">
                             {(field) => (
                               <field.DateField
-                                label="Date Finished"
+                                label="Date finished"
                                 placeholder="e.g today's date"
                               />
                             )}

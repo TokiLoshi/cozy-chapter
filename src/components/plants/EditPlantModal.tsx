@@ -45,7 +45,7 @@ export default function EditPlantModal({
           fields: Record<string, string>
         }
         if (value.species.length === 0) {
-          errors.fields.species = 'Species is required'
+          errors.fields.species = 'Species is required.'
         }
         return errors
       },
@@ -79,14 +79,14 @@ export default function EditPlantModal({
           try {
             await deleteUploadedImageServer({ data: key })
           } catch (error) {
-            console.error(`Error deleting image(s)`)
+            console.error(`Error deleting image(s).`)
           }
         }
         onClose()
       } catch (error) {
         console.error('Error editing plant modal', error)
-        toast.error('Failed to update plant', {
-          description: 'Please try again',
+        toast.error('Failed to update plant.', {
+          description: 'Please try again.',
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
             title: 'text-slate-100',
@@ -132,7 +132,10 @@ export default function EditPlantModal({
             {/** Species Field */}
             <form.AppField name="species">
               {(field) => (
-                <field.TextField label="Species" placeholder={plant.species} />
+                <field.TextField
+                  label="Species"
+                  placeholder="Species / type of plant e.g Orchid."
+                />
               )}
             </form.AppField>
             {/** Name */}
@@ -150,11 +153,7 @@ export default function EditPlantModal({
               {(field) => (
                 <field.NumberField
                   label="Recommended days between waterings"
-                  placeholder={
-                    plant.recommendedWateringIntervalDays
-                      ? String(plant.recommendedWateringIntervalDays)
-                      : ''
-                  }
+                  placeholder="How often should they be watered? E.g 7"
                 />
               )}
             </form.AppField>
@@ -164,7 +163,7 @@ export default function EditPlantModal({
               {(field) => (
                 <field.TextField
                   label="Group"
-                  placeholder={plant.group ? plant.group : 'e.g lounge plants'}
+                  placeholder="E.g lounge plants."
                 />
               )}
             </form.AppField>
@@ -174,11 +173,7 @@ export default function EditPlantModal({
               {(field) => (
                 <field.DateField
                   label="Date last watered"
-                  placeholder={
-                    plant.lastWatered
-                      ? plant.lastWatered.toLocaleDateString()
-                      : 'Not watered yet'
-                  }
+                  placeholder="Not watered yet."
                 />
               )}
             </form.AppField>
@@ -193,7 +188,7 @@ export default function EditPlantModal({
                     { label: 'Ok', value: 'ok' },
                     { label: 'Needs Attention', value: 'needsAttention' },
                   ]}
-                  placeholder={plant.plantHealth}
+                  placeholder="How is this plant doing?"
                 />
               )}
             </form.AppField>
@@ -209,10 +204,7 @@ export default function EditPlantModal({
                     { label: 'Bright Indirect', value: 'brightIndirect' },
                     { label: 'Bright Direct', value: 'brightDirect' },
                   ]}
-                  placeholder={
-                    plant.lightPreferences ||
-                    'Tends to do better in which lighting?'
-                  }
+                  placeholder="Which lighting does it tend to do better in?"
                 />
               )}
             </form.AppField>
@@ -222,9 +214,7 @@ export default function EditPlantModal({
               {(field) => (
                 <field.TextField
                   label="Notes"
-                  placeholder={
-                    plant.notes ? plant.notes : 'add your thoughts here'
-                  }
+                  placeholder="Any thoughts or reminders to add here?"
                 />
               )}
             </form.AppField>
@@ -275,11 +265,11 @@ export default function EditPlantModal({
                         }
                       }
                       setCurrentImageUrl(res[0].ufsUrl)
-                      toast.success('Image ready - save edits to apply')
+                      toast.success('Image ready - save edits to apply.')
                     }
                   }}
                   onUploadError={(error: Error) => {
-                    toast.error(`Upload failed: ${error.message}`)
+                    toast.error(`Upload failed: ${error.message}.`)
                   }}
                 />
               )}

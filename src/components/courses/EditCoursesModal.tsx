@@ -45,18 +45,18 @@ export default function EditCoursesModal({
         if (value.progressTotal && value.progressCurrent) {
           if (parseInt(value.progressCurrent) > parseInt(value.progressTotal)) {
             errors.fields.progressCurrent =
-              'Current progress cannot exceed total progress'
+              'Current progress cannot exceed total progress.'
           }
         }
         if (value.progressCurrent) {
           if (parseInt(value.progressCurrent) < 0) {
-            errors.fields.progressCurrent = "Progress can't be negative"
+            errors.fields.progressCurrent = "Progress can't be negative."
           }
         }
         if (value.progressTotal) {
           if (parseInt(value.progressTotal) < 0) {
             errors.fields.progressTotal =
-              "Total progress possible can't be negative"
+              "Total progress possible can't be negative."
           }
         }
 
@@ -108,7 +108,7 @@ export default function EditCoursesModal({
         })
         onClose()
       } catch (error) {
-        console.error(`Error updating course: ${(error as Error).message}`)
+        console.error(`Error updating course: ${(error as Error).message}.`)
         toast.error('Failed to update course: ', {
           classNames: {
             toast: 'bg-slate-800 border-slate-700',
@@ -231,7 +231,7 @@ export default function EditCoursesModal({
             <form.AppField name="progressUnit">
               {(field) => (
                 <field.Select
-                  label="Progress Unit"
+                  label="Progress unit"
                   values={[
                     { label: 'Videos', value: 'videos' },
                     { label: 'Lessons', value: 'lessons' },
@@ -246,7 +246,7 @@ export default function EditCoursesModal({
             <form.AppField name="progressTotal">
               {(field) => (
                 <field.NumberField
-                  label="Total Progress"
+                  label="Total progress"
                   placeholder={'Course Progress Total'}
                   min={0}
                 />

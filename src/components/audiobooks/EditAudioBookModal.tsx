@@ -59,11 +59,9 @@ export default function EditAudioBookModal({
           value.lastChapter &&
           value.lastChapter > audioBook.totalChapters
         ) {
-          errors.fields.lastChapter = `Chapter cannot exceed ${audioBook.totalChapters}`
+          errors.fields.lastChapter = `Chapter cannot exceed ${audioBook.totalChapters}.`
         }
-        if (value.positionMinutes && value.positionMinutes < 0) {
-          errors.fields.positionMinutes = 'Position cannot be negative'
-        }
+
         return errors
       },
     },
@@ -237,9 +235,9 @@ export default function EditAudioBookModal({
                         >
                           {(field) => (
                             <field.NumberField
-                              label="Current Position (in minutes)"
+                              label="Current position (in minutes)"
                               min={0}
-                              placeholder="e.g 45"
+                              placeholder="e.g 45."
                             />
                           )}
                         </form.AppField>
@@ -249,7 +247,7 @@ export default function EditAudioBookModal({
                           {(field) => (
                             <field.DateField
                               label="Date started"
-                              placeholder="No start date yet"
+                              placeholder="No start date yet."
                             />
                           )}
                         </form.AppField>
@@ -262,7 +260,7 @@ export default function EditAudioBookModal({
                           {(field) => (
                             <field.DateField
                               label="Date finished"
-                              placeholder="No finish date yet"
+                              placeholder="No finish date yet."
                             />
                           )}
                         </form.AppField>
@@ -294,7 +292,7 @@ export default function EditAudioBookModal({
             {/** Notes  */}
             <form.AppField name="notes">
               {(field) => (
-                <field.TextArea label="Notes" placeholder="No notes yet" />
+                <field.TextArea label="Notes" placeholder="No notes yet." />
               )}
             </form.AppField>
 

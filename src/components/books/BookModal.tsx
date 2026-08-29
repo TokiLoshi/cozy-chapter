@@ -410,11 +410,11 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
                     </div>
                   ) : searchError ? (
                     <p className="text-red-400 text-sm">
-                      Failed to search. Please try again
+                      Failed to search. Please try again.
                     </p>
                   ) : searchResults?.length === 0 ? (
                     <p className="text-gray-400 text-sm text-center py-4">
-                      No books found
+                      No books found.
                     </p>
                   ) : (
                     <div className="space-y-2">
@@ -468,8 +468,8 @@ export default function BooksModal({ isOpen, selectedStatus }: BookModalProps) {
             <p className="text-center text-gray-400 py-8">
               {' '}
               {librarySearch
-                ? 'No books match your search'
-                : 'No books in this category yet'}
+                ? 'No books match your search.'
+                : 'No books in this category yet.'}
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
