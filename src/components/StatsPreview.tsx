@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { Leaf, Settings } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { ArrowDown, ArrowUp, Leaf, Settings } from 'lucide-react'
 import type {
   ActivityLogSelect,
   UserStatsSelect,
@@ -79,6 +79,7 @@ type Props = {
   plantAlert: 'allGood' | 'needsWater' | 'needsAttention'
   onPlantsClick: () => void
   onSettingsClick: () => void
+  children?: React.ReactNode
 }
 
 const DAY_KEYS: Array<DayKey> = [
@@ -133,12 +134,14 @@ export default function StatsWidget({
   plantAlert,
   onPlantsClick,
   onSettingsClick,
+  children,
 }: Props) {
   const todayKey = useMemo(() => {
     const rawDay = new Date().getDay()
     const mondayFirstIndex = rawDay === 0 ? 6 : rawDay - 1
     return DAY_KEYS[mondayFirstIndex]
   }, [])
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const weekData = useMemo(() => {
     return buildWeekData(recentActivity)
@@ -161,10 +164,44 @@ export default function StatsWidget({
 
   return (
     <>
-      <div className="absolute top-6 left-6 z-[10] min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md">
+      {!isExpanded && (
+        <>
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="absolute top-6 left-6 z-[10] flex items-center gap-3 rounded-xl border border-white/15 bg-slate-900/80 px-4 py-2.5 shadow-2xl backdrop-blur-md cursor-pointer"
+          >
+            {' '}
+            <ArrowDown className="text-amber-600" />
+            <span className="text-sm font-semibold text-white">{username}</span>
+            <span className="flex items-center gap-1">
+              <FlameIcon size={13} lit={isStreakActive} />
+              <span className="font-mono text-sm text-slate-300">
+                {currentStreak}
+              </span>
+            </span>
+            <span className="text-sm tabular-nums text-slate-300">
+              {booksFinishedThisYear}/{yearlyGoal}
+            </span>
+          </button>
+        </>
+      )}
+
+      <div
+        className={
+          isExpanded
+            ? `absolute top-6 left-6 z-[10] min-w-[230px] rounded-xl border border-white/15 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-md`
+            : 'hidden'
+        }
+      >
         {/** Header */}
         <button className="absolute top-3 right-3 text-amber-500/70 cursor-pointer hover:text-amber-500/60 ">
           <Settings onClick={handlePreferences} />
+        </button>
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="absolute top-3 left-3 text-amber-500/70 cursor-pointer hover:tex-amber-500/60"
+        >
+          <ArrowUp />
         </button>
         <div className="m-4">
           <h2 className="text-lg mt-3 font-bold text-white">
@@ -279,6 +316,7 @@ export default function StatsWidget({
               </div>
             ))}
           </div>
+          <div className="mt-4 border-t border-white/10 pt-4">{children}</div>
         </div>
       </div>
     </>

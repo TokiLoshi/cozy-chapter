@@ -87,38 +87,18 @@ export default function AudioComponent() {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-4">
-        <h3 className="text-white text-lg font-semibold">music player</h3>
+      <p className="text-white text-xs font-slate-500 mb-2 text-center">
+        Cozy music
+      </p>
+      <div className="flex items-center justify-center gap-4">
+        <button
+          onClick={handleBack}
+          aria-label="Previous Track"
+          className="text-white/80 hover:text-white transition-all hover:scale-100 hover:cursor-pointer active:scale-95"
+        >
+          <CircleArrowLeft className="text-white " />
+        </button>
 
-        {isPlaying && (
-          <>
-            <div className="flex items-center gap-2 w-full px-2">
-              <span className="text-white/50 text-xs">
-                <Volume2 />
-              </span>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={volume}
-                onChange={(e) => setVolume(parseFloat(e.target.value))}
-                aria-label="Volume"
-                className="w-full accent-amber-500 cursor-pointer"
-              />
-            </div>
-          </>
-        )}
-
-        {currentTrackIndex >= 1 && (
-          <button
-            onClick={handleBack}
-            aria-label="Previous Track"
-            className="text-white/80 hover:text-white transition-all hover:scale-100 hover:cursor-pointer active:scale-95"
-          >
-            <CircleArrowLeft className="text-white " />
-          </button>
-        )}
         <button
           onClick={handleClick}
           aria-label={isPlaying ? 'Pause music' : 'Play music'}
@@ -137,16 +117,35 @@ export default function AudioComponent() {
         >
           <CircleArrowRight className="text-white" />
         </button>
-
-        <div className="text-center">
-          <p className="text-white/80 text-sm font-medium">
-            {isPlaying ? 'Now playing:' : ''}
-          </p>
-          <p className="text-white/80 text-sm font-medium">
-            {isPlaying ? trackNames[currentTrackIndex] : ''}
-          </p>
-        </div>
       </div>
+      <div className="text-center"></div>
+      {isPlaying && (
+        <>
+          <div className="flex items-center gap-2 w-full px-2">
+            <span className="text-white/50 text-xs">
+              <Volume2 />
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={volume}
+              onChange={(e) => setVolume(parseFloat(e.target.value))}
+              aria-label="Volume"
+              className="w-full accent-amber-500 cursor-pointer"
+            />
+          </div>
+          <div className="items-center text-center">
+            <p className="text-white/80 text-xs">
+              <span className="font-semibold">
+                {isPlaying ? 'Now playing:' : ''}
+              </span>{' '}
+              {isPlaying ? trackNames[currentTrackIndex] : ''}
+            </p>
+          </div>
+        </>
+      )}
     </>
   )
 }

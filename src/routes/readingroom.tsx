@@ -159,9 +159,6 @@ function ReadingRoomComponent() {
         <div
           className={`fixed inset-0 z-[200] bg-black pointer-events-none transition-opacity duration-1000 ${fadeToBlack ? 'opacity-100' : 'opacity-0'}`}
         />
-        <div className="absolute top-6 right-6 z-[10] items-center bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl">
-          <AudioComponent />
-        </div>
 
         {/** Stats widget */}
         <StatsWidget
@@ -174,7 +171,11 @@ function ReadingRoomComponent() {
           libraryCount={userBooks.length}
           onPlantsClick={handlePlantClick}
           onSettingsClick={() => toggleWindow('preferences')}
-        />
+        >
+          {/* <div className="absolute top-6 right-6 z-[10] items-center bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-2xl"> */}
+          <AudioComponent />
+          {/* </div> */}
+        </StatsWidget>
 
         {/** 3D component  */}
         <Experience
