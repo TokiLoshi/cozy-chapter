@@ -6,7 +6,7 @@ import {
   householdMember,
 } from '../schemas/household-schema'
 import { userPlants } from '../schemas/plant-schema'
-import { detachPlantsFromHousehold } from './plants'
+import { attachPlantsToHousehold, detachPlantsFromHousehold } from './plants'
 import { db } from '@/db'
 
 // Create a household
@@ -33,6 +33,13 @@ export async function createHousehold(input: { userId: string; name: string }) {
 
     const result = { household: newHouse, member: newMember }
 
+    const plants = await attachPlantsToHousehold(
+      result.household.id,
+      input.userId,
+    )
+    if (!plants.success) {
+      console.error(`Error attaching plants`)
+    }
     return { success: true, data: result }
   } catch (error) {
     console.error(
